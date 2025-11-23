@@ -1,0 +1,15 @@
+RewriteEngine On
+# ریدایرکت product-list.html به product-list.php
+RewriteRule ^product-list\.html$ product-list.php [L]
+
+# ریدایرکت product-list.html به product-list.php
+RewriteRule ^product-grid\.html$ product-grid.php [L]
+
+# ریدایرکت product-list.html به product-list.php
+RewriteRule ^product-detail\.html$ product-detail.php [L]
+
+# ریدایرکت product-list.html به product-list.php
+RewriteRule ^vendor-list\.html$ vendor-list.php [L]
+
+# ریدایرکت product-list.html به product-list.php
+RewriteRule ^vendor-profile\.html$ vendor-profile.php [L]

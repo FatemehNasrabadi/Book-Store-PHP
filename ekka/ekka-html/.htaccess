@@ -1,0 +1,8 @@
+# ریدایرکت shop-left-sidebar-col-3.html به shop-left-sidebar-col-3.php
+RewriteRule ^shop-left-sidebar-col-3\.html$ vendor-shop-left-sidebar-col-3.php [L]
+
+# ریدایرکت index.html به index.php
+RewriteRule ^index\.html$ vendor-index.php [L]
+
+# ریدایرکت product-full-width.html به product-full-width.php
+RewriteRule ^product-full-width\.html$ vendor-product-full-width.php [L]
