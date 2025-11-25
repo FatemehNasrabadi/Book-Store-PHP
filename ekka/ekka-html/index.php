@@ -1,15 +1,53 @@
 <?php
 include('../../config/db.php'); // اتصال به دیتابیس
 //گرفتن همه کتاب ها از دیتابیس
-$all_books=[];
-$sql_all="SELECT * FROM books ORDER BY created_at DESC";
+
+$sql_all="SELECT * FROM books ORDER BY id DESC";
 $result_all=mysqli_query($conn,$sql_all);
 
-if(mysqli_num_rows($result_all)>0){
+$books=[];
+if($result_all && mysqli_num_rows($result_all)>0){
+    //گرفتن هرردیف و دخیره در books
     while($row=mysqli_fetch_assoc($result_all)){
-        $all_books[]=$row;
+        $books[]=$row;
     }
 }
+//  // بررسی وجود کتگوری در url
+//  $category=isset($_GET['category'])?$_GET['category']:null;
+//  $books_category=[];
+// //بررسی دسته بندی
+// if($category){
+//     $category_safe=mysqli_real_escape_string($conn,$category);
+//     $sql_category="SELECT * FROM books WHERE category='$category_safe' ORDER BY created_at DESC";
+//     $result_category=mysqli_query($conn,$sql_category);
+//     if($result_category&& mysqli_num_rows($result_category)>0){
+//         while($row=mysqli_fetch_assoc($result_category)){
+//             $books_category[]=$row;
+//         }
+
+//     }
+// }
+//   $display_books=!empty ($books_category)? $books_category:$books;
+
+// گرفتن دسته‌بندی از URL
+$category = isset($_GET['category']) ? trim($_GET['category']) : null;
+
+$books_category=[];
+
+// اگر دسته‌بندی انتخاب شده بود
+if($category){
+    $category_safe = mysqli_real_escape_string($conn,$category);
+    $sql_category = "SELECT * FROM books WHERE category='$category_safe' ORDER BY id DESC";
+    $result_category = mysqli_query($conn,$sql_category);
+
+    if($result_category && mysqli_num_rows($result_category)>0){
+        while($row=mysqli_fetch_assoc($result_category)){
+            $books_category[]=$row;
+        }
+    }
+}
+
+$display_books = !empty($books_category) ? $books_category : $books;
 
 ?>
 <!--========================================================= 
@@ -933,7 +971,7 @@ if(mysqli_num_rows($result_all)>0){
             </div> 
             <div class="row">
        <?php
-       $last_four=array_slice($all_books,0,4);
+       $last_four=array_slice($books,0,4);
        foreach($last_four as $book){?>
        
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
@@ -1013,41 +1051,65 @@ if(mysqli_num_rows($result_all)>0){
     
     <section class="ec-banner section section-space-p">
         <h2 class="d-none">بنر</h2>
-        <div class="ec-banners">
-            <div class="ec-banner-left col-sm-6">
-                <div class="ec-banner-block ec-banner-block-1 col-sm-12">
+        <div class="ec-banners" >
+            <div class="ec-banner-left col-sm-6" >
+                <div class="ec-banner-block ec-banner-block-1 col-sm-12 ">
                     <?php 
+                    if(!empty($books)){
                     $lastBook=$books[0];
 
                     ?>
-                    <div class="banner-block">
+                    <div class="banner-block"  >
                        
-                        <img src="assets/images/products/<?php echo $lastBook['image']; ?>" alt=""  style="width:500px; height:400px; object-fit:cover;" />
+                        <img src="assets/images/products/<?php echo $lastBook['image']; ?>" alt=""  style="width:800px; height:900px; object-fit:cover;" />
                         <div class="banner-content">
                             <div class="banner-text">
                                 <span class="ec-banner-stitle">بیا باهم کتاب بخونیم</span>
                                 <span class="ec-banner-title"><?php echo $lastBook['name']; ?></span>
                                 <p> <?php echo $lastBook['price']; ?> <br> تومان</p>
                             </div>
-                            <span class="ec-banner-btn"><a href="#" class="btn-primary">کشف کن </a></span>
+                            <?php }?>
+                            <span class="ec-banner-btn"><a href="product-full-width.php?id=<?php echo htmlentities($lastBook['id']);?>" class="btn-primary" type="submit">کشف کن </a></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="ec-banner-right col-sm-6">
+            <div class="ec-banner-right col-sm-6" >
+                <div class="ec-banner-block ec-banner-block-1 col-sm-12 ">
+                    <?php 
+                    if(!empty($books)){
+                    $firstBook=$books[1];
+
+                    ?>
+                    <div class="banner-block"  >
+                       
+                        <img src="assets/images/products/<?php echo $firstBook['image']; ?>" alt=""  style="width:800px; height:900px; object-fit:cover;" />
+                        <div class="banner-content">
+                            <div class="banner-text">
+                                <span class="ec-banner-stitle">بیا باهم کتاب بخونیم</span>
+                                <span class="ec-banner-title"><?php echo $firstBook['name']; ?></span>
+                                <p> <?php echo $firstBook['price']; ?> <br> تومان</p>
+                            </div>
+                            <?php }?>
+                            <span class="ec-banner-btn"><a href="product-full-width.php?id=<?php echo htmlentities($firstBook['id']);?>" class="btn-primary" type="submit">کشف کن </a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="ec-banner-right col-sm-6">
                 <div class="ec-banner-block ec-banner-block-2 col-sm-12">
                     <div class="banner-block">
                         <img src="assets/images/banner/16.jpg" alt="" />
-                        <div class="banner-content">
+                        <div class="banner-content"> -->
                             <!-- <div class="banner-text">
                                 <span class="ec-banner-stitle">استثنایی</span>
                                 <span class="ec-banner-title">طراحی داخلی<br> زیبا</span>
                             </div> -->
-                            <span class="ec-banner-btn"><a href="#" class="btn-primary">کشف کن</a></span>
+                            <!-- <span class="ec-banner-btn"><a href="#" class="btn-primary">کشف کن</a></span>
                         </div>
                     </div>
-                </div>
-                <div class="ec-banner-block ec-banner-block-3 col-sm-6">
+                </div> -->
+                <!-- <div class="ec-banner-block ec-banner-block-3 col-sm-6">
                     <div class="banner-block">
                         <a href="#">
                             <img src="assets/images/banner/17.jpg" alt="" />
@@ -1073,34 +1135,37 @@ if(mysqli_num_rows($result_all)>0){
                             </div>
                         </a>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>
     <!-- ec Banner Section End -->
 
-    <!-- Product tab Area Start -->
+
+   
+<!-- Product tab Area Start -->
     <section class="section ec-product-tab section-space-p">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 section-title-block">
                     <div class="section-title">
                         <h2 class="ec-title">بررسی کنید</h2>
-                        <p class="sub-title">فرصت محدود.</p>
+                        <!-- <p class="sub-title">فرصت محدود.</p> -->
                     </div>
+                     <?php foreach($display_books as $book): ?>
                     <div class="section-btn">
                         <ul class="ec-pro-tab-nav nav">
                             <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab"
-                                    href="#tab-pro-new-arrivals">تازه ها</a></li>
+                                  onclick="window.location.href='index.php?category=کودک'">کودک</a></li>
                             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
-                                    href="#tab-pro-special-offer">پیشنهاد ویژه</a></li>
+                                    onclick="window.location.href='index.php?category=رمان'">رمان</a></li>
                             <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
-                                    href="#tab-pro-best-sellers">پرفروش ها</a></li>
+                                    onclick="window.location.href='index.php?category=زبان انگلیسی'">زبان انگلیسی</a></li>
                         </ul>
                     </div>
                 </div>
-
             </div>
+            
             <div class="row">
                 <div class="col">
                     <div class="tab-content">
@@ -1112,11 +1177,11 @@ if(mysqli_num_rows($result_all)>0){
                                         <div class="ec-product-inner">
                                             <div class="ec-pro-image-outer">
                                                 <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
+                                                    <a href="product-full-width.php" class="image">
                                                         <img class="main-image"
-                                                            src="assets/images/product-image/19_1.jpg" alt="Product" />
+                                                            src="../ekka-html/assets/images/products/<?php echo $book['image']; ?>" alt="" />
                                                         <img class="hover-image"
-                                                            src="assets/images/product-image/19_2.jpg" alt="Product" />
+                                                            src="../ekka-html/assets/images/products/<?php echo $book['image']; ?>" alt="" />
                                                     </a>
                                                     <div class="ec-pro-actions">
                                                         <button title="افزودن به سبد" class=" add-to-cart"><img
@@ -1138,14 +1203,17 @@ if(mysqli_num_rows($result_all)>0){
                                                 </div>
                                             </div>
                                             <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">تلاش جهانی برای بقا</a></h5>
+                                                <h5 class="ec-pro-title"><?php echo htmlspecialchars($book['name']); ?></h5>
                                                 <span class="ec-price">
-                                                    <span class="old-price">1549 تومان</span>
-                                                    <span class="new-price">1402 تومان</span>
+                                                    <span class="new-price"> <?php echo $book['price']; ?></span>
+                                                  <a href="details.php?id=<?php echo $book['id']; ?>">جزئیات</a>
+
+                                                    
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
+                                 
                                     <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
                                         <div class="ec-product-inner">
                                             <div class="ec-pro-image-outer">
@@ -2618,7 +2686,9 @@ if(mysqli_num_rows($result_all)>0){
                     </div>
                 </div>
             </div>
+            
         </div>
+        <?php endforeach; ?>
     </section>
     <!-- ec Product tab Area End -->
 
