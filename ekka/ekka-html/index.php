@@ -12,22 +12,7 @@ if($result_all && mysqli_num_rows($result_all)>0){
         $books[]=$row;
     }
 }
-//  // بررسی وجود کتگوری در url
-//  $category=isset($_GET['category'])?$_GET['category']:null;
-//  $books_category=[];
-// //بررسی دسته بندی
-// if($category){
-//     $category_safe=mysqli_real_escape_string($conn,$category);
-//     $sql_category="SELECT * FROM books WHERE category='$category_safe' ORDER BY created_at DESC";
-//     $result_category=mysqli_query($conn,$sql_category);
-//     if($result_category&& mysqli_num_rows($result_category)>0){
-//         while($row=mysqli_fetch_assoc($result_category)){
-//             $books_category[]=$row;
-//         }
 
-//     }
-// }
-//   $display_books=!empty ($books_category)? $books_category:$books;
 
 // گرفتن دسته‌بندی از URL
 $category = isset($_GET['category']) ? trim($_GET['category']) : null;
@@ -48,6 +33,23 @@ if($category){
 }
 
 $display_books = !empty($books_category) ? $books_category : $books;
+
+
+
+// گرفتن آخرین 4 کتاب تخفیف‌دار، اگر کمتر از 4 بود همونارو برمی‌گردونه
+$sql_last_discounted = "SELECT * FROM books WHERE discount != 0 ORDER BY created_at DESC LIMIT 4";
+$result_last_discounted = mysqli_query($conn, $sql_last_discounted);
+
+$last_discounted_books = [];
+if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
+    while($row = mysqli_fetch_assoc($result_last_discounted)){
+        // محاسبه قیمت بعد از تخفیف
+        $row['final_price'] = $row['price'] - ($row['price'] * $row['discount'] / 100);
+        $last_discounted_books[] = $row;
+    }
+}
+
+
 
 ?>
 <!--========================================================= 
@@ -351,27 +353,12 @@ $display_books = !empty($books_category) ? $books_category : $books;
                                             </ul> -->
                                             <ul class="d-block">
                                                 <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
-                                                <li><a href="shop-banner-left-sidebar-col-3.html"> بنر سایدبار چپ 3
-                                                        ستونه</a></li>
-                                                <li><a href="shop-banner-left-sidebar-col-4.html"> بنر سایدبار چپ 4
-                                                        ستونه</a></li>
-                                                <li><a href="shop-banner-right-sidebar-col-3.html"> بنر سایدبار راست 3
-                                                        ستونه </a></li>
-                                                <li><a href="shop-banner-right-sidebar-col-4.html"> بنر سایدبار راست 4
-                                                        ستونه </a></li>
-                                                <li><a href="shop-banner-full-width.html"> بنر تمام عرض 4 ستونه</a>
-                                                </li>
-                                            </ul>
-                                            <ul class="d-block">
-                                                <li class="menu_title"><a href="javascript:void(0)">ورژن ستونه</a></li>
-                                                <li><a href="shop-full-width-col-3.html">3 ستون تمام عرض</a></li>
-                                                <li><a href="shop-full-width-col-4.html">4 ستون تمام عرض</a></li>
-                                                <li><a href="shop-full-width-col-5.html">5 ستون تمام عرض</a></li>
-                                                <li><a href="shop-full-width-col-6.html">6 ستون تمام عرض</a></li>
-                                                <li><a href="shop-banner-full-width-col-3.html">بنر 3 ستونه</a>
-                                                </li>
-                                            </ul>
-                                            <ul class="d-block">
+                                                <li><a href="shop-left-sidebar-col-3.php"> همه محصولات</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=رمان"> رمان</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=کودک">کودک</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=زبان انگلیسی"> زبان انگلیسی</a></li>
+                                            </ul>                           
+                                            <!-- <ul class="d-block">
                                                 <li class="menu_title"><a href="javascript:void(0)">ورژن لیست</a>
                                                 </li>
                                                 <li><a href="shop-list-left-sidebar.html">فروشگاه با سایدبار چپ</a></li>
@@ -382,7 +369,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                                                 <li><a href="shop-list-banner-right-sidebar.html">بنر سایدبار راست</a>
                                                 </li>
                                                 <li><a href="shop-list-full-col-2.html">تمام عرض 2 ستونه</a></li>
-                                            </ul>
+                                            </ul> -->
                                         </li>
                                         <li>
                                             <!-- <ul class="ec-main-banner w-100">
@@ -1152,1551 +1139,84 @@ $display_books = !empty($books_category) ? $books_category : $books;
                         <h2 class="ec-title">بررسی کنید</h2>
                         <!-- <p class="sub-title">فرصت محدود.</p> -->
                     </div>
-                     <?php foreach($display_books as $book): ?>
+                    <?php $category=isset($_GET['category'])?trim($_GET['category']):null;?>
                     <div class="section-btn">
                         <ul class="ec-pro-tab-nav nav">
-                            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab"
-                                  onclick="window.location.href='index.php?category=کودک'">کودک</a></li>
-                            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
-                                    onclick="window.location.href='index.php?category=رمان'">رمان</a></li>
-                            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
-                                    onclick="window.location.href='index.php?category=زبان انگلیسی'">زبان انگلیسی</a></li>
+                            <li class="nav-item"> <a class="nav-link <?php echo ($category == 'کودک') ? 'active' : ''; ?>"
+               href="index.php?category=کودک">کودک</a></li>
+                            <li class="nav-item"> <a class="nav-link <?php echo ($category == 'رمان') ? 'active' : ''; ?>"
+               href="index.php?category=رمان">رمان</a></li>
+                            <li class="nav-item"> <a class="nav-link <?php echo ($category == 'زبان انگلیسی') ? 'active' : ''; ?>"
+               href="index.php?category=زبان انگلیسی">زبان انگلیسی</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            
-            <div class="row">
-                <div class="col">
-                    <div class="tab-content">
-                        <!-- 1st Product tab start -->
-                        <div class="tab-pane fade show active" id="tab-pro-new-arrivals">
-                            <div class="row">
-                                <div class="ec-pro-tab-slider">
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-full-width.php" class="image">
-                                                        <img class="main-image"
-                                                            src="../ekka-html/assets/images/products/<?php echo $book['image']; ?>" alt="" />
-                                                        <img class="hover-image"
-                                                            src="../ekka-html/assets/images/products/<?php echo $book['image']; ?>" alt="" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><?php echo htmlspecialchars($book['name']); ?></h5>
-                                                <span class="ec-price">
-                                                    <span class="new-price"> <?php echo $book['price']; ?></span>
-                                                  <a href="details.php?id=<?php echo $book['id']; ?>">جزئیات</a>
+             
+<?php
+$category = isset($_GET['category']) ? trim($_GET['category']) : null;
+$display_books = $category ? $books_category : $books;
+?>
 
-                                                    
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                 
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/20_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/20_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ لامپ
-                                                        شب چراغ</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">120 تومان</span>
-                                                    <span class="new-price">80 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/21_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/21_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="sale">پرفروش</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی
-                                                        چرخدار دفتر</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">999 تومان</span>
-                                                    <span class="new-price">799 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/22_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/22_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="stock">ناموجود</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز مدرن
-                                                        برای اتاق نشیمن</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">450 تومان</span>
-                                                    <span class="new-price">400 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/23_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/23_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-15%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز
-                                                        ناهارخوری با صندلی</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">3950 تومان</span>
-                                                    <span class="new-price">3500 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/24_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/24_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی اداری
-                                                        مدرن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">890 تومان</span>
-                                                    <span class="new-price">750 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/25_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/25_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-35%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز اداری
-                                                        مدرن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">530 تومان</span>
-                                                    <span class="new-price">399 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/26_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/26_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-25%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل های
-                                                        چوبی تک</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">450 تومان</span>
-                                                    <span class="new-price">400 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/27_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/27_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل پارچه
-                                                        پشمی</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">19000 تومان</span>
-                                                    <span class="new-price">1550 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/28_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/28_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">تخت چوبی با
-                                                        تشک</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">4500 تومان</span>
-                                                    <span class="new-price">3700 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/20_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/20_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="sale">پرفروش</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ شب
-                                                        مدرن LED</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">230 تومان</span>
-                                                    <span class="new-price">180 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/21_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/21_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="stock">ناموجود</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی مدرن
-                                                        برای دفتر</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">680 تومان</span>
-                                                    <span class="new-price">550 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ec 1st Product tab end -->
-                        <!-- ec 2nd Product tab start -->
-                        <div class="tab-pane fade" id="tab-pro-special-offer">
-                            <div class="row">
-                                <div class="ec-pro-tab-slider">
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/25_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/25_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-35%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز اداری
-                                                        مدرن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">530 تومان</span>
-                                                    <span class="new-price">399 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/26_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/26_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-25%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل های
-                                                        چوبی تک</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">450 تومان</span>
-                                                    <span class="new-price">400 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/27_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/27_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل پارچه
-                                                        پشمی</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">19000 تومان</span>
-                                                    <span class="new-price">1550 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/28_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/28_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">تخت چوبی با
-                                                        تشک</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">4500 تومان</span>
-                                                    <span class="new-price">3700 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/19_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/19_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی تک
-                                                        برای نشیمن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">1549 تومان</span>
-                                                    <span class="new-price">1402 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/20_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/20_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ لامپ
-                                                        شب چراغ</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">120 تومان</span>
-                                                    <span class="new-price">80 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/21_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/21_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="sale">پرفروش</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی
-                                                        چرخدار دفتر</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">999 تومان</span>
-                                                    <span class="new-price">799 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/22_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/22_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="stock">ناموجود</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز مدرن
-                                                        برای اتاق نشیمن</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">450 تومان</span>
-                                                    <span class="new-price">400 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/23_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/23_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-15%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز
-                                                        ناهارخوری با صندلی</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">3950 تومان</span>
-                                                    <span class="new-price">3500 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/24_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/24_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی اداری
-                                                        مدرن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">890 تومان</span>
-                                                    <span class="new-price">750 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/20_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/20_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="sale">پرفروش</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ شب
-                                                        مدرن LED</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">230 تومان</span>
-                                                    <span class="new-price">180 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/21_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/21_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="stock">ناموجود</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی مدرن
-                                                        برای دفتر</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">680 تومان</span>
-                                                    <span class="new-price">550 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ec 2nd Product tab end -->
-                        <!-- ec 3rd Product tab start -->
-                        <div class="tab-pane fade" id="tab-pro-best-sellers">
-                            <div class="row">
-                                <div class="ec-pro-tab-slider">
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/23_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/23_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-15%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز
-                                                        ناهارخوری با صندلی</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">3950 تومان</span>
-                                                    <span class="new-price">3500 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/28_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/28_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">تخت چوبی با
-                                                        تشک</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">4500 تومان</span>
-                                                    <span class="new-price">3700 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/19_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/19_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی تک
-                                                        برای نشیمن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">1549 تومان</span>
-                                                    <span class="new-price">1402 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/24_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/24_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی اداری
-                                                        مدرن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">890 تومان</span>
-                                                    <span class="new-price">750 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/27_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/27_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل پارچه
-                                                        پشمی</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">19000 تومان</span>
-                                                    <span class="new-price">1550 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/20_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/20_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="sale">پرفروش</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ شب
-                                                        مدرن LED</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">230 تومان</span>
-                                                    <span class="new-price">180 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/25_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/25_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-35%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز اداری
-                                                        مدرن</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">530 تومان</span>
-                                                    <span class="new-price">399 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/26_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/26_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="percentage">-25%</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل های
-                                                        چوبی تک</a></h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">450 تومان</span>
-                                                    <span class="new-price">400 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/20_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/20_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ لامپ
-                                                        شب چراغ</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">120 تومان</span>
-                                                    <span class="new-price">80 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/21_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/21_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="sale">پرفروش</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی
-                                                        چرخدار دفتر</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">999 تومان</span>
-                                                    <span class="new-price">799 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/22_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/22_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="stock">ناموجود</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز مدرن
-                                                        برای اتاق نشیمن</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">450 تومان</span>
-                                                    <span class="new-price">400 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                        <div class="ec-product-inner">
-                                            <div class="ec-pro-image-outer">
-                                                <div class="ec-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image"
-                                                            src="assets/images/product-image/21_1.jpg" alt="Product" />
-                                                        <img class="hover-image"
-                                                            src="assets/images/product-image/21_2.jpg" alt="Product" />
-                                                    </a>
-                                                    <span class="flags">
-                                                        <span class="stock">ناموجود</span>
-                                                    </span>
-                                                    <div class="ec-pro-actions">
-                                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                                src="assets/images/icons/cart.svg"
-                                                                class="svg_img pro_svg" alt="" /></button>
-                                                        <a href="compare.html" class="ec-btn-group compare"
-                                                            title="مقایسه"><img src="assets/images/icons/compare.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a href="#" class="ec-btn-group quickview"
-                                                            data-link-action="quickview" title="مشاهده"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#ec_quickview_modal"><img
-                                                                src="assets/images/icons/quickview.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                                src="assets/images/icons/pro_wishlist.svg"
-                                                                class="svg_img pro_svg" alt="" /></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-content">
-                                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی مدرن
-                                                        برای دفتر</a>
-                                                </h5>
-                                                <span class="ec-price">
-                                                    <span class="old-price">680 تومان</span>
-                                                    <span class="new-price">550 تومان</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ec 3rd Product tab end -->
+<div class="row">
+<style>
+    .ec-product-inner img{
+        width: 120%;
+        height: 560px;
+        object-fit: cover;
+        border-radius: 10px;
+    } </style>
+<?php if (!empty($display_books)): ?>
+    <?php foreach ($display_books as $book): ?>
+    
+        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-6">
+            <div class="ec-product-inner">
+                <div class="ec-pro-image">
+                    <a href="product-full-width.php?id=<?php echo $book['id']; ?>" class="image">
+                        <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($book['image']); ?>" 
+                             alt="<?php echo htmlspecialchars($book['name']); ?>" />
+                    </a>
+                    <div class="ec-pro-actions">
+                        <button title="افزودن به سبد" class="add-to-cart">
+                            <img src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt="">
+                        </button>
+                        <a href="#" class="ec-btn-group wishlist" title="علاقه‌مندی">
+                            <img src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg" alt="">
+                        </a>
                     </div>
                 </div>
+
+                <div class="ec-pro-content">
+                    <h5 class="ec-pro-title">
+                        <a href="product-full-width.php?id=<?php echo $book['id']; ?>">
+                            <?php echo htmlspecialchars($book['name']); ?>
+                        </a>
+                    </h5>
+
+                    <span class="ec-price">
+                        <span class="new-price"><?php echo htmlspecialchars($book['price']); ?> تومان</span>
+                    </span>
+
+                    <a href="product-full-width.php?id=<?php echo $book['id']; ?>" class="btn btn-primary mt-2">
+                        جزئیات
+                    </a>
+                </div>
             </div>
-            
         </div>
-        <?php endforeach; ?>
+
+    <?php endforeach; ?>
+<?php endif; ?>
+
+</div>
+       
     </section>
     <!-- ec Product tab Area End -->
 
     <!--  offer Section Start -->
-    <section class="section ec-offer-section section-space-mt section-space-mb">
-        <h2 class="d-none">پیشنهاد</h2>
+    <!-- <section class="section ec-offer-section section-space-mt section-space-mb">
+        <h2 class="d-none">پیشنهاد</h2> -->
         <!-- <img src="assets/images/offer-image/offer_bg.jpg" alt="" class="offer_bg" /> -->
-        <div class="container">
+        <!-- <div class="container">
             <div class="row">
                 <div class="ec-offer-inner">
                     <div class="col-sm-4 ec-offer-content">
@@ -2709,7 +1229,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- offer Section End -->
 
     <!-- Trending Item Start -->
@@ -2717,341 +1237,60 @@ $display_books = !empty($books_category) ? $books_category : $books;
         <div class="container">
             <div class="row">
                 <div class="col-md-12 section-title-block">
-                    <div class="section-title">
-                        <h2 class="ec-title">پرفروش ها</h2>
+                    <!-- <div class="section-title">
+                        <h2 class="ec-title">تخفیف ها</h2>
                         <p class="sub-title">محصولات ما را بررسی کنید.</p>
-                    </div>
-                    <div class="section-btn">
+                    </div> -->
+                    <!-- <div class="section-btn">
                         <span class="ec-section-btn"><a class="btn-secondary" href="shop-left-sidebar-col-3.html">مشاهده
                                 همه</a></span>
+                    </div> -->
+                </div>
+            </div>
+<?php 
+// بررسی وجود کتاب‌های دارای تخفیف
+if(!empty($last_discounted_books)) {
+?>
+    <div class="row"> 
+
+        <?php foreach($last_discounted_books as $book) { ?>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content mb-4">
+                <div class="ec-product-inner">
+                    <div class="ec-pro-image-outer">
+                        <div class="ec-pro-image">
+                           
+                            <a href="#?id=<?php echo $book['id']; ?>" class="image">
+                                <img class="main-image" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($book['image']); ?>" alt="<?php echo htmlspecialchars($book['name']); ?>" />
+                                <img class="hover-image" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($book['image']); ?>" alt="<?php echo htmlspecialchars($book['name']); ?>" />
+                            </a>
+                          
+                            <!-- <div class="ec-pro-actions">
+                                <button title="افزودن به سبد" class="add-to-cart"><img src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt="" /></button>
+                                <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img src="assets/images/icons/compare.svg" class="svg_img pro_svg" alt="" /></a>
+                                <a href="#" class="ec-btn-group quickview" data-link-action="quickview" title="مشاهده" data-bs-toggle="modal" data-bs-target="#ec_quickview_modal"><img src="assets/images/icons/quickview.svg" class="svg_img pro_svg" alt="" /></a>
+                                <a class="ec-btn-group wishlist" title="علاقه مندی"><img src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg" alt="" /></a>
+                            </div> -->
+                           
+                        </div>
+                    </div>
+
+                    <div class="ec-pro-content">
+                        <h5 class="ec-pro-title">
+                            <a href="#?id=<?php echo $book['id']; ?>">
+                                <?php echo htmlspecialchars($book['name']); ?>
+                            </a>
+                        </h5>
+                        <span class="ec-price">
+                            <span class="old-price"><?php echo htmlspecialchars($book['price']); ?> تومان</span>
+                            <span class="new-price"><?php echo htmlspecialchars($book['final_price']); ?> تومان</span>
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="ec-trend-slider">
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/27_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/27_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل پارچه پشمی</a></h5>
-                                <span class="ec-price">
-                                    <span class="old-price">19000 تومان</span>
-                                    <span class="new-price">1550 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/20_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/20_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <span class="flags">
-                                        <span class="sale">پرفروش</span>
-                                    </span>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ شب مدرن LED</a>
-                                </h5>
-                                <span class="ec-price">
-                                    <span class="old-price">230 تومان</span>
-                                    <span class="new-price">180 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/25_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/25_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <span class="flags">
-                                        <span class="percentage">-35%</span>
-                                    </span>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز اداری مدرن</a></h5>
-                                <span class="ec-price">
-                                    <span class="old-price">530 تومان</span>
-                                    <span class="new-price">399 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/26_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/26_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <span class="flags">
-                                        <span class="percentage">-25%</span>
-                                    </span>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">مبل های چوبی تک</a></h5>
-                                <span class="ec-price">
-                                    <span class="old-price">450 تومان</span>
-                                    <span class="new-price">400 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/20_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/20_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">چراغ لامپ شب چراغ</a>
-                                </h5>
-                                <span class="ec-price">
-                                    <span class="old-price">120 تومان</span>
-                                    <span class="new-price">80 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/21_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/21_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <span class="flags">
-                                        <span class="sale">پرفروش</span>
-                                    </span>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">صندلی چرخدار دفتر</a>
-                                </h5>
-                                <span class="ec-price">
-                                    <span class="old-price">999 تومان</span>
-                                    <span class="new-price">799 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/22_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/22_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <span class="flags">
-                                        <span class="stock">ناموجود</span>
-                                    </span>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">میز مدرن برای اتاق
-                                        نشیمن</a>
-                                </h5>
-                                <span class="ec-price">
-                                    <span class="old-price">450 تومان</span>
-                                    <span class="new-price">400 تومان</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                        <div class="ec-product-inner">
-                            <div class="ec-pro-image-outer">
-                                <div class="ec-pro-image">
-                                    <a href="product-left-sidebar.html" class="image">
-                                        <img class="main-image" src="assets/images/product-image/28_1.jpg"
-                                            alt="Product" />
-                                        <img class="hover-image" src="assets/images/product-image/28_2.jpg"
-                                            alt="Product" />
-                                    </a>
-                                    <span class="flags">
-                                        <span class="stock">ناموجود</span>
-                                    </span>
-                                    <div class="ec-pro-actions">
-                                        <button title="افزودن به سبد" class=" add-to-cart"><img
-                                                src="assets/images/icons/cart.svg" class="svg_img pro_svg"
-                                                alt="" /></button>
-                                        <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                                src="assets/images/icons/compare.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                            title="مشاهده" data-bs-toggle="modal"
-                                            data-bs-target="#ec_quickview_modal"><img
-                                                src="assets/images/icons/quickview.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                        <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                                src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg"
-                                                alt="" /></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ec-pro-content">
-                                <h5 class="ec-pro-title"><a href="product-left-sidebar.html">تخت چوبی با تشک</a>
-                                </h5>
-                                <span class="ec-price">
-                                    <span class="old-price">550 تومان0</span>
-                                    <span class="new-price">$5100</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php } ?>
+
+    </div> 
+<?php } ?>
     </section>
     <!-- Trending Item end -->
 
@@ -3067,7 +1306,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                         </div>
                         <div class="ec-service-desc">
                             <h2>تحویل نامحدود</h2>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ.</p>
+                            <p></p>
                         </div>
                     </div>
                 </div>
@@ -3078,7 +1317,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                         </div>
                         <div class="ec-service-desc">
                             <h2>بازگشت رایگان</h2>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ</p>
+                            <p></p>
                         </div>
                     </div>
                 </div>
@@ -3089,7 +1328,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                         </div>
                         <div class="ec-service-desc">
                             <h2>24/7 پشتیبانی</h2>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ</p>
+                            <p></p>
                         </div>
                     </div>
                 </div>
@@ -3099,7 +1338,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
     <!--services Section End -->
 
     <!-- ec testimonial Start -->
-    <section class="section ec-test-section section-space-ptb-100 section-space-mt section-space-mb">
+    <!-- <section class="section ec-test-section section-space-ptb-100 section-space-mt section-space-mb">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 section-title-block">
@@ -3161,7 +1400,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- ec testimonial end -->
 
     <!-- Ec Instagram Start -->
@@ -3180,61 +1419,47 @@ $display_books = !empty($books_category) ? $books_category : $books;
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="ec-insta-wrapper">
-                    <div class="ec-insta-outer">
-                        <div class="insta-auto">
-                            <!-- instagram item -->
-                            <div class="ec-insta-item">
-                                <div class="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="assets/images/instragram-image/1.jpg" alt="">
-
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- instagram item -->
-                            <div class="ec-insta-item">
-                                <div class="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="assets/images/instragram-image/2.jpg" alt="">
-
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- instagram item -->
-                            <div class="ec-insta-item">
-                                <div class="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="assets/images/instragram-image/3.jpg" alt="">
-
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- instagram item -->
-                            <div class="ec-insta-item">
-                                <div class="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="assets/images/instragram-image/4.jpg" alt="">
-
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- instagram item -->
-                            <div class="ec-insta-item">
-                                <div class="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="assets/images/instragram-image/5.jpg" alt="">
-
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- instagram item -->
+            <style>
+                .ec-insta-item {
+                 flex: 0 0 20%;  /* هر کارت 20٪ عرض ردیف را بگیرد (۵ کارت در یک ردیف) */
+                 padding: 5px;   /* فاصله بین کارت‌ها */
+                 box-sizing: border-box;
+               }
+               .ec-insta-inner img {
+                 width: 100%;      
+                 height: 200px;    
+                 object-fit: cover; 
+                 border-radius: 5px; 
+               }
+           </style>
+            <?php
+$last_6 = array_slice($books, 0, 6);
+if(!empty($last_6)) {
+?>
+<div class="row">
+    <div class="ec-insta-wrapper">
+        <div class="ec-insta-outer">
+            <div class="insta-auto">
+                <?php foreach($last_6 as $book) { ?>
+                    <!-- instagram/book item -->
+                    <div class="ec-insta-item">
+                        <div class="ec-insta-inner">
+                            <a href="#" target="_blank">
+                                <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($book['image']); ?>" alt="<?php echo htmlspecialchars($book['name']); ?>">
+                            </a>
                         </div>
                     </div>
-                </div>
+                <?php } ?>
             </div>
         </div>
+    </div>
+</div>
+<?php } ?>
     </section>
     <!-- Ec Instagram End -->
 
     <!-- Ec Brand Section Start -->
-    <section class="section ec-brand-section section-space-ptb-100 section-space-mt">
+    <!-- <section class="section ec-brand-section section-space-ptb-100 section-space-mt">
         <h2 class="d-none">Brand</h2>
         <div class="container">
             <div class="row">
@@ -3276,7 +1501,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- Ec Brand Section End -->
 
     <!-- Footer Start -->
@@ -3284,12 +1509,12 @@ $display_books = !empty($books_category) ? $books_category : $books;
         <div class="footer-container">
             <div class="footer-offer">
                 <div class="container">
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="text-center footer-off-msg">
                             <span>برنده مسابقه!این نسخه محدود رادریافت کنید</span><span class="footer-off-text">-
                                 صندلی اداری رایگان</span><a href="#" target="_blank">نمایش جزئیات</a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="footer-top section-space-footer-p">

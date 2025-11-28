@@ -286,7 +286,7 @@ if(isset($_GET['id'])) {
                                 <li class="dropdown position-static"><a href="javascript:void(0)">دسته بندی ها</a>
                                     <ul class="mega-menu d-block">
                                         <li class="d-flex">
-                                            <ul class="d-block">
+                                            <!-- <ul class="d-block">
                                                 <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
                                                 <li><a href="shop-left-sidebar-col-3.html">سایدبار چپ 3 ستونه</a>
                                                 </li>
@@ -297,106 +297,15 @@ if(isset($_GET['id'])) {
                                                 <li><a href="shop-right-sidebar-col-4.html">سایدبار راست 4 ستونه</a>
                                                 </li>
                                                 <li><a href="shop-full-width.html">تمام عرض 4 ستونه</a></li>
+                                            </ul> -->
+                                           <ul class="d-block">
+                                                
+                                                <li><a href="shop-left-sidebar-col-3.php"> همه محصولات</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=رمان"> رمان</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=کودک">کودک</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=زبان انگلیسی"> زبان انگلیسی</a></li>
                                             </ul>
-                                            <ul class="d-block">
-                                                <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
-                                                <li><a href="shop-banner-left-sidebar-col-3.html"> بنر سایدبار چپ 3
-                                                        ستونه</a></li>
-                                                <li><a href="shop-banner-left-sidebar-col-4.html"> بنر سایدبار چپ 4
-                                                        ستونه</a></li>
-                                                <li><a href="shop-banner-right-sidebar-col-3.html"> بنر سایدبار راست 3
-                                                        ستونه </a></li>
-                                                <li><a href="shop-banner-right-sidebar-col-4.html"> بنر سایدبار راست 4
-                                                        ستونه </a></li>
-                                                <li><a href="shop-banner-full-width.html"> بنر تمام عرض 4 ستونه</a>
-                                                </li>
-                                            </ul>
-                                            <ul class="d-block">
-                                                <li class="menu_title"><a href="javascript:void(0)">ورژن ستونه</a></li>
-                                                <li><a href="shop-full-width-col-3.html">3 ستون تمام عرض</a></li>
-                                                <li><a href="shop-full-width-col-4.html">4 ستون تمام عرض</a></li>
-                                                <li><a href="shop-full-width-col-5.html">5 ستون تمام عرض</a></li>
-                                                <li><a href="shop-full-width-col-6.html">6 ستون تمام عرض</a></li>
-                                                <li><a href="shop-banner-full-width-col-3.html">بنر 3 ستونه</a>
-                                                </li>
-                                            </ul>
-                                            <ul class="d-block">
-                                                <li class="menu_title"><a href="javascript:void(0)">ورژن لیست</a>
-                                                </li>
-                                                <li><a href="shop-list-left-sidebar.html">فروشگاه با سایدبار چپ</a></li>
-                                                <li><a href="shop-list-right-sidebar.html">فروشگاه با سایدبار راست</a>
-                                                </li>
-                                                <li><a href="shop-list-banner-left-sidebar.html"> بنر سایدبار چپ </a>
-                                                </li>
-                                                <li><a href="shop-list-banner-right-sidebar.html">بنر سایدبار راست</a>
-                                                </li>
-                                                <li><a href="shop-list-full-col-2.html">تمام عرض 2 ستونه</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <ul class="ec-main-banner w-100">
-                                                <li>
-                                                    <a class="p-0" href="shop-left-sidebar-col-3.html"><img
-                                                            class="img-responsive" src="assets/images/menu-banner/1.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                                <li>
-                                                    <a class="p-0" href="shop-left-sidebar-col-4.html"><img
-                                                            class="img-responsive" src="assets/images/menu-banner/2.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                                <li>
-                                                    <a class="p-0" href="shop-right-sidebar-col-3.html"><img
-                                                            class="img-responsive" src="assets/images/menu-banner/3.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                                <li>
-                                                    <a class="p-0" href="shop-right-sidebar-col-4.html"><img
-                                                            class="img-responsive" src="assets/images/menu-banner/4.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
-                                    <ul class="sub-menu">
-                                        <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
-                                                <i class="ecicon eci-angle-left"></i></a>
-                                            <ul class="sub-menu sub-menu-child">
-                                                <li><a href="product-left-sidebar.html">محصول سایدبار چپ</a></li>
-                                                <li><a href="product-right-sidebar.html">محصول سایدبار راست</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="dropdown position-static"><a href="javascript:void(0)">محصول 360 درجه
-                                                <i class="ecicon eci-angle-left"></i></a>
-                                            <ul class="sub-menu sub-menu-child">
-                                                <li><a href="product-360-left-sidebar.html">360 ساید بار چپ</a></li>
-                                                <li><a href="product-360-right-sidebar.html">360 ساید بار راست</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="dropdown position-static"><a href="javascript:void(0)">محصول ویدئویی
-                                                <i class="ecicon eci-angle-left"></i></a>
-                                            <ul class="sub-menu sub-menu-child">
-                                                <li><a href="product-video-left-sidebar.html">سایدبار چپ ویدئویی</a>
-                                                </li>
-                                                <li><a href="product-video-right-sidebar.html">سایدبار راست ویدئویی</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li class="dropdown position-static"><a href="javascript:void(0)">گالری محصول
-                                                <i class="ecicon eci-angle-left"></i></a>
-                                            <ul class="sub-menu sub-menu-child">
-                                                <li><a href="product-gallery-left-sidebar.html">سایدبار چپ گالری</a>
-                                                </li>
-                                                <li><a href="product-gallery-right-sidebar.html">سایدبار راست گالری</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="product-full-width.html">محصول تمام عرض</a></li>
-                                        <li><a href="product-360-full-width.html">360 تمام عرض</a></li>
-                                        <li><a href="product-video-full-width.html">تمام عرض ویدئو </a></li>
-                                        <li><a href="product-gallery-full-width.html">تمام عرض گالری</a></li>
+                                            
                                     </ul>
                                 </li>
                                 <li class="dropdown"><a href="javascript:void(0)">صفحات</a>
