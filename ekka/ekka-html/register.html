@@ -853,14 +853,14 @@
                 <div class="ec-register-wrapper">
                     <div class="ec-register-container">
                         <div class="ec-register-form">
-                            <form action="#" method="post">
+                            <form id="registerForm" action="register_action.php" method="post">
                                 <span class="ec-register-wrap ec-register-half">
                                     <label>نام *</label>
-                                    <input type="text" name="firstname" placeholder="نام خود را وارد کنید" required="">
+                                    <input type="text" name="name" placeholder="نام خود را وارد کنید" required="">
                                 </span>
                                 <span class="ec-register-wrap ec-register-half">
-                                    <label> نام خانوادگی *</label>
-                                    <input type="text" name="lastname" placeholder="نام خانوادگی خود را وارد کنید"
+                                    <label> نام کاربری *</label>
+                                    <input type="text" name="username" placeholder="نام کاربری خود را وارد کنید"
                                         required="">
                                 </span>
                                 <span class="ec-register-wrap ec-register-half">
@@ -869,7 +869,7 @@
                                 </span>
                                 <span class="ec-register-wrap ec-register-half">
                                     <label>شماره تماس*</label>
-                                    <input type="text" name="phonenumber" placeholder="شماره تماس خود را وارد کنید"
+                                    <input type="text" name="mobile_number" placeholder="شماره تماس خود را وارد کنید"
                                         required="">
                                 </span>
                                 <span class="ec-register-wrap">
@@ -878,52 +878,22 @@
                                 </span>
                                 <span class="ec-register-wrap ec-register-half">
                                     <label>شهر *</label>
-                                    <span class="ec-rg-select-inner">
-                                        <select name="ec_select_city" id="ec-select-city" class="ec-register-select">
-                                            <option selected="" disabled="">شهر </option>
-                                            <option value="1">شهر 1</option>
-                                            <option value="2">شهر 2</option>
-                                            <option value="3">شهر 3</option>
-                                            <option value="4">شهر 4</option>
-                                            <option value="5">شهر 5</option>
-                                        </select>
-                                    </span>
+                                    <span class="ec-register-wrap">
+                                    <input type="text" name="city" placeholder="شهر">
+                                </span>
                                 </span>
                                 <span class="ec-register-wrap ec-register-half">
                                     <label>کد پستی</label>
-                                    <input type="text" name="postalcode" placeholder="کدپستی">
+                                    <input type="text" name="postal_code" placeholder="کدپستی">
                                 </span>
                                 <span class="ec-register-wrap ec-register-half">
-                                    <label>کشور *</label>
-                                    <span class="ec-rg-select-inner">
-                                        <select name="ec_select_country" id="ec-select-country"
-                                            class="ec-register-select">
-                                            <option selected="" disabled="">کشور</option>
-                                            <option value="1">کشور 1</option>
-                                            <option value="2">کشور 2</option>
-                                            <option value="3">کشور 3</option>
-                                            <option value="4">کشور 4</option>
-                                            <option value="5">کشور 5</option>
-                                        </select>
-                                    </span>
-                                </span>
-                                <span class="ec-register-wrap ec-register-half">
-                                    <label>منطقه</label>
-                                    <span class="ec-rg-select-inner">
-                                        <select name="ec_select_state" id="ec-select-state" class="ec-register-select">
-                                            <option selected="" disabled="">منطقه/ایالت</option>
-                                            <option value="1">منطقه/ایالت 1</option>
-                                            <option value="2">منطقه/ایالت 2</option>
-                                            <option value="3">منطقه/ایالت 3</option>
-                                            <option value="4">منطقه/ایالت 4</option>
-                                            <option value="5">منطقه/ایالت 5</option>
-                                        </select>
-                                    </span>
+                                    <label> پسوورد</label>
+                                    <input type="password" name="password" placeholder="رمز">
                                 </span>
                                 <span class="ec-register-wrap ec-recaptcha">
-                                    <span class="g-recaptcha" data-sitekey="6LfKURIUAAAAAO50vlwWZkyK_G2ywqE52NU7YO0S"
+                                    <!-- <span class="g-recaptcha" data-sitekey="6LfKURIUAAAAAO50vlwWZkyK_G2ywqE52NU7YO0S"
                                         data-callback="verifyRecaptchaCallback"
-                                        data-expired-callback="expiredRecaptchaCallback"></span>
+                                        data-expired-callback="expiredRecaptchaCallback"></span> -->
                                     <input class="form-control d-none" data-recaptcha="true" required=""
                                         data-error="Please complete the Captcha">
                                     <span class="help-block with-errors"></span>
@@ -932,6 +902,7 @@
                                     <button class="btn btn-primary" type="submit">ثبت نام</button>
                                 </span>
                             </form>
+                            <div id="registerMessage" style="margin-top: 15px;"></div>
                         </div>
                     </div>
                 </div>
