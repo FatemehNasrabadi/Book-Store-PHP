@@ -1,7 +1,22 @@
 <?php
 include('../../config/db.php'); // اتصال به دیتابیس
-//گرفتن همه کتاب ها از دیتابیس
 
+// session_start();
+
+// // چک  که کاربر وارد شده یا نه
+// if(!isset($_SESSION['users_id'])){
+//     header("Location: login.html");
+//     exit();
+// }
+// $user_id = $_SESSION['users_id'];
+// $sql = "SELECT * FROM users WHERE id='$user_id' LIMIT 1";
+// $result = mysqli_query($conn, $sql);
+// $user = mysqli_fetch_assoc($result);
+
+// echo "خوش آمدید، " . htmlspecialchars($user['name']);
+
+
+//گرفتن همه کتاب ها از دیتابیس
 $sql_all="SELECT * FROM books ORDER BY id DESC";
 $result_all=mysqli_query($conn,$sql_all);
 
@@ -37,17 +52,18 @@ $display_books = !empty($books_category) ? $books_category : $books;
 
 
 // گرفتن آخرین 4 کتاب تخفیف‌دار، اگر کمتر از 4 بود همونارو برمی‌گردونه
-$sql_last_discounted = "SELECT * FROM books WHERE discount != 0 ORDER BY created_at DESC LIMIT 4";
-$result_last_discounted = mysqli_query($conn, $sql_last_discounted);
+// $sql_last_discounted = "SELECT * FROM books WHERE discount != 0 ORDER BY created_at DESC LIMIT 4";
+// $result_last_discounted = mysqli_query($conn, $sql_last_discounted);
 
-$last_discounted_books = [];
-if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
-    while($row = mysqli_fetch_assoc($result_last_discounted)){
-        // محاسبه قیمت بعد از تخفیف
-        $row['final_price'] = $row['price'] - ($row['price'] * $row['discount'] / 100);
-        $last_discounted_books[] = $row;
-    }
-}
+// $last_discounted_books = [];
+// if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
+//     while($row = mysqli_fetch_assoc($result_last_discounted)){
+//         // محاسبه قیمت بعد از تخفیف
+//         $row['final_price'] = $row['price'] - ($row['price'] * $row['discount'] / 100);
+//         $last_discounted_books[] = $row;
+//     }
+// }
+
 
 
 
@@ -161,15 +177,15 @@ if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
                     <div class="col header-top-res d-lg-none">
                         <div class="ec-header-bottons">
                             <!-- Header User Start -->
-                            <div class="ec-header-user dropdown">
+                            <!-- <div class="ec-header-user dropdown">
                                 <button class="dropdown-toggle" data-bs-toggle="dropdown"><img
                                         src="assets/images/icons/user.svg" class="svg_img header_svg" alt="" /></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                    <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                    <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                 </ul>
-                            </div>
+                            </div> -->
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
                             <a href="#" class="ec-header-btn ec-header-wishlist">
@@ -243,21 +259,22 @@ if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
                                             class="ec-btn-title">اکانت</span></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                        <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                        <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
                                 <!-- Header wishlist Start -->
-                                <a href="#" class="ec-header-btn ec-header-wishlist">
+                                <!-- <a href="#" class="ec-header-btn ec-header-wishlist">
                                     <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                             class="svg_img header_svg" alt="" /></div><span
                                         class="ec-header-count ec-cart-wishlist">0</span>
                                     <span class="ec-btn-title">علاقه مندی ها</span>
-                                </a>
+                                </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                                <a href="#ec-si
+                                de-cart" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
                                     <span class="ec-header-count ec-cart-count">0</span><span class="ec-btn-title">سبد
@@ -352,7 +369,7 @@ if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
                                                 <li><a href="shop-full-width.html">تمام عرض 4 ستونه</a></li>
                                             </ul> -->
                                             <ul class="d-block">
-                                                <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
+                                                
                                                 <li><a href="shop-left-sidebar-col-3.php"> همه محصولات</a></li>
                                                 <li><a href="shop-left-sidebar-col-3.php?category=رمان"> رمان</a></li>
                                                 <li><a href="shop-left-sidebar-col-3.php?category=کودک">کودک</a></li>

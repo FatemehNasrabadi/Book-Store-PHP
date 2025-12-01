@@ -1,36 +1,48 @@
 <?php
+
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+error_reporting(E_ALL);
+
 include('../../config/db.php'); // اتصال به دیتابیس
 
-//چک خالی نبودن
-if($_SERVER["REQUEST_METHOD"]=="POST"){
-    //گرفتن داده و امن سازی
-    $name=mysqli_real_escape_string($conn,$_POST['name']);
-    $username=mysqli_real_escape_string($conn,$_POST['username']);
-    $email=mysqli_real_escape_string($conn,$_POST['email']);
-    $mobile_number=mysqli_real_escape_string($conn,$_POST['mobile_number']);
-    $address=mysqli_real_escape_string($conn,$_POST['address']);
-    $postal_code=mysqli_real_escape_string($conn,$_POST['postal_code']);
+// بررسی اینکه فرم ارسال شده
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    // دریافت داده‌ها از فرم و جلوگیری از تزریق SQL
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $address = mysqli_real_escape_string($conn, $_POST['address']);
+    $mobile_number = mysqli_real_escape_string($conn, $_POST['mobile_number']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
     $city=mysqli_real_escape_string($conn,$_POST['city']);
-    $password=password_hash($_POST['password'],PASSWORD_DEFAULT); //هش رمز
+    $postal_code=mysqli_real_escape_string($conn,$_POST['postal_code']);
 
-    //چک تکراری نبودن ایمیل و نام کاربری
-    $check="SELECT id FROM users WHERE email='$email' OR username='$username'";
-    $rescheck=mysqli_query($conn,$check);
-    
-    if(mysqli_num_rows($rescheck)>0){
-        echo "ایمیل یا نام کاربری قبلا ثبت شده است";
-        exit();
+
+    // هش کردن رمز عبور قبل از ذخیره
+    $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+
+    // آماده کردن کوئری برای ذخیره اطلاعات در جدول sellers
+    $sql = "INSERT INTO users (name, username, password, mobile_number, email, address, postal_code, city, created_at) 
+            VALUES ('$name', '$username', '$password_hashed', '$mobile_number', '$email','$address','$postal_code', '$city', NOW())";
+
+    // اجرای کوئری و بررسی نتیجه
+    if (mysqli_query($conn, $sql)) {
+        // موفقیت در ثبت‌نام
+        echo "ثبت‌نام با موفقیت انجام شد!";
+        // انتقال به صفحه ورود بعد از ۲ ثانیه
+        header("refresh:2; url=login.html");
+    } else {
+        // در صورت خطا
+        echo "خطا در ثبت‌نام: " . mysqli_error($conn);
     }
 
-    //ذخیره در دیتابیس
-    $sql="INSERT INTO users (name, username, email,mobile_number, address, city, password, postal_code, created_at)
-    VALUE ('$name','$username','$email','$mobile_number','$address','$city','$password', '$postal_code', NOW())";
-
-    if(mysqli_query($conn,$sql)){
-        echo"success";
-    }else{
-        echo "خطا". mysqli_error($conn);
-    }
-
+    // بستن اتصال به دیتابیس
+    mysqli_close($conn);
+} else {
+    // اگر کاربر مستقیم وارد این صفحه شد
+    echo "فرم ثبت‌نام ارسال نشده است.";
 }
+
 ?>
