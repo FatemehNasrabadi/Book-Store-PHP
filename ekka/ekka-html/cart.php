@@ -1,4 +1,13 @@
-﻿<!--========================================================= 
+﻿<?php
+session_start();
+include('../../config/db.php'); // اتصال به دیتابیس
+
+?>
+
+
+
+
+<!--========================================================= 
     Item Name: Ekka - Ecommerce HTML Template.
     Author: ashishmaraviya
     Version: 1.0
@@ -115,7 +124,7 @@
                                         src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                    <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                    <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                 </ul>
                             </div>
@@ -162,7 +171,7 @@
                         <!-- Ec Header Logo End -->
 
                         <!-- Ec Header Search Start -->
-                        <div class="align-self-center">
+                        <!-- <div class="align-self-center">
                             <div class="header-search">
                                 <form class="ec-btn-group-form" action="#">
                                     <input class="form-control" placeholder="نام محصول خود را وارد کنید ..."
@@ -171,7 +180,7 @@
                                             class="svg_img header_svg" alt=""></button>
                                 </form>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- Ec Header Search End -->
 
                         <!-- Ec Header Button Start -->
@@ -185,24 +194,24 @@
                                             alt=""></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                        <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                        <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
                                 <!-- Header wishlist Start -->
-                                <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                                <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                     <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count">4</span>
-                                </a>
+                                </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                                <!-- <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count cart-count-lable">3</span>
-                                </a>
+                                </a> -->
                                 <!-- Header Cart End -->
                             </div>
                         </div>
@@ -226,7 +235,7 @@
                     </div>
                     <!-- Ec Header Logo End -->
                     <!-- Ec Header Search Start -->
-                    <div class="col">
+                    <!-- <div class="col">
                         <div class="header-search">
                             <form class="ec-btn-group-form" action="#">
                                 <input class="form-control" placeholder="نام محصول خود را وارد کنید ..." type="text">
@@ -234,7 +243,7 @@
                                         class="svg_img header_svg" alt="icon"></button>
                             </form>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- Ec Header Search End -->
                 </div>
             </div>
@@ -248,7 +257,7 @@
                         <div class="ec-main-menu">
                             <ul>
                                 <li><a href="index.html">خانه</a></li>
-                                <li class="dropdown position-static"><a href="javascript:void(0)">دسته بندی ها</a>
+                                <!-- <li class="dropdown position-static"><a href="javascript:void(0)">دسته بندی ها</a>
                                     <ul class="mega-menu d-block">
                                         <li class="d-flex">
                                             <ul class="d-block">
@@ -315,8 +324,8 @@
                                             </ul>
                                         </li>
                                     </ul>
-                                </li>
-                                <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
+                                </li> -->
+                                <!-- <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
                                     <ul class="sub-menu">
                                         <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
                                                 <i class="ecicon eci-angle-left"></i></a>
@@ -355,8 +364,8 @@
                                         <li><a href="product-video-full-width.html">تمام عرض ویدئو </a></li>
                                         <li><a href="product-gallery-full-width.html">تمام عرض گالری</a></li>
                                     </ul>
-                                </li>
-                                <li class="dropdown"><a href="javascript:void(0)">صفحات</a>
+                                </li> -->
+                                <!-- <li class="dropdown"><a href="javascript:void(0)">صفحات</a>
                                     <ul class="sub-menu">
                                         <li><a href="about-us.html">درباره ما</a></li>
                                         <li><a href="contact-us.html">ارتباط با ما</a></li>
@@ -370,8 +379,8 @@
                                         <li><a href="terms-condition.html">شرایط و ضوابط</a></li>
                                         <li><a href="privacy-policy.html">سیاست حفظ حریم خصوصی</a></li>
                                     </ul>
-                                </li>
-                                <li class="dropdown"><span class="main-label-note-new" data-toggle="tooltip"
+                                </li> -->
+                                <!-- <li class="dropdown"><span class="main-label-note-new" data-toggle="tooltip"
                                         title="NEW"></span><a href="javascript:void(0)">دیگر</a>
                                     <ul class="sub-menu">
                                         <li class="dropdown position-static"><a href="javascript:void(0)">تاییده ایمیل
@@ -460,8 +469,8 @@
                                             </ul>
                                         </li>
                                     </ul>
-                                </li>
-                                <li class="dropdown"><a href="javascript:void(0)">بلاگ</a>
+                                </li> -->
+                                <!-- <li class="dropdown"><a href="javascript:void(0)">بلاگ</a>
                                     <ul class="sub-menu">
                                         <li><a href="blog-left-sidebar.html">بلاگ سایدبار چپ</a></li>
                                         <li><a href="blog-right-sidebar.html">بلاگ سایدبار راست</a></li>
@@ -484,7 +493,7 @@
                                     </ul>
                                 </li>
                                 <li><a href="offer.html">پیشنهادات داغ</a></li>
-                            </ul>
+                            </ul> -->
                         </div>
                     </div>
                 </div>
@@ -510,7 +519,7 @@
                             </ul>
                         </li>
 
-                        <li><a href="javascript:void(0)">دسته بندی ها</a>
+                        <!-- <li><a href="javascript:void(0)">دسته بندی ها</a>
                             <ul class="sub-menu">
                                 <li>
                                     <a href="javascript:void(0)">ورژن کلاسیک</a>
@@ -699,7 +708,7 @@
                                 <li><a href="elemets-blog.html">بلاگ</a></li>
                             </ul>
                         </li>
-                        <li><a href="offer.html">پیشنهادات داغ</a></li>
+                        <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                     </ul>
                 </div>
                 <div class="header-res-lan-curr">
@@ -758,7 +767,7 @@
                     <button class="ec-close">×</button>
                 </div>
                 <ul class="eccart-pro-items">
-                    <li>
+                    <!-- <li>
                         <a href="product-left-sidebar.html" class="sidekka_pro_img"><img
                                 src="assets/images/product-image/6_1.jpg" alt="product"></a>
                         <div class="ec-pro-content">
@@ -769,8 +778,8 @@
                             </div>
                             <a href="javascript:void(0)" class="remove">×</a>
                         </div>
-                    </li>
-                    <li>
+                    </li> -->
+                    <!-- <li>
                         <a href="product-left-sidebar.html" class="sidekka_pro_img"><img
                                 src="assets/images/product-image/12_1.jpg" alt="product"></a>
                         <div class="ec-pro-content">
@@ -792,7 +801,7 @@
                                 <input class="qty-input" type="text" name="ec_qtybtn" value="1">
                             </div>
                             <a href="javascript:void(0)" class="remove">×</a>
-                        </div>
+                        </div> -->
                     </li>
                 </ul>
             </div>
@@ -849,124 +858,106 @@
     <!-- Ec breadcrumb end -->
 
     <!-- Ec cart page -->
+    
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
                 <div class="ec-cart-leftside col-lg-8 col-md-12 ">
-                    <!-- cart content Start -->
-                    <div class="ec-cart-content">
-                        <div class="ec-cart-inner">
-                            <div class="row">
-                                <form action="#">
-                                    <div class="table-content cart-table-content">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>محصول</th>
-                                                    <th>قیمت</th>
-                                                    <th style="text-align: center;">تعداد</th>
-                                                    <th>کل</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td data-label="Product" class="ec-cart-pro-name"><a
-                                                            href="product-left-sidebar.html"><img
-                                                                class="ec-cart-pro-img mr-4"
-                                                                src="assets/images/product-image/1.jpg" alt="">کفش
-                                                            بچگانه</a></td>
-                                                    <td data-label="Price" class="ec-cart-pro-price"><span
-                                                            class="amount">5600 تومان</span></td>
-                                                    <td data-label="Quantity" class="ec-cart-pro-qty"
-                                                        style="text-align: center;">
-                                                        <div class="cart-qty-plus-minus">
-                                                            <input class="cart-plus-minus" type="text"
-                                                                name="cartqtybutton" value="1">
-                                                        </div>
-                                                    </td>
-                                                    <td data-label="Total" class="ec-cart-pro-subtotal">5600 تومان</td>
-                                                    <td data-label="Remove" class="ec-cart-pro-remove">
-                                                        <a href="#"><i class="ecicon eci-trash-o"></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td data-label="Product" class="ec-cart-pro-name"><a
-                                                            href="product-left-sidebar.html"><img
-                                                                class="ec-cart-pro-img mr-4"
-                                                                src="assets/images/product-image/2.jpg" alt="">هودی تک
-                                                            رنگ</a></td>
-                                                    <td data-label="Price" class="ec-cart-pro-price"><span
-                                                            class="amount">7500 تومان</span></td>
-                                                    <td data-label="Quantity" class="ec-cart-pro-qty"
-                                                        style="text-align: center;">
-                                                        <div class="cart-qty-plus-minus">
-                                                            <input class="cart-plus-minus" type="text"
-                                                                name="cartqtybutton" value="1">
-                                                        </div>
-                                                    </td>
-                                                    <td data-label="Total" class="ec-cart-pro-subtotal">7500 تومان</td>
-                                                    <td data-label="Remove" class="ec-cart-pro-remove">
-                                                        <a href="#"><i class="ecicon eci-trash-o"></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td data-label="Product" class="ec-cart-pro-name"><a
-                                                            href="product-left-sidebar.html"><img
-                                                                class="ec-cart-pro-img mr-4"
-                                                                src="assets/images/product-image/3.jpg" alt="">تی شرت
-                                                            زنانه</a></td>
-                                                    <td data-label="Price" class="ec-cart-pro-price"><span
-                                                            class="amount">4800 تومان</span></td>
-                                                    <td data-label="Quantity" class="ec-cart-pro-qty"
-                                                        style="text-align: center;">
-                                                        <div class="cart-qty-plus-minus">
-                                                            <input class="cart-plus-minus" type="text"
-                                                                name="cartqtybutton" value="1">
-                                                        </div>
-                                                    </td>
-                                                    <td data-label="Total" class="ec-cart-pro-subtotal">4800 تومان</td>
-                                                    <td data-label="Remove" class="ec-cart-pro-remove">
-                                                        <a href="#"><i class="ecicon eci-trash-o"></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td data-label="Product" class="ec-cart-pro-name"><a
-                                                            href="product-left-sidebar.html"><img
-                                                                class="ec-cart-pro-img mr-4"
-                                                                src="assets/images/product-image/4.jpg" alt="">کلاه اوول
-                                                            مردانه</a></td>
-                                                    <td data-label="Price" class="ec-cart-pro-price"><span
-                                                            class="amount">9500 تومان</span></td>
-                                                    <td data-label="Quantity" class="ec-cart-pro-qty"
-                                                        style="text-align: center;">
-                                                        <div class="cart-qty-plus-minus">
-                                                            <input class="cart-plus-minus" type="text"
-                                                                name="cartqtybutton" value="1">
-                                                        </div>
-                                                    </td>
-                                                    <td data-label="Total" class="ec-cart-pro-subtotal">9500 تومان</td>
-                                                    <td data-label="Remove" class="ec-cart-pro-remove">
-                                                        <a href="#"><i class="ecicon eci-trash-o"></i></a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                <?php
+
+// بررسی خالی بودن سبد خرید
+if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
+    echo "سبد خرید خالی است";
+    exit();
+}
+?>
+
+<!-- cart content Start -->
+<div class="ec-cart-content">
+    <div class="ec-cart-inner">
+
+        <?php 
+        foreach($_SESSION['cart'] as $product_id => $qty){
+
+            // گرفتن اطلاعات محصول
+            $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
+            $result = mysqli_query($conn, $sql);
+            $product = mysqli_fetch_assoc($result);
+
+            // اگر محصول پیدا نشد، از حلقه ادامه بده
+            if (!$product) continue;
+
+            // محاسبه قیمت کل
+            $total = $product['price'] * $qty;
+        ?>
+
+        <div class="row">
+            <form action="#">
+                <div class="table-content cart-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>محصول</th>
+                                <th>قیمت</th>
+                                <th>تعداد</th>
+                                <th>کل</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td data-label="Product" class="ec-cart-pro-name">
+                                    <a href="#">
+                                        <img class="ec-cart-pro-img mr-4"
+                                             src="assets/images/products/<?php echo $product['image']; ?>" 
+                                             alt="">
+                                        <?php echo $product['name']; ?>
+                                    </a>
+                                </td>
+
+                                <td data-label="Price" class="ec-cart-pro-price">
+                                    <span class="amount"><?php echo $product['price']; ?></span>
+                                </td>
+
+                                <td data-label="Quantity" class="ec-cart-pro-qty" style="text-align:center;">
+                                    <div class="cart-qty-plus-minus">
+                                        <input class="cart-plus-minus" type="text"
+                                               name="cartqtybutton" value="<?php echo $qty; ?>">
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="ec-cart-update-bottom">
-                                                <a href="#">ادامه خرید</a>
-                                                <button class="btn btn-primary">پرداخت</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                                </td>
+
+                                <td data-label="Total" class="ec-cart-pro-subtotal">
+                                    <?php echo $total; ?>
+                                </td>
+
+                                <td data-label="Remove" class="ec-cart-pro-remove">
+                                    <a href="remove_from_cart.php?id=<?php echo $product_id; ?>">
+                                        <i class="ecicon eci-trash-o"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ec-cart-update-bottom">
+                            <a href="shop.html">ادامه خرید</a>
+                            <button class="btn btn-primary">پرداخت</button>
                         </div>
                     </div>
-                    <!--cart content End -->
                 </div>
+            </form>
+        </div>
+
+        <?php } ?>
+
+    </div>
+</div>
+<!-- cart content End -->
                 <!-- Sidebar Area Start -->
                 <div class="ec-cart-rightside col-lg-4 col-md-12">
                     <div class="ec-sidebar-wrap">

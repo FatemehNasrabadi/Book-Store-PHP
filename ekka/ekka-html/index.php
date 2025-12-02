@@ -1,8 +1,14 @@
 <?php
 include('../../config/db.php'); // اتصال به دیتابیس
-
+session_start();
+//عدد سبد خرید
+$cart_count=0;
+if(isset($_SESSION['cart'])){
+    foreach($_SESSION['cart'] as $qty){
+        $cart_count+=$qty;
+    }
+}
 // session_start();
-
 // // چک  که کاربر وارد شده یا نه
 // if(!isset($_SESSION['users_id'])){
 //     header("Location: login.html");
@@ -277,7 +283,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                                 de-cart" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span class="ec-header-count ec-cart-count">0</span><span class="ec-btn-title">سبد
+                                    <span class="ec-header-count ec-cart-count"><?php echo $cart_count;;?></span><span class="ec-btn-title">سبد
                                         خرید</span>
                                 </a>
                                 <!-- Header Cart End -->
@@ -991,7 +997,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
             <div class="ec-pro-content">
                 <h6 class="ec-pro-title"><?php echo $book['name']; ?></h6>
                 <span class="ec-price"><?php echo $book['price']; ?> تومان</span>
-            </div>
+                <a href="add_to_cart.php?id=<?php echo $row['id']; ?>" class="add-to-cart-btn"> افزودن به سبد خرید</a>            </div>
         </div>
     </div>
                             <?php }?>
@@ -1194,7 +1200,7 @@ $display_books = $category ? $books_category : $books;
                              alt="<?php echo htmlspecialchars($book['name']); ?>" />
                     </a>
                     <div class="ec-pro-actions">
-                        <button title="افزودن به سبد" class="add-to-cart">
+                        <button href="add_to_cart.php?id=<?php echo $row['id']; ?>" title="افزودن به سبد" class="add-to-cart">
                             <img src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt="">
                         </button>
                         <a href="#" class="ec-btn-group wishlist" title="علاقه‌مندی">
