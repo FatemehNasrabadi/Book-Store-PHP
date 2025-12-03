@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $address = mysqli_real_escape_string($conn, $_POST['address']);
     $mobile_number = mysqli_real_escape_string($conn, $_POST['mobile_number']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $city=mysqli_real_escape_string($conn,$_POST['city']);
+    $country=mysqli_real_escape_string($conn,$_POST['country']);
     $postal_code=mysqli_real_escape_string($conn,$_POST['postal_code']);
 
 
@@ -24,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
     // آماده کردن کوئری برای ذخیره اطلاعات در جدول sellers
-    $sql = "INSERT INTO users (name, username, password, mobile_number, email, address, postal_code, city, created_at) 
-            VALUES ('$name', '$username', '$password_hashed', '$mobile_number', '$email','$address','$postal_code', '$city', NOW())";
+    $sql = "INSERT INTO users (name, username, password, mobile_number, email, address, postal_code, country, created_at) 
+            VALUES ('$name', '$username', '$password_hashed', '$mobile_number', '$email','$address','$postal_code', '$country', NOW())";
 
     // اجرای کوئری و بررسی نتیجه
     if (mysqli_query($conn, $sql)) {

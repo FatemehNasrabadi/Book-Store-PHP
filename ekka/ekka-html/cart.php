@@ -2,6 +2,7 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
+
 ?>
 
 
@@ -864,33 +865,27 @@ include('../../config/db.php'); // اتصال به دیتابیس
             <div class="row">
                 <div class="ec-cart-leftside col-lg-8 col-md-12 ">
                 <?php
-
 // بررسی خالی بودن سبد خرید
-if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
-    echo "سبد خرید خالی است";
-    exit();
-}
+// if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
+//     echo "سبد خرید خالی است";
+//     exit();
+// }
 ?>
 
 <!-- cart content Start -->
 <div class="ec-cart-content">
     <div class="ec-cart-inner">
-
-        <?php 
+      <?php 
         foreach($_SESSION['cart'] as $product_id => $qty){
-
             // گرفتن اطلاعات محصول
             $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
             $result = mysqli_query($conn, $sql);
             $product = mysqli_fetch_assoc($result);
-
             // اگر محصول پیدا نشد، از حلقه ادامه بده
             if (!$product) continue;
-
             // محاسبه قیمت کل
             $total = $product['price'] * $qty;
         ?>
-
         <div class="row">
             <form action="#">
                 <div class="table-content cart-table-content">
@@ -904,7 +899,6 @@ if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
                                 <th></th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr>
                                 <td data-label="Product" class="ec-cart-pro-name">
@@ -915,46 +909,37 @@ if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
                                         <?php echo $product['name']; ?>
                                     </a>
                                 </td>
-
                                 <td data-label="Price" class="ec-cart-pro-price">
                                     <span class="amount"><?php echo $product['price']; ?></span>
                                 </td>
-
                                 <td data-label="Quantity" class="ec-cart-pro-qty" style="text-align:center;">
                                     <div class="cart-qty-plus-minus">
                                         <input class="cart-plus-minus" type="text"
                                                name="cartqtybutton" value="<?php echo $qty; ?>">
                                     </div>
                                 </td>
-
                                 <td data-label="Total" class="ec-cart-pro-subtotal">
                                     <?php echo $total; ?>
                                 </td>
-
-                                <td data-label="Remove" class="ec-cart-pro-remove">
+                               <td data-label="Remove" class="ec-cart-pro-remove">
                                     <a href="remove_from_cart.php?id=<?php echo $product_id; ?>">
                                         <i class="ecicon eci-trash-o"></i>
                                     </a>
                                 </td>
                             </tr>
                         </tbody>
-
                     </table>
                 </div>
-
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="ec-cart-update-bottom">
-                            <a href="shop.html">ادامه خرید</a>
-                            <button class="btn btn-primary">پرداخت</button>
+                            <a href="index.php">ادامه خرید</a>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
-
         <?php } ?>
-
     </div>
 </div>
 <!-- cart content End -->
@@ -969,9 +954,9 @@ if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
                             <div class="ec-sb-block-content">
                                 <h4 class="ec-ship-title">هزینه ارسال</h4>
                                 <div class="ec-cart-form">
-                                    <p> مقصد خود را وارد کنید تا برآورد حمل و نقل را دریافت کنید </p>
+                                    <!-- <p> مقصد خود را وارد کنید تا برآورد حمل و نقل را دریافت کنید </p> -->
                                     <form action="#" method="post">
-                                        <span class="ec-cart-wrap">
+                                        <!-- <span class="ec-cart-wrap">
                                             <label>کشور *</label>
                                             <span class="ec-cart-select-inner">
                                                 <select name="ec_cart_country" id="ec-cart-select-country"
@@ -984,8 +969,8 @@ if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
                                                     <option value="5">کشور 5</option>
                                                 </select>
                                             </span>
-                                        </span>
-                                        <span class="ec-cart-wrap">
+                                        </span> -->
+                                        <!-- <span class="ec-cart-wrap">
                                             <label>منطقه</label>
                                             <span class="ec-cart-select-inner">
                                                 <select name="ec_cart_state" id="ec-cart-select-state"
@@ -999,48 +984,80 @@ if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
                                                     <option value="5">منطقه/ایالت 5</option>
                                                 </select>
                                             </span>
-                                        </span>
-                                        <span class="ec-cart-wrap">
+                                        </span> -->
+                                        <!-- <span class="ec-cart-wrap">
                                             <label> کد پستی </label>
                                             <input type="text" name="postalcode" placeholder=" کد پستی ">
-                                        </span>
+                                        </span> -->
                                     </form>
                                 </div>
                             </div>
+<?php 
+$total_price = 0; // جمع کل محصولات
+$discount_code = '';
+$discount_amount = 0;
 
-                            <div class="ec-sb-block-content">
-                                <div class="ec-cart-summary-bottom">
-                                    <div class="ec-cart-summary">
-                                        <div>
-                                            <span class="text-left">ریزهزینه</span>
-                                            <span class="text-right">8000 تومان</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-left">هزینه ارسال</span>
-                                            <span class="text-right">8000 تومان</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-left">کد تخفیف</span>
-                                            <span class="text-right"><a class="ec-cart-coupan">اعمال کد تخفیف</a></span>
-                                        </div>
-                                        <div class="ec-cart-coupan-content">
-                                            <form class="ec-cart-coupan-form" name="ec-cart-coupan-form" method="post"
-                                                action="#">
-                                                <input class="ec-coupan" type="text" required=""
-                                                    placeholder="کد تخفیف  خود را وارد کنید" name="ec-coupan" value="">
-                                                <button class="ec-coupan-btn button btn-primary" type="submit"
-                                                    name="subscribe" value="">اعمال</button>
-                                            </form>
-                                        </div>
-                                        <div class="ec-cart-summary-total">
-                                            <span class="text-left">هزینه کل</span>
-                                            <span class="text-right">8000 تومان</span>
-                                        </div>
-                                    </div>
+if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0){
+    foreach($_SESSION['cart'] as $product_id => $qty){
+        $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
+        $result = mysqli_query($conn, $sql);
+        $product = mysqli_fetch_assoc($result);
+        if(!$product) continue;
+        $subtotal = $product['price'] * $qty;
+        $total_price += $subtotal;
+    }
+}
 
-                                </div>
-                            </div>
-                        </div>
+// بررسی ارسال فرم کد تخفیف
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ec-coupan'])){
+    $discount_code = trim($_POST['ec-coupan']);
+    if(strtolower($discount_code) === 'bookstore'){
+        $discount_amount = $total_price * 0.5; // 50٪ تخفیف
+    }
+}
+
+$final_price = $total_price - $discount_amount; // جمع کل بعد از تخفیف
+$shipping_cost = 8000; // هزینه ارسال
+?>
+                        <div class="ec-sb-block-content">
+   <div class="ec-sb-block-content">
+    <div class="ec-cart-summary-bottom">
+        <div class="ec-cart-summary">
+            <div>
+                <span class="text-left">ریزهزینه</span>
+                <span class="text-right"><?php echo $total_price; ?> تومان</span>
+            </div>
+            <div>
+                <span class="text-left">هزینه ارسال</span>
+                <span class="text-right"><?php echo $shipping_cost; ?> تومان</span>
+            </div>
+            <div>
+                <span class="text-left">کد تخفیف</span>
+                <span class="text-right">
+                    <form class="ec-cart-coupan-form" method="post" action="">
+                        <input class="ec-coupan" type="text" name="ec-coupan" placeholder="کد تخفیف خود را وارد کنید" value="<?php echo htmlspecialchars($discount_code); ?>">
+                        <button class="ec-coupan-btn button btn-primary" type="submit">اعمال</button>
+                    </form>
+                </span>
+            </div>
+
+            <div class="ec-cart-summary-total">
+                <span class="text-left">هزینه کل</span>
+                <span class="text-right">
+                    <?php if($discount_amount > 0): ?>
+                        <span style="text-decoration: line-through; color:#888;"><?php echo $total_price + $shipping_cost; ?> تومان</span>
+                        <br>
+                        <span style="color:red;"><?php echo $final_price + $shipping_cost; ?> تومان</span>
+                    <?php else: ?>
+                        <?php echo $total_price + $shipping_cost; ?> تومان
+                    <?php endif; ?>
+                </span>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary">پرداخت</button>
+</div>
+  
                         <!-- Sidebar Summary Block -->
                     </div>
                 </div>
@@ -1048,304 +1065,7 @@ if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
         </div>
     </section>
     <!-- New Product Start -->
-    <section class="section ec-new-product section-space-p">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <div class="section-title">
-                        <h2 class="ec-bg-title">تازه رسیده ها</h2>
-                        <h2 class="ec-title">تازه رسیده ها</h2>
-                        <p class="sub-title"> مرور مجموعه ای از محصولات برتر </p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <!-- New Product Content -->
-                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 mb-6 pro-gl-content">
-                    <div class="ec-product-inner">
-                        <div class="ec-pro-image-outer">
-                            <div class="ec-pro-image">
-                                <a href="product-left-sidebar.html" class="image">
-                                    <img class="main-image" src="assets/images/product-image/6_1.jpg" alt="Product">
-                                    <img class="hover-image" src="assets/images/product-image/6_2.jpg" alt="Product">
-                                </a>
-                                <span class="percentage">20%</span>
-                                <a href="#" class="quickview" data-link-action="quickview" title="مشاهده"
-                                    data-bs-toggle="modal" data-bs-target="#ec_quickview_modal"><img
-                                        src="assets/images/icons/quickview.svg" class="svg_img pro_svg" alt=""></a>
-                                <div class="ec-pro-actions">
-                                    <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                            src="assets/images/icons/compare.svg" class="svg_img pro_svg" alt=""></a>
-                                    <button title="افزودن به سبد خرید" class=" add-to-cart"><img
-                                            src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt=""> افزودن به
-                                        کارت </button>
-                                    <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                            src="assets/images/icons/wishlist.svg" class="svg_img pro_svg" alt=""></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ec-pro-content">
-                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html"> تی شرت یقه گرد </a></h5>
-                            <div class="ec-pro-rating">
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star"></i>
-                            </div>
-                            <div class="ec-pro-list-desc"> لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و
-                                با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان
-                                که لازم است</div>
-                            <span class="ec-price">
-                                <span class="old-price">2700 تومان</span>
-                                <span class="new-price">2200 تومان</span>
-                            </span>
-                            <div class="ec-pro-option">
-                                <div class="ec-pro-color">
-                                    <span class="ec-pro-opt-label">رنگ</span>
-                                    <ul class="ec-opt-swatch ec-change-img">
-                                        <li class="active"><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/6_1.jpg"
-                                                data-src-hover="assets/images/product-image/6_1.jpg"
-                                                data-tooltip="Gray"><span style="background-color:#e8c2ff;"></span></a>
-                                        </li>
-                                        <li><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/6_2.jpg"
-                                                data-src-hover="assets/images/product-image/6_2.jpg"
-                                                data-tooltip="Orange"><span
-                                                    style="background-color:#9cfdd5;"></span></a></li>
-                                    </ul>
-                                </div>
-                                <div class="ec-pro-size">
-                                    <span class="ec-pro-opt-label">اندازه</span>
-                                    <ul class="ec-opt-size">
-                                        <li class="active"><a href="#" class="ec-opt-sz" data-old="2500 تومان"
-                                                data-new="2000 تومان" data-tooltip="Small">S</a></li>
-                                        <li><a href="#" class="ec-opt-sz" data-old="2700 تومان" data-new="2200 تومان"
-                                                data-tooltip="Medium">M</a></li>
-                                        <li><a href="#" class="ec-opt-sz" data-old="3500 تومان" data-new="3000 تومان"
-                                                data-tooltip="Extra Large">XL</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 mb-6 pro-gl-content">
-                    <div class="ec-product-inner">
-                        <div class="ec-pro-image-outer">
-                            <div class="ec-pro-image">
-                                <a href="product-left-sidebar.html" class="image">
-                                    <img class="main-image" src="assets/images/product-image/7_1.jpg" alt="Product">
-                                    <img class="hover-image" src="assets/images/product-image/7_2.jpg" alt="Product">
-                                </a>
-                                <span class="percentage">20%</span>
-                                <span class="flags">
-                                    <span class="sale">پرفروش</span>
-                                </span>
-                                <a href="#" class="quickview" data-link-action="quickview" title="مشاهده"
-                                    data-bs-toggle="modal" data-bs-target="#ec_quickview_modal"><img
-                                        src="assets/images/icons/quickview.svg" class="svg_img pro_svg" alt=""></a>
-                                <div class="ec-pro-actions">
-                                    <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                            src="assets/images/icons/compare.svg" class="svg_img pro_svg" alt=""></a>
-                                    <button title="افزودن به سبد خرید" class=" add-to-cart"><img
-                                            src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt=""> افزودن به
-                                        کارت </button>
-                                    <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                            src="assets/images/icons/wishlist.svg" class="svg_img pro_svg" alt=""></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ec-pro-content">
-                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html">پیراهن آستین بلند</a></h5>
-                            <div class="ec-pro-rating">
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star"></i>
-                            </div>
-                            <div class="ec-pro-list-desc"> لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و
-                                با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان
-                                که لازم است</div>
-                            <span class="ec-price">
-                                <span class="old-price">1200 تومان</span>
-                                <span class="new-price">1000 تومان</span>
-                            </span>
-                            <div class="ec-pro-option">
-                                <div class="ec-pro-color">
-                                    <span class="ec-pro-opt-label">رنگ</span>
-                                    <ul class="ec-opt-swatch ec-change-img">
-                                        <li class="active"><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/7_1.jpg"
-                                                data-src-hover="assets/images/product-image/7_1.jpg"
-                                                data-tooltip="Gray"><span style="background-color:#01f1f1;"></span></a>
-                                        </li>
-                                        <li><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/7_2.jpg"
-                                                data-src-hover="assets/images/product-image/7_2.jpg"
-                                                data-tooltip="Orange"><span
-                                                    style="background-color:#b89df8;"></span></a></li>
-                                    </ul>
-                                </div>
-                                <div class="ec-pro-size">
-                                    <span class="ec-pro-opt-label">اندازه</span>
-                                    <ul class="ec-opt-size">
-                                        <li class="active"><a href="#" class="ec-opt-sz" data-old="1200 تومان"
-                                                data-new="1000 تومان" data-tooltip="Small">S</a></li>
-                                        <li><a href="#" class="ec-opt-sz" data-old="1500 تومان" data-new="1200 تومان"
-                                                data-tooltip="Medium">M</a></li>
-                                        <li><a href="#" class="ec-opt-sz" data-old="2000 تومان" data-new="1700 تومان"
-                                                data-tooltip="Extra Large">XL</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 mb-6 pro-gl-content">
-                    <div class="ec-product-inner">
-                        <div class="ec-pro-image-outer">
-                            <div class="ec-pro-image">
-                                <a href="product-left-sidebar.html" class="image">
-                                    <img class="main-image" src="assets/images/product-image/1_1.jpg" alt="Product">
-                                    <img class="hover-image" src="assets/images/product-image/1_2.jpg" alt="Product">
-                                </a>
-                                <span class="percentage">20%</span>
-                                <span class="flags">
-                                    <span class="sale">پرفروش</span>
-                                </span>
-                                <a href="#" class="quickview" data-link-action="quickview" title="مشاهده"
-                                    data-bs-toggle="modal" data-bs-target="#ec_quickview_modal"><img
-                                        src="assets/images/icons/quickview.svg" class="svg_img pro_svg" alt=""></a>
-                                <div class="ec-pro-actions">
-                                    <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                            src="assets/images/icons/compare.svg" class="svg_img pro_svg" alt=""></a>
-                                    <button title="افزودن به سبد خرید" class=" add-to-cart"><img
-                                            src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt=""> افزودن به
-                                        کارت </button>
-                                    <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                            src="assets/images/icons/wishlist.svg" class="svg_img pro_svg" alt=""></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ec-pro-content">
-                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html">عروسک کودکانه</a></h5>
-                            <div class="ec-pro-rating">
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star"></i>
-                            </div>
-                            <div class="ec-pro-list-desc"> لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و
-                                با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان
-                                که لازم است</div>
-                            <span class="ec-price">
-                                <span class="old-price">4000 تومان</span>
-                                <span class="new-price">3000 تومان</span>
-                            </span>
-                            <div class="ec-pro-option">
-                                <div class="ec-pro-color">
-                                    <span class="ec-pro-opt-label">رنگ</span>
-                                    <ul class="ec-opt-swatch ec-change-img">
-                                        <li class="active"><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/1_1.jpg"
-                                                data-src-hover="assets/images/product-image/1_1.jpg"
-                                                data-tooltip="Gray"><span style="background-color:#90cdf7;"></span></a>
-                                        </li>
-                                        <li><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/1_2.jpg"
-                                                data-src-hover="assets/images/product-image/1_2.jpg"
-                                                data-tooltip="Orange"><span
-                                                    style="background-color:#ff3b66;"></span></a></li>
-                                        <li><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/1_3.jpg"
-                                                data-src-hover="assets/images/product-image/1_3.jpg"
-                                                data-tooltip="Green"><span style="background-color:#ffc476;"></span></a>
-                                        </li>
-                                        <li><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/1_4.jpg"
-                                                data-src-hover="assets/images/product-image/1_4.jpg"
-                                                data-tooltip="Sky Blue"><span
-                                                    style="background-color:#1af0ba;"></span></a></li>
-                                    </ul>
-                                </div>
-                                <div class="ec-pro-size">
-                                    <span class="ec-pro-opt-label">اندازه</span>
-                                    <ul class="ec-opt-size">
-                                        <li class="active"><a href="#" class="ec-opt-sz" data-old="4000 تومان"
-                                                data-new="3000 تومان" data-tooltip="Small">S</a></li>
-                                        <li><a href="#" class="ec-opt-sz" data-old="5000 تومان" data-new="4000 تومان"
-                                                data-tooltip="Medium">M</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 mb-6 pro-gl-content">
-                    <div class="ec-product-inner">
-                        <div class="ec-pro-image-outer">
-                            <div class="ec-pro-image">
-                                <a href="product-left-sidebar.html" class="image">
-                                    <img class="main-image" src="assets/images/product-image/2_1.jpg" alt="Product">
-                                    <img class="hover-image" src="assets/images/product-image/2_2.jpg" alt="Product">
-                                </a>
-                                <span class="percentage">20%</span>
-                                <span class="flags">
-                                    <span class="new">جدید</span>
-                                </span>
-                                <a href="#" class="quickview" data-link-action="quickview" title="مشاهده"
-                                    data-bs-toggle="modal" data-bs-target="#ec_quickview_modal"><img
-                                        src="assets/images/icons/quickview.svg" class="svg_img pro_svg" alt=""></a>
-                                <div class="ec-pro-actions">
-                                    <a href="compare.html" class="ec-btn-group compare" title="مقایسه"><img
-                                            src="assets/images/icons/compare.svg" class="svg_img pro_svg" alt=""></a>
-                                    <button title="افزودن به سبد خرید" class=" add-to-cart"><img
-                                            src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt=""> افزودن به
-                                        کارت </button>
-                                    <a class="ec-btn-group wishlist" title="علاقه مندی"><img
-                                            src="assets/images/icons/wishlist.svg" class="svg_img pro_svg" alt=""></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ec-pro-content">
-                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html">کیف جانبو</a></h5>
-                            <div class="ec-pro-rating">
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star fill"></i>
-                                <i class="ecicon eci-star"></i>
-                            </div>
-                            <div class="ec-pro-list-desc"> لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و
-                                با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان
-                                که لازم است</div>
-                            <span class="ec-price">
-                                <span class="old-price">5000 تومان</span>
-                                <span class="new-price">4000 تومان</span>
-                            </span>
-                            <div class="ec-pro-option">
-                                <div class="ec-pro-color">
-                                    <span class="ec-pro-opt-label">رنگ</span>
-                                    <ul class="ec-opt-swatch ec-change-img">
-                                        <li class="active"><a href="#" class="ec-opt-clr-img"
-                                                data-src="assets/images/product-image/2_1.jpg"
-                                                data-src-hover="assets/images/product-image/2_2.jpg"
-                                                data-tooltip="Gray"><span style="background-color:#fdbf04;"></span></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 shop-all-btn"><a href="#">تمامی کالکشن‌های فروشگاه</a></div>
-            </div>
-        </div>
-    </section>
+  
     <!-- New Product end -->
 
     <!-- Footer Start -->

@@ -2,7 +2,12 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 //get book id from url
-$product_id=$_GET['id'];
+
+if(!isset($_GET['id'])|| empty($_GET['id'])){
+    die("invalid product id");
+}
+$product_id=intval($_GET['id']);
+
 //اگه سبد خرید نبود ایجاد کن
 if(!isset($_SESSION['cart'])){
     $_SESSION['cart']=[];

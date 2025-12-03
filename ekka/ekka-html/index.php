@@ -1,9 +1,10 @@
 <?php
-include('../../config/db.php'); // اتصال به دیتابیس
 session_start();
+include('../../config/db.php'); // اتصال به دیتابیس
+
 //عدد سبد خرید
 $cart_count=0;
-if(isset($_SESSION['cart'])){
+if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
     foreach($_SESSION['cart'] as $qty){
         $cart_count+=$qty;
     }
@@ -83,7 +84,19 @@ $display_books = !empty($books_category) ? $books_category : $books;
  ============================================================-->
 <!DOCTYPE html>
 <html lang="en">
-
+    <!-- جاوا اسکریبپت برای اپدیت بدون رفرش -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$('.add-to-cart-btn').click(function(e){
+    e.preventDefault();
+    var bookId = $(this).data('id');
+    $.get('add_to_cart.php', {id: bookId}, function(){
+        // بعد از افزودن محصول، عدد سبد را آپدیت کن
+        var count = parseInt($('#cart-count').text());
+        $('#cart-count').text(count + 1);
+    });
+});
+</script>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
@@ -204,7 +217,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
                             <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                 <div class="header-icon"><img src="assets/images/icons/pro_cart.svg"
                                         class="svg_img header_svg" alt="" /></div>
-                                <span class="ec-header-count ec-cart-count">3</span>  <!--تعدداد سبد خرید!!!-->
+                                <!-- <span class="ec-header-count ec-cart-count">3</span>  تعدداد سبد خرید!!! -->
                             </a>
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
@@ -279,11 +292,10 @@ $display_books = !empty($books_category) ? $books_category : $books;
                                 </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="#ec-si
-                                de-cart" class="ec-header-btn ec-side-toggle">
+                                <a href="cart.php" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span class="ec-header-count ec-cart-count"><?php echo $cart_count;;?></span><span class="ec-btn-title">سبد
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
                                         خرید</span>
                                 </a>
                                 <!-- Header Cart End -->
@@ -997,7 +1009,7 @@ $display_books = !empty($books_category) ? $books_category : $books;
             <div class="ec-pro-content">
                 <h6 class="ec-pro-title"><?php echo $book['name']; ?></h6>
                 <span class="ec-price"><?php echo $book['price']; ?> تومان</span>
-                <a href="add_to_cart.php?id=<?php echo $row['id']; ?>" class="add-to-cart-btn"> افزودن به سبد خرید</a>            </div>
+                <a href="add_to_cart.php?id=<?php echo $book['id']; ?>" class="add-to-cart-btn"> افزودن به سبد خرید</a></div>
         </div>
     </div>
                             <?php }?>
@@ -1200,7 +1212,7 @@ $display_books = $category ? $books_category : $books;
                              alt="<?php echo htmlspecialchars($book['name']); ?>" />
                     </a>
                     <div class="ec-pro-actions">
-                        <button href="add_to_cart.php?id=<?php echo $row['id']; ?>" title="افزودن به سبد" class="add-to-cart">
+                        <button href="add_to_cart.php?id=<?php echo $book['id']; ?>" title="افزودن به سبد" class="add-to-cart">
                             <img src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt="">
                         </button>
                         <a href="#" class="ec-btn-group wishlist" title="علاقه‌مندی">
