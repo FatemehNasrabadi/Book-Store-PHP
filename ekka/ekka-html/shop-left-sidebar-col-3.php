@@ -1,8 +1,15 @@
 ﻿<?php
-
+session_start();
 
 include('../../config/db.php'); // اتصال به دیتابیس
 
+//عدد سبد خرید
+$cart_count=0;
+if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
+    foreach($_SESSION['cart'] as $qty){
+        $cart_count+=$qty;
+    }
+}
 
 // گرفتن دسته‌بندی از URL
 $category = isset($_GET['category']) ? trim($_GET['category']) : null;
@@ -32,6 +39,20 @@ $result = mysqli_query($conn, $sql);
  ============================================================-->
 <!DOCTYPE html>
 <html lang="en">
+
+  <!-- جاوا اسکریبپت برای اپدیت بدون رفرش -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$('.add-to-cart-btn').click(function(e){
+    e.preventDefault();
+    var bookId = $(this).data('id');
+    $.get('add_to_cart.php', {id: bookId}, function(){
+        // بعد از افزودن محصول، عدد سبد را آپدیت کن
+        var count = parseInt($('#cart-count').text());
+        $('#cart-count').text(count + 1);
+    });
+});
+</script>
 
 <head>
     <meta charset="UTF-8">
@@ -112,29 +133,30 @@ $result = mysqli_query($conn, $sql);
                                         src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                    <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                    <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                 </ul>
                             </div>
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
-                            <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                            <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                 <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                         class="svg_img header_svg" alt=""></div>
                                 <span class="ec-header-count">4</span>
-                            </a>
+                            </a> -->
                             <!-- Header Cart End -->
                             <!-- Header Cart Start -->
-                            <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
-                                <div class="header-icon"><img src="assets/images/icons/cart.svg"
-                                        class="svg_img header_svg" alt=""></div>
-                                <span class="ec-header-count cart-count-lable">3</span>
-                            </a>
+                          <a href="cart.php" class="ec-header-btn ">
+                                    <div class="header-icon"><img src="assets/images/icons/cart.svg"
+                                            class="svg_img header_svg" alt="" /></div>
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                                        خرید</span>
+                                </a>
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
-                            <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none">
+                            <!-- <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none">
                                 <img src="assets/images/icons/menu.svg" class="svg_img header_svg" alt="icon">
-                            </a>
+                            </a> -->
                             <!-- Header menu End -->
                         </div>
                     </div>
@@ -161,22 +183,13 @@ $result = mysqli_query($conn, $sql);
                         <!-- Ec Header Search Start -->
                         <div class="align-self-center">
                             <div class="header-search">
-                                <?php
-                                $search='';
-                                if(isset($_GET['search'])&& !empty($_GET['search'])){
-                                    $search=mysqli_real_escape_string($conn,$_GET['search']);
-                                    $sql="SELECT*FROM books WHERE name LIKE '%search%' ORDER BY created_at DESC";
-                                }else{
-                                    $sql="SELECT*FROM books ORDER BY created_at DESC";
-                                }
-                                ?>
-                        
-                                <form class="ec-btn-group-form" method="GET" action="shop-left-sidebar-col-3.php">
+                                <form class="ec-btn-group-form" action="search.php" method="GET">
                                     <input class="form-control" placeholder="نام محصول خود را وارد کنید ..."
-                                        type="text" name="search">
+                                        type="text" name="q" required/>
                                     <button class="submit" type="submit"><img src="assets/images/icons/search.svg"
-                                            class="svg_img header_svg" alt=""></button>
+                                            class="svg_img header_svg" alt=""><i class="ecicon eci-search"></i></button>
                                 </form>
+                                
                             </div>
                         </div>
                         <!-- Ec Header Search End -->
@@ -192,24 +205,26 @@ $result = mysqli_query($conn, $sql);
                                             alt=""></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                        <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                        <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
                                 <!-- Header wishlist Start -->
-                                <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                                <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                     <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count">4</span>
-                                </a>
+                                </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                                  <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
-                                            class="svg_img header_svg" alt=""></div>
-                                    <span class="ec-header-count cart-count-lable">3</span>
+                                            class="svg_img header_svg" alt="" /></div>
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                                        خرید</span>  
                                 </a>
+                              
                                 <!-- Header Cart End -->
                             </div>
                         </div>
@@ -235,11 +250,12 @@ $result = mysqli_query($conn, $sql);
                     <!-- Ec Header Search Start -->
                     <div class="col">
                         <div class="header-search">
-                            <form class="ec-btn-group-form" action="#">
-                                <input class="form-control" placeholder="نام محصول خود را وارد کنید ..." type="text">
-                                <button class="submit" type="submit"><img src="assets/images/icons/search.svg"
-                                        class="svg_img header_svg" alt="icon"></button>
-                            </form>
+                              <form class="ec-search-group-form" action="search.php" method="GET">
+                                    <input class="form-control" placeholder="جستجو ..." type="text" name="q" required/>
+                                    <button class="search_submit" type="submit">جستجو<img
+                                            src="assets/images/icons/search.svg" class="svg_img search_svg"
+                                            alt="" /> <i class="ecicon eci-search"></i> </button>
+                                </form>
                         </div>
                     </div>
                     <!-- Ec Header Search End -->
@@ -276,7 +292,7 @@ $result = mysqli_query($conn, $sql);
                                            
                                     </ul>
                                 </li>
-                                <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
+                                <!-- <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
                                     <ul class="sub-menu">
                                         <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
                                                 <i class="ecicon eci-angle-left"></i></a>
@@ -443,7 +459,7 @@ $result = mysqli_query($conn, $sql);
                                         <li><a href="elemets-blog.html">بلاگ</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="offer.html">پیشنهادات داغ</a></li>
+                                <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -466,14 +482,13 @@ $result = mysqli_query($conn, $sql);
                                 <li>
                                     <a href="javascript:void(0)">ورژن کلاسیک</a>
                                     <ul class="sub-menu">
-                                        <li><a href="shop-left-sidebar-col-3.html">سایدبار چپ 3 ستونه</a></li>
-                                        <li><a href="shop-left-sidebar-col-4.html">سایدبار چپ 4 ستونه</a></li>
-                                        <li><a href="shop-right-sidebar-col-3.html">سایدبار راست 3 ستونه</a></li>
-                                        <li><a href="shop-right-sidebar-col-4.html">سایدبار راست 4 ستونه</a></li>
-                                        <li><a href="shop-full-width.html">تمام عرض 4 ستونه</a></li>
+                                       <li><a href="shop-left-sidebar-col-3.php"> همه محصولات</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=رمان"> رمان</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=کودک">کودک</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=زبان انگلیسی"> زبان انگلیسی</a></li>
                                     </ul>
                                 </li>
-                                <li>
+                                <!-- <li>
                                     <a href="javascript:void(0)">ورژن کلاسیک</a>
                                     <ul class="sub-menu">
                                         <li><a href="shop-banner-left-sidebar-col-3.html"> بنر سایدبار چپ 3
@@ -509,10 +524,10 @@ $result = mysqli_query($conn, $sql);
                                 </li>
                                 <li><a class="p-0" href="shop-left-sidebar-col-3.html"><img class="img-responsive"
                                             src="assets/images/menu-banner/1.jpg" alt=""></a>
-                                </li>
+                                </li> -->
                             </ul>
                         </li>
-                        <li><a href="javascript:void(0)">محصولات</a>
+                        <!-- <li><a href="javascript:void(0)">محصولات</a>
                             <ul class="sub-menu">
                                 <li><a href="javascript:void(0)">صفحه محصولات</a>
                                     <ul class="sub-menu">
@@ -650,7 +665,7 @@ $result = mysqli_query($conn, $sql);
                                 <li><a href="elemets-blog.html">بلاگ</a></li>
                             </ul>
                         </li>
-                        <li><a href="offer.html">پیشنهادات داغ</a></li>
+                        <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                     </ul>
                 </div>
                 <div class="header-res-lan-curr">
@@ -700,7 +715,7 @@ $result = mysqli_query($conn, $sql);
     <!-- Header End  -->
 
     <!-- ekka Cart Start -->
-    <div class="ec-side-cart-overlay"></div>
+    <!-- <div class="ec-side-cart-overlay"></div>
     <div id="ec-side-cart" class="ec-side-cart">
         <div class="ec-cart-inner">
             <div class="ec-cart-top">
@@ -772,7 +787,7 @@ $result = mysqli_query($conn, $sql);
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- ekka Cart End -->
 
     <!-- Ec breadcrumb start -->
@@ -846,21 +861,18 @@ if(mysqli_num_rows($result) > 0) {
                 <div class="ec-pro-image-outer">
                     <div class="ec-pro-image">
                         <a href="product-full-width.php?id=<?php echo $row['id']; ?>">
-                            <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($row['image']); ?>" alt="" style="width:500px; height:400px; object-fit:cover;">
+                            <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($row['image']); ?>" alt="" style="width:600px; height:500px; object-fit:cover;">
                         </a>
                         <div class="ec-pro-actions">
-                            <button title="افزودن به سبد خرید" class="add-to-cart">
-                                <img src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt=""> افزودن به کارت
-                            </button>
-                            <a class="ec-btn-group wishlist" title="علاقه مندی">
-                                <img src="assets/images/icons/wishlist.svg" class="svg_img pro_svg" alt="">
-                            </a>
                         </div>
                     </div>
 
                     <div class="product-info">
+                           <a href="add_to_cart.php?id=<?php echo $row['id']; ?>" class="add-to-cart-btn"> افزودن به سبد خرید</a>
+
                         <h5><?php echo $row['name']; ?></h5>
                         <span class="price"><?php echo $row['price']; ?> تومان</span>
+
                     </div>
                 </div>
             </div>

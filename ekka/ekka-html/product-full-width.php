@@ -1,6 +1,14 @@
 ﻿<?php 
-
+session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
+
+//عدد سبد خرید
+$cart_count=0;
+if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
+    foreach($_SESSION['cart'] as $qty){
+        $cart_count+=$qty;
+    }
+}
 
 // گرفتن id محصول از URL
 if(isset($_GET['id'])) {
@@ -46,7 +54,19 @@ if(isset($_GET['id'])) {
  ============================================================-->
 <!DOCTYPE html>
 <html lang="en">
-
+ <!-- جاوا اسکریبپت برای اپدیت بدون رفرش -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$('.add-to-cart-btn').click(function(e){
+    e.preventDefault();
+    var bookId = $(this).data('id');
+    $.get('add_to_cart.php', {id: bookId}, function(){
+        // بعد از افزودن محصول، عدد سبد را آپدیت کن
+        var count = parseInt($('#cart-count').text());
+        $('#cart-count').text(count + 1);
+    });
+});
+</script>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -150,24 +170,25 @@ if(isset($_GET['id'])) {
                                         src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                    <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                    <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                 </ul>
                             </div>
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
-                            <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                            <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                 <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                         class="svg_img header_svg" alt=""></div>
                                 <span class="ec-header-count">4</span>
-                            </a>
+                            </a> -->
                             <!-- Header Cart End -->
                             <!-- Header Cart Start -->
-                            <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
-                                <div class="header-icon"><img src="assets/images/icons/cart.svg"
-                                        class="svg_img header_svg" alt=""></div>
-                                <span class="ec-header-count cart-count-lable">3</span>
-                            </a>
+                                    <a href="cart.php" class="ec-header-btn ">
+                                    <div class="header-icon"><img src="assets/images/icons/cart.svg"
+                                            class="svg_img header_svg" alt="" /></div>
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                                        خرید</span>  
+                                </a>
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
                             <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none">
@@ -199,11 +220,11 @@ if(isset($_GET['id'])) {
                         <!-- Ec Header Search Start -->
                         <div class="align-self-center">
                             <div class="header-search">
-                                <form class="ec-btn-group-form" action="#">
+                                <form class="ec-btn-group-form" action="search.php" method="GET">
                                     <input class="form-control" placeholder="نام محصول خود را وارد کنید ..."
-                                        type="text">
+                                        type="text" name="q" required/>
                                     <button class="submit" type="submit"><img src="assets/images/icons/search.svg"
-                                            class="svg_img header_svg" alt=""></button>
+                                            class="svg_img header_svg" alt=""><i class="ecicon eci-search"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -220,23 +241,24 @@ if(isset($_GET['id'])) {
                                             alt=""></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                        <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                        <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
                                 <!-- Header wishlist Start -->
-                                <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                                <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                     <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count">4</span>
-                                </a>
+                                </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                            <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
-                                            class="svg_img header_svg" alt=""></div>
-                                    <span class="ec-header-count cart-count-lable">3</span>
+                                            class="svg_img header_svg" alt="" /></div>
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">
+                                        </span>  
                                 </a>
                                 <!-- Header Cart End -->
                             </div>
@@ -308,7 +330,7 @@ if(isset($_GET['id'])) {
                                             
                                     </ul>
                                 </li>
-                                <li class="dropdown"><a href="javascript:void(0)">صفحات</a>
+                                <!-- <li class="dropdown"><a href="javascript:void(0)">صفحات</a>
                                     <ul class="sub-menu">
                                         <li><a href="about-us.html">درباره ما</a></li>
                                         <li><a href="contact-us.html">ارتباط با ما</a></li>
@@ -435,7 +457,7 @@ if(isset($_GET['id'])) {
                                         <li><a href="elemets-blog.html">بلاگ</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="offer.html">پیشنهادات داغ</a></li>
+                                <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -451,7 +473,7 @@ if(isset($_GET['id'])) {
             </div>
             <div class="ec-menu-inner">
                 <div class="ec-menu-content">
-                    <ul>
+                    <!-- <ul>
                         <li><a href="index.html">خانه</a></li>
                         <li><a href="javascript:void(0)">دسته بندی ها</a>
                             <ul class="sub-menu">
@@ -644,7 +666,7 @@ if(isset($_GET['id'])) {
                             </ul>
                         </li>
                         <li><a href="offer.html">پیشنهادات داغ</a></li>
-                    </ul>
+                    </ul> -->
                 </div>
                 <div class="header-res-lan-curr">
                     <div class="header-top-lan-curr">
@@ -693,7 +715,7 @@ if(isset($_GET['id'])) {
     <!-- Header End  -->
 
     <!-- ekka Cart Start -->
-    <div class="ec-side-cart-overlay"></div>
+    <!-- <div class="ec-side-cart-overlay"></div>
     <div id="ec-side-cart" class="ec-side-cart">
         <div class="ec-cart-inner">
             <div class="ec-cart-top">
@@ -765,7 +787,7 @@ if(isset($_GET['id'])) {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- ekka Cart End -->
 
     <!-- Ec breadcrumb start -->
@@ -843,7 +865,7 @@ if(isset($_GET['id'])) {
                                             <span class="ec-read-review"><a href="#ec-spt-nav-review">اولین کسی که نظر
                                                     میدهد باشید</a></span>
                                         </div> -->
-                                        <div class="ec-single-desc"><?php echo htmlspecialchars($product['description']) ?></div>
+                                        <div class="ec-single-desc">دسته‌بندی:<?php echo htmlspecialchars($product['category']) ?></div>
 
                                         <!-- <div class="ec-single-sales">
                                             <div class="ec-single-sales-inner">
@@ -887,17 +909,18 @@ if(isset($_GET['id'])) {
                                             </div>
                                         </div>
                                         <div class="ec-single-qty">
-                                            <div class="qty-plus-minus">
+                                            <!-- <div class="qty-plus-minus">
                                                 <input class="qty-input" type="text" name="ec_qtybtn" value="1">
-                                            </div>
+                                            </div> -->
                                             <div class="ec-single-cart ">
-                                                <button class="btn btn-primary">افزودن به سبد خرید</button>
-                                            </div>
-                                            <div class="ec-single-wishlist">
+                                                  <a href="add_to_cart.php?id=<?php echo $product['id']; ?>" class="btn btn-primary add-to-cart-btn">
+                                                         افزودن به سبد خرید</a>                         
+                                                                           </div>
+                                            <!-- <div class="ec-single-wishlist">
                                                 <a class="ec-btn-group wishlist" title="علاقه مندی"><img
                                                         src="assets/images/icons/wishlist.svg" class="svg_img pro_svg"
                                                         alt=""></a>
-                                            </div>
+                                            </div> -->
                                             <!-- <div class="ec-single-quickview">
                                                 <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
                                                     title="مشاهده" data-bs-toggle="modal"

@@ -2,8 +2,20 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
-
+// اگر درخواست حذف محصول آمده:
+if (isset($_GET['remove'])) {
+    $remove_id = $_GET['remove'];
+    // اگر محصول در سبد خرید است حذفش کن
+    if (isset($_SESSION['cart'][$remove_id])) {
+        unset($_SESSION['cart'][$remove_id]);
+    }
+    // رفرش به cart.php برای جلوگیری از تکرار حذف در رفرش صفحه
+    header("Location: cart.php");
+    exit();
+}
 ?>
+
+
 
 
 
@@ -890,7 +902,7 @@ include('../../config/db.php'); // اتصال به دیتابیس
             <form action="#">
                 <div class="table-content cart-table-content">
                     <table>
-                        <thead>
+                        <!-- <thead>
                             <tr>
                                 <th>محصول</th>
                                 <th>قیمت</th>
@@ -898,7 +910,7 @@ include('../../config/db.php'); // اتصال به دیتابیس
                                 <th>کل</th>
                                 <th></th>
                             </tr>
-                        </thead>
+                        </thead> -->
                         <tbody>
                             <tr>
                                 <td data-label="Product" class="ec-cart-pro-name">
@@ -922,7 +934,7 @@ include('../../config/db.php'); // اتصال به دیتابیس
                                     <?php echo $total; ?>
                                 </td>
                                <td data-label="Remove" class="ec-cart-pro-remove">
-                                    <a href="remove_from_cart.php?id=<?php echo $product_id; ?>">
+                                    <a href="cart.php?remove=<?php echo $product_id; ?>">
                                         <i class="ecicon eci-trash-o"></i>
                                     </a>
                                 </td>
@@ -930,13 +942,7 @@ include('../../config/db.php'); // اتصال به دیتابیس
                         </tbody>
                     </table>
                 </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="ec-cart-update-bottom">
-                            <a href="index.php">ادامه خرید</a>
-                        </div>
-                    </div>
-                </div>
+                
             </form>
         </div>
         <?php } ?>
@@ -954,41 +960,7 @@ include('../../config/db.php'); // اتصال به دیتابیس
                             <div class="ec-sb-block-content">
                                 <h4 class="ec-ship-title">هزینه ارسال</h4>
                                 <div class="ec-cart-form">
-                                    <!-- <p> مقصد خود را وارد کنید تا برآورد حمل و نقل را دریافت کنید </p> -->
                                     <form action="#" method="post">
-                                        <!-- <span class="ec-cart-wrap">
-                                            <label>کشور *</label>
-                                            <span class="ec-cart-select-inner">
-                                                <select name="ec_cart_country" id="ec-cart-select-country"
-                                                    class="ec-cart-select">
-                                                    <option selected="" disabled="">ایران</option>
-                                                    <option value="1">کشور 1</option>
-                                                    <option value="2">کشور 2</option>
-                                                    <option value="3">کشور 3</option>
-                                                    <option value="4">کشور 4</option>
-                                                    <option value="5">کشور 5</option>
-                                                </select>
-                                            </span>
-                                        </span> -->
-                                        <!-- <span class="ec-cart-wrap">
-                                            <label>منطقه</label>
-                                            <span class="ec-cart-select-inner">
-                                                <select name="ec_cart_state" id="ec-cart-select-state"
-                                                    class="ec-cart-select">
-                                                    <option selected="" disabled="">لطفا یک منطقه، ایالت را انتخاب کنید
-                                                    </option>
-                                                    <option value="1">منطقه/ایالت 1</option>
-                                                    <option value="2">منطقه/ایالت 2</option>
-                                                    <option value="3">منطقه/ایالت 3</option>
-                                                    <option value="4">منطقه/ایالت 4</option>
-                                                    <option value="5">منطقه/ایالت 5</option>
-                                                </select>
-                                            </span>
-                                        </span> -->
-                                        <!-- <span class="ec-cart-wrap">
-                                            <label> کد پستی </label>
-                                            <input type="text" name="postalcode" placeholder=" کد پستی ">
-                                        </span> -->
                                     </form>
                                 </div>
                             </div>

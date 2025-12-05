@@ -207,11 +207,11 @@ $('.add-to-cart-btn').click(function(e){
                             </div> -->
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
-                            <a href="#" class="ec-header-btn ec-header-wishlist">
+                            <!-- <a href="#" class="ec-header-btn ec-header-wishlist">
                                 <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                         class="svg_img header_svg" alt="" /></div>
                                 <span class="ec-header-count ec-wishlist-count">0</span>
-                            </a>
+                            </a> -->
                             <!-- Header Cart End -->
                             <!-- Header Cart Start -->
                             <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
@@ -250,19 +250,11 @@ $('.add-to-cart-btn').click(function(e){
                         <!-- Ec Header Search Start -->
                         <div class="align-self-center ec-header-search">
                             <div class="header-search">
-                                <form class="ec-search-group-form" action="#">
-                                    <!-- <div class="ec-search-select-inner">
-                                        <select name="ec-search-cat">
-                                            <option selected disabled>همه</option>
-                                            <option value="cloths">لباس ها</option>
-                                            <option value="bag">کیف</option>
-                                            <option value="shoes">کفش</option>
-                                        </select>
-                                    </div> -->
-                                    <input class="form-control" placeholder="جستجو ..." type="text">
+                                <form class="ec-search-group-form" action="search.php" method="GET">
+                                    <input class="form-control" placeholder="جستجو ..." type="text" name="q" required/>
                                     <button class="search_submit" type="submit">جستجو<img
                                             src="assets/images/icons/search.svg" class="svg_img search_svg"
-                                            alt="" /></button>
+                                            alt="" /> <i class="ecicon eci-search"></i> </button>
                                 </form>
                             </div>
                         </div>
@@ -292,7 +284,7 @@ $('.add-to-cart-btn').click(function(e){
                                 </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="cart.php" class="ec-header-btn ec-side-toggle">
+                                <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
                                     <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
@@ -322,23 +314,16 @@ $('.add-to-cart-btn').click(function(e){
                     </div>
                     <!-- Ec Header Logo End -->
                     <!-- Ec Header Search Start -->
-                    <div class="col align-self-center ec-header-search">
-                        <div class="header-search">
-                            <form class="ec-search-group-form" action="#">
-                                <!-- <div class="ec-search-select-inner">
-                                    <select name="ec-search-cat">
-                                        <option selected disabled>همه</option>
-                                        <option value="cloths">لباس ها</option>
-                                        <option value="bag">کیف</option>
-                                        <option value="shoes">کفش</option>
-                                    </select>
-                                </div> -->
-                                <input class="form-control" placeholder="جستجو ..." type="text">
-                                <button class="search_submit" type="submit"><img src="assets/images/icons/search.svg"
-                                        class="svg_img search_svg" alt="" /></button>
-                            </form>
+                    <div class="align-self-center ec-header-search">
+                            <div class="header-search">
+                                <form class="ec-search-group-form" action="search.php" method="GET">
+                                    <input class="form-control" placeholder="جستجو ..." type="text" name="q" required/>
+                                    <button class="search_submit" type="submit">جستجو<img
+                                            src="assets/images/icons/search.svg" class="svg_img search_svg"
+                                            alt="" /> <i class="ecicon eci-search"></i> </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
                     <!-- Ec Header Search End -->
                 </div>
             </div>
@@ -430,13 +415,13 @@ $('.add-to-cart-btn').click(function(e){
                                 </li>
                                 <li class="dropdown"><a href="javascript:void(0)">محصولات</a>   <!--محصول سایدبار چپ خوبهههههههههههههههههههههههههههههههههه-->
                                     <ul class="sub-menu">
-                                        <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
+                                        <!-- <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
                                                 <i class="ecicon eci-angle-left"></i></a>
                                             <ul class="sub-menu sub-menu-child">
                                                 <li><a href="product-left-sidebar.html">محصول سایدبار چپ</a></li>
                                                 <li><a href="product-right-sidebar.html">محصول سایدبار راست</a></li>
                                             </ul>
-                                        </li>
+                                        </li> -->
                                         <!-- <li class="dropdown position-static"><a href="javascript:void(0)">محصول 360 درجه
                                                 <i class="ecicon eci-angle-left"></i></a>
                                             <ul class="sub-menu sub-menu-child">
@@ -444,7 +429,7 @@ $('.add-to-cart-btn').click(function(e){
                                                 <li><a href="product-360-right-sidebar.html">360 ساید بار راست</a></li>
                                             </ul>
                                         </li> -->
-                                        <li class="dropdown position-static"><a href="javascript:void(0)">محصول ویدئویی
+                                        <!-- <li class="dropdown position-static"><a href="javascript:void(0)">محصول ویدئویی
                                                 <i class="ecicon eci-angle-left"></i></a>
                                             <ul class="sub-menu sub-menu-child">
                                                 <li><a href="product-video-left-sidebar.html">سایدبار چپ ویدئویی</a>
@@ -465,9 +450,9 @@ $('.add-to-cart-btn').click(function(e){
                                         <li><a href="product-full-width.html">محصول تمام عرض</a></li>
                                         <li><a href="product-360-full-width.html">360 تمام عرض</a></li>
                                         <li><a href="product-video-full-width.html">تمام عرض ویدئو </a></li>
-                                        <li><a href="product-gallery-full-width.html">تمام عرض گالری</a></li>
+                                        <li><a href="product-gallery-full-width.html">تمام عرض گالری</a></li> -->
                                     </ul>
-                                </li>
+                                <!-- </li>
                                 <li class="dropdown"><a href="javascript:void(0)">صفحات </a>
                                     <ul class="sub-menu">
                                         <li><a href="about-us.html">درباره ما</a></li>
@@ -590,7 +575,7 @@ $('.add-to-cart-btn').click(function(e){
                                         <li><a href="elemets-blog.html">بلاگ</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="offer.html">پیشنهادات داغ</a></li>
+                                <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -1001,7 +986,7 @@ $('.add-to-cart-btn').click(function(e){
             <div class="ec-pro-image-outer">
                 <div class="ec-pro-image">
                     <a href="product-full-width.php?id=<?php echo $book['id']; ?>">
-                        <img src="assets/images/products/<?php echo $book['image']; ?>" alt=""  style="width:500px; height:400px; object-fit:cover;">
+                        <img src="assets/images/products/<?php echo $book['image']; ?>" alt=""  style="width:600px; height:500px; object-fit:cover;">
                     </a>
                 </div>
             </div>
