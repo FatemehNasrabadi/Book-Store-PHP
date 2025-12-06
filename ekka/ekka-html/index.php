@@ -4,11 +4,13 @@ include('../../config/db.php'); // اتصال به دیتابیس
 
 //عدد سبد خرید
 $cart_count=0;
-if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
-    foreach($_SESSION['cart'] as $qty){
-        $cart_count+=$qty;
-    }
+if(isset($_SESSION['user_id'])){
+    $uid=$_SESSION['user_id'];
+    $q=mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
+    $row=mysqli_fetch_assoc($q);
+    $cart_count=$row['total']??0;
 }
+echo $cart_count;
 // session_start();
 // // چک  که کاربر وارد شده یا نه
 // if(!isset($_SESSION['users_id'])){

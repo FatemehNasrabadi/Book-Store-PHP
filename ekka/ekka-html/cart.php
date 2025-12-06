@@ -13,6 +13,22 @@ if (isset($_GET['remove'])) {
     header("Location: cart.php");
     exit();
 }
+
+
+
+if(!isset($_SESSION['users_id'])){
+    die("لطفا وارد حساب شوید");
+}
+
+$user_id = $_SESSION['users_id'];
+
+// گرفتن محصولات کاربر
+$sql = "SELECT c.quantity, b.*
+        FROM carts c 
+        JOIN books b ON c.product_id = b.id
+        WHERE c.user_id = $user_id";
+$result = mysqli_query($conn, $sql);
+$total_price = 0;
 ?>
 
 
@@ -888,15 +904,19 @@ if (isset($_GET['remove'])) {
 <div class="ec-cart-content">
     <div class="ec-cart-inner">
       <?php 
-        foreach($_SESSION['cart'] as $product_id => $qty){
-            // گرفتن اطلاعات محصول
-            $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
-            $result = mysqli_query($conn, $sql);
-            $product = mysqli_fetch_assoc($result);
-            // اگر محصول پیدا نشد، از حلقه ادامه بده
-            if (!$product) continue;
-            // محاسبه قیمت کل
-            $total = $product['price'] * $qty;
+        // foreach($_SESSION['cart'] as $product_id => $qty){
+        //     // گرفتن اطلاعات محصول
+        //     $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
+        //     $result = mysqli_query($conn, $sql);
+        //     $product = mysqli_fetch_assoc($result);
+        //     // اگر محصول پیدا نشد، از حلقه ادامه بده
+        //     if (!$product) continue;
+        //     // محاسبه قیمت کل
+        //     $total = $product['price'] * $qty;
+
+    while($row = mysqli_fetch_assoc($result)): 
+    $line_total = $row['price'] * $row['quantity'];
+    $total_price += $line_total;
         ?>
         <div class="row">
             <form action="#">
@@ -916,13 +936,13 @@ if (isset($_GET['remove'])) {
                                 <td data-label="Product" class="ec-cart-pro-name">
                                     <a href="#">
                                         <img class="ec-cart-pro-img mr-4"
-                                             src="assets/images/products/<?php echo $product['image']; ?>" 
+                                             src="assets/images/products/<?php echo $row['image']; ?>" 
                                              alt="">
                                         <?php echo $product['name']; ?>
                                     </a>
                                 </td>
                                 <td data-label="Price" class="ec-cart-pro-price">
-                                    <span class="amount"><?php echo $product['price']; ?></span>
+                                    <span class="amount"><?php echo $row['price']; ?></span>
                                 </td>
                                 <td data-label="Quantity" class="ec-cart-pro-qty" style="text-align:center;">
                                     <div class="cart-qty-plus-minus">
@@ -934,7 +954,7 @@ if (isset($_GET['remove'])) {
                                     <?php echo $total; ?>
                                 </td>
                                <td data-label="Remove" class="ec-cart-pro-remove">
-                                    <a href="cart.php?remove=<?php echo $product_id; ?>">
+                                    <a href="cart.php?remove=<?php echo $row['id']; ?>">
                                         <i class="ecicon eci-trash-o"></i>
                                     </a>
                                 </td>
@@ -945,7 +965,7 @@ if (isset($_GET['remove'])) {
                 
             </form>
         </div>
-        <?php } ?>
+        <?php endwhile; ?>
     </div>
 </div>
 <!-- cart content End -->
