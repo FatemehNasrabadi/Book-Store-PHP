@@ -2,6 +2,9 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
+
+
+
 // اگر درخواست حذف محصول آمده:
 if (isset($_GET['remove'])) {
     $remove_id = $_GET['remove'];
@@ -14,13 +17,15 @@ if (isset($_GET['remove'])) {
     exit();
 }
 
-
-
-if(!isset($_SESSION['users_id'])){
-    die("لطفا وارد حساب شوید");
+if(!isset($_SESSION['user_id'])){
+    header("Location: login.html");
+    exit();
 }
 
-$user_id = $_SESSION['users_id'];
+// if(!isset($_SESSION['users_id'])){
+//     die("لطفا وارد حساب شوید");
+// }
+// $user_id = $_SESSION['users_id'];
 
 // گرفتن محصولات کاربر
 $sql = "SELECT c.quantity, b.*

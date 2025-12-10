@@ -2,6 +2,17 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
+
+$username = "اکانت";
+if (isset($_SESSION['users_id'])) {
+    $uid=$_SESSION['user_id'];
+    $q=mysqli_query($conn,"SELECT name FROM users WHERE id=$uid LIMIT 1");
+    $u=mysqli_fetch_assoc($q);
+    if($u)$username=$u['name'];
+}
+
+ 
+
 //عدد سبد خرید
 $cart_count=0;
 if(isset($_SESSION['user_id'])){
@@ -268,8 +279,8 @@ $('.add-to-cart-btn').click(function(e){
                                 <!-- Header User Start -->
                                 <div class="ec-header-user dropdown">
                                     <button class="dropdown-toggle" data-bs-toggle="dropdown"><img
-                                            src="assets/images/icons/user.svg" class="svg_img header_svg" alt="" /><span
-                                            class="ec-btn-title">اکانت</span></button>
+                                            src="assets/images/icons/user.svg" class="svg_img header_svg " alt="" /><span
+                                            class="ec-btn-title"><?php echo $username;?></span></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                         <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>

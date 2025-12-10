@@ -1,4 +1,63 @@
-﻿<!--========================================================= 
+﻿<?php
+session_start();
+
+include('../../config/db.php'); // اتصال به دیتابیس
+
+//اگر لاگین نبود
+if(!isset($_SESSION['user_id'])){
+    header("Location: login.html");
+    exit();
+}
+$user_id=$_SESSION['user_id'];
+//گرفتن اطلاعات کاربر
+$sql="SELECT *FROM users WHERE id=$user_id LIMIT 1";
+$result=mysqli_query($conn,$sql);
+$user=mysqli_fetch_assoc($result);
+
+//عدد سبد خرید
+$cart_count=0;
+if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
+    foreach($_SESSION['cart'] as $qty){
+        $cart_count+=$qty;
+    }
+}
+
+// //پردازش ویرایش اطلاعات
+
+// if(isset($_POST['update_profile'])){
+
+//     $name = mysqli_real_escape_string($conn, $_POST['name']);
+//     $email = mysqli_real_escape_string($conn, $_POST['email']);
+//     $mobile_number = mysqli_real_escape_string($conn, $_POST['mobile_number']);
+//     $address = mysqli_real_escape_string($conn, $_POST['address']);
+//     $userneme = mysqli_real_escape_string($conn, $_POST['username']);
+    
+
+//     $update_sql = "
+//         UPDATE users SET 
+//             name='$name',
+//             mobile_number='$mobile_number',
+//             username='$username';
+//             email='$email';
+//             address='$address',
+//         WHERE id=$user_id
+//     ";
+
+//     if(mysqli_query($conn, $update_sql)){
+//         $message = "اطلاعات با موفقیت بروزرسانی شد";
+//         // آپدیت فوری داده‌ها در صفحه
+//         $user['name'] = $name;
+//         $user['mobile_number'] = $mobile_number;
+//         $user['address'] = $address;
+//         $user['email'] = $email;
+//         $user['username'] = $username;
+//     } else {
+//         $error = "خطا در بروزرسانی";
+//     }
+// }
+
+?>
+<!--========================================================= 
     Item Name: Ekka - Ecommerce HTML Template.
     Author: ashishmaraviya
     Version: 1.0
@@ -115,23 +174,24 @@
                                         src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                    <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                    <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                 </ul>
                             </div>
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
-                            <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                            <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                 <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                         class="svg_img header_svg" alt=""></div>
                                 <span class="ec-header-count">4</span>
-                            </a>
+                            </a> -->
                             <!-- Header Cart End -->
                             <!-- Header Cart Start -->
                             <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                 <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                         class="svg_img header_svg" alt=""></div>
-                                <span class="ec-header-count cart-count-lable">3</span>
+                               <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                                        خرید</span>
                             </a>
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
@@ -164,12 +224,13 @@
                         <!-- Ec Header Search Start -->
                         <div class="align-self-center">
                             <div class="header-search">
-                                <form class="ec-btn-group-form" action="#">
+                                <form class="ec-btn-group-form" action="search.php" method="GET">
                                     <input class="form-control" placeholder="نام محصول خود را وارد کنید ..."
-                                        type="text">
+                                        type="text" name="q" required/>
                                     <button class="submit" type="submit"><img src="assets/images/icons/search.svg"
-                                            class="svg_img header_svg" alt=""></button>
+                                            class="svg_img header_svg" alt=""><i class="ecicon eci-search"></i></button>
                                 </form>
+                                
                             </div>
                         </div>
                         <!-- Ec Header Search End -->
@@ -185,23 +246,24 @@
                                             alt=""></button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
-                                        <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
+                                        <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
                                 <!-- Header wishlist Start -->
-                                <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                                <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                     <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count">4</span>
-                                </a>
+                                </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
                                 <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt=""></div>
-                                    <span class="ec-header-count cart-count-lable">3</span>
+                                     <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">
+                                        </span>
                                 </a>
                                 <!-- Header Cart End -->
                             </div>
@@ -252,18 +314,12 @@
                                     <ul class="mega-menu d-block">
                                         <li class="d-flex">
                                             <ul class="d-block">
-                                                <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
-                                                <li><a href="shop-left-sidebar-col-3.html">سایدبار چپ 3 ستونه</a>
-                                                </li>
-                                                <li><a href="shop-left-sidebar-col-4.html">سایدبار چپ 4 ستونه</a>
-                                                </li>
-                                                <li><a href="shop-right-sidebar-col-3.html">سایدبار راست 3 ستونه</a>
-                                                </li>
-                                                <li><a href="shop-right-sidebar-col-4.html">سایدبار راست 4 ستونه</a>
-                                                </li>
-                                                <li><a href="shop-full-width.html">تمام عرض 4 ستونه</a></li>
+                                               <li><a href="shop-left-sidebar-col-3.php"> همه محصولات</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=رمان"> رمان</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=کودک">کودک</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=زبان انگلیسی"> زبان انگلیسی</a></li>
                                             </ul>
-                                            <ul class="d-block">
+                                            <!-- <ul class="d-block">
                                                 <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
                                                 <li><a href="shop-banner-left-sidebar-col-3.html"> بنر سایدبار چپ 3
                                                         ستونه</a></li>
@@ -313,9 +369,9 @@
                                                             class="img-responsive" src="assets/images/menu-banner/4.jpg"
                                                             alt=""></a></li>
                                             </ul>
-                                        </li>
+                                        </li> -->
                                     </ul>
-                                </li>
+                                <!-- </li>
                                 <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
                                     <ul class="sub-menu">
                                         <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
@@ -483,7 +539,7 @@
                                         <li><a href="elemets-blog.html">بلاگ</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="offer.html">پیشنهادات داغ</a></li>
+                                <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -858,11 +914,11 @@
                                     <ul>
                                         <li><a href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a href="user-history.html">تاریخچه</a></li>
-                                        <li><a href="wishlist.html">علاقه مندی ها</a></li>
+                                        <!-- <li><a href="wishlist.html">علاقه مندی ها</a></li> -->
                                         <li><a href="cart.html">سبد خرید</a></li>
                                         <li><a href="checkout.html">ادامه خرید</a></li>
                                         <li><a href="track-order.html">پیگیری سفارش</a></li>
-                                        <li><a href="user-invoice.html">فاکتور</a></li>
+                                        <!-- <li><a href="user-invoice.html">فاکتور</a></li> -->
                                     </ul>
                                 </div>
                             </div>
@@ -883,10 +939,10 @@
                                             </div>
                                             <div class="ec-vendor-block-detail">
                                                 <img class="v-img" src="assets/images/user/1.jpg" alt="vendor image">
-                                                <h5 class="name">مارینا ازاد</h5>
-                                                <p>( فروشنده )</p>
+                                                <h5 class="name"><?php echo $user['username'];?></h5>
+                                                <p>( کاربر )</p>
                                             </div>
-                                            <p>سلام <span>مارینا ازاد!</span></p>
+                                            <p>سلام <span><?php echo $user['name'];?> !</span></p>
                                             <p>از حساب کاربری شما امکان به راحتی سفارشات را مشاهده و ردیابی کنید. امکان
                                                 مدیریت و تغییر اطلاعات حساب کاربری خود را مانند آدرس، اطلاعات تماس و
                                                 تاریخ سفارشات را مدیریت کنید.</p>
@@ -897,20 +953,20 @@
                                             <div class="col-md-6 col-sm-12">
                                                 <div
                                                     class="ec-vendor-detail-block ec-vendor-block-email space-bottom-30">
-                                                    <h6>آدرس ایمیل <a href="javasript:void(0)"
+                                                    <h6>ایمیل  <a href="javasript:void(0)"
                                                             data-link-action="editmodal" title="ویرایش جزییات"
                                                             data-bs-toggle="modal" data-bs-target="#edit_modal"><img
                                                                 src="assets/images/icons/edit.svg"
                                                                 class="svg_img pro_svg" alt="edit"></a></h6>
                                                     <ul>
-                                                        <li><strong>ایمیل 1 : </strong><a
+                                                        <li><strong> <?php echo $user['email'];?></strong><a
                                                                 href="/cdn-cgi/l/email-protection" class="__cf_email__"
                                                                 data-cfemail="cebdbbbebea1bcbaff8eabb6afbea3a2abe0ada1a3">[email&#160;protected]</a>
                                                         </li>
-                                                        <li><strong>ایمیل 2 : </strong><a
+                                                        <!-- <li><strong>ایمیل 2 : </strong><a
                                                                 href="/cdn-cgi/l/email-protection" class="__cf_email__"
                                                                 data-cfemail="b0c3c5c0c0dfc2c482f0d5c8d1c0dddcd59ed3dfdd">[email&#160;protected]</a>
-                                                        </li>
+                                                        </li> -->
                                                     </ul>
                                                 </div>
                                             </div>
@@ -923,8 +979,8 @@
                                                                 src="assets/images/icons/edit.svg"
                                                                 class="svg_img pro_svg" alt="edit"></a></h6>
                                                     <ul>
-                                                        <li><strong>شماره تماس 1 : </strong>(123) 123 456 7890</li>
-                                                        <li><strong>شماره تماس 2 : </strong>(123) 123 456 7890</li>
+                                                        <li><strong>شماره تماس  : </strong><?php echo $user['mobile_number'];?></li>
+                                                        <!-- <li><strong>شماره تماس 2 : </strong>(123) 123 456 7890</li> -->
                                                     </ul>
                                                 </div>
                                             </div>
@@ -936,12 +992,11 @@
                                                                 src="assets/images/icons/edit.svg"
                                                                 class="svg_img pro_svg" alt="edit"></a></h6>
                                                     <ul>
-                                                        <li><strong>خانه : </strong>123، 2150 پلاک، متن ساختگی
-                                                            ، سان خوزه، کالیفرنیا - 95131.</li>
+                                                        <li><strong>خانه : </strong><?php echo $user['address'];?></li>
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-sm-12">
+                                            <!-- <div class="col-md-6 col-sm-12">
                                                 <div class="ec-vendor-detail-block ec-vendor-block-address">
                                                     <h6>آدرس ارسال<a href="javasript:void(0)"
                                                             data-link-action="editmodal" title="ویرایش جزییات"
@@ -953,7 +1008,7 @@
                                                             ، سان خوزه، کالیفرنیا - 95131.</li>
                                                     </ul>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -1157,32 +1212,32 @@
                                 </div>
                             </div>
                             <div class="ec-vendor-upload-detail">
-                                <form class="row g-3">
+                                <form class="row g-3" action="" method="post">
                                     <div class="col-md-6 space-t-15">
                                         <label class="form-label">نام</label>
-                                        <input type="text" class="form-control">
+                                        <input type="text" name="name" class="form-control" value="<?php echo $user['name'];?>">
                                     </div>
                                     <div class="col-md-6 space-t-15">
-                                        <label class="form-label">نام خانوادگی</label>
-                                        <input type="text" class="form-control">
+                                        <label class="form-label">نام کاربری</label>
+                                        <input type="text" name="username" class="form-control" value="<?php echo $user['username'];?>">
                                     </div>
                                     <div class="col-md-12 space-t-15">
                                         <label class="form-label">آدرس1</label>
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" name="address" value="<?php echo $user['address'];?>">
                                     </div>
-                                    <div class="col-md-12 space-t-15">
+                                    <!-- <div class="col-md-12 space-t-15">
                                         <label class="form-label">آدرس2</label>
                                         <input type="text" class="form-control">
                                     </div>
                                     <div class="col-md-12 space-t-15">
                                         <label class="form-label">آدرس3</label>
                                         <input type="text" class="form-control">
-                                    </div>
+                                    </div> -->
                                     <div class="col-md-6 space-t-15">
                                         <label class="form-label">ایمیل 1</label>
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" name="email" value="<?php echo $user['email'];?>">
                                     </div>
-                                    <div class="col-md-6 space-t-15">
+                                    <!-- <div class="col-md-6 space-t-15">
                                         <label class="form-label">ایمیل 2</label>
                                         <input type="text" class="form-control">
                                     </div>
@@ -1193,9 +1248,9 @@
                                     <div class="col-md-6 space-t-15">
                                         <label class="form-label">شماره تماس 2</label>
                                         <input type="text" class="form-control">
-                                    </div>
+                                    </div> -->
                                     <div class="col-md-12 space-t-15">
-                                        <button type="submit" class="btn btn-primary">به روز رسانی</button>
+                                        <button type="submit" name="update_profile" class="btn btn-primary">به روز رسانی</button>
                                         <a href="#" class="btn btn-lg btn-secondary qty_close" data-bs-dismiss="modal"
                                             aria-label="Close">بستن</a>
                                     </div>
