@@ -1,39 +1,36 @@
 ﻿<?php
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
-
-
-
+if(!isset($_SESSION['user_id'])){
+    header("Location:login.html");
+    exit();
+}
+$user_id=$_SESSION['user_id'];
 
 // اگر درخواست حذف محصول آمده:
 if (isset($_GET['remove'])) {
     $remove_id = $_GET['remove'];
-    // اگر محصول در سبد خرید است حذفش کن
-    if (isset($_SESSION['cart'][$remove_id])) {
-        unset($_SESSION['cart'][$remove_id]);
-    }
+    $user_id=$_SESSION['user_id'];
+   //حذف از جدول cart
+   $delete_sql="DELETE FROM carts WHERE user_id=$user_id AND product_id=$remove_id";
+   mysqli_query($conn,$delete_sql);
+    unset($_SESSION['cart'][$remove_id]);
+    
     // رفرش به cart.php برای جلوگیری از تکرار حذف در رفرش صفحه
     header("Location: cart.php");
     exit();
 }
 
-if(!isset($_SESSION['user_id'])){
-    header("Location: login.html");
-    exit();
-}
-
-// if(!isset($_SESSION['users_id'])){
-//     die("لطفا وارد حساب شوید");
-// }
-// $user_id = $_SESSION['users_id'];
 
 // گرفتن محصولات کاربر
-$sql = "SELECT c.quantity, b.*
+$sql = "SELECT c.quantity, c.product_id, b.*
         FROM carts c 
         JOIN books b ON c.product_id = b.id
         WHERE c.user_id = $user_id";
 $result = mysqli_query($conn, $sql);
 $total_price = 0;
+
+
 ?>
 
 
@@ -897,28 +894,11 @@ $total_price = 0;
         <div class="container">
             <div class="row">
                 <div class="ec-cart-leftside col-lg-8 col-md-12 ">
-                <?php
-// بررسی خالی بودن سبد خرید
-// if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
-//     echo "سبد خرید خالی است";
-//     exit();
-// }
-?>
 
 <!-- cart content Start -->
 <div class="ec-cart-content">
     <div class="ec-cart-inner">
       <?php 
-        // foreach($_SESSION['cart'] as $product_id => $qty){
-        //     // گرفتن اطلاعات محصول
-        //     $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
-        //     $result = mysqli_query($conn, $sql);
-        //     $product = mysqli_fetch_assoc($result);
-        //     // اگر محصول پیدا نشد، از حلقه ادامه بده
-        //     if (!$product) continue;
-        //     // محاسبه قیمت کل
-        //     $total = $product['price'] * $qty;
-
     while($row = mysqli_fetch_assoc($result)): 
     $line_total = $row['price'] * $row['quantity'];
     $total_price += $line_total;
@@ -943,7 +923,7 @@ $total_price = 0;
                                         <img class="ec-cart-pro-img mr-4"
                                              src="assets/images/products/<?php echo $row['image']; ?>" 
                                              alt="">
-                                        <?php echo $product['name']; ?>
+                                        <?php echo $row['name']; ?>
                                     </a>
                                 </td>
                                 <td data-label="Price" class="ec-cart-pro-price">
@@ -952,14 +932,14 @@ $total_price = 0;
                                 <td data-label="Quantity" class="ec-cart-pro-qty" style="text-align:center;">
                                     <div class="cart-qty-plus-minus">
                                         <input class="cart-plus-minus" type="text"
-                                               name="cartqtybutton" value="<?php echo $qty; ?>">
+                                               name="cartqtybutton" value="<?php echo $row['quantity']; ?>">
                                     </div>
                                 </td>
                                 <td data-label="Total" class="ec-cart-pro-subtotal">
-                                    <?php echo $total; ?>
+                                    <?php echo $line_total; ?>
                                 </td>
                                <td data-label="Remove" class="ec-cart-pro-remove">
-                                    <a href="cart.php?remove=<?php echo $row['id']; ?>">
+                                    <a href="cart.php?remove=<?php echo $row['product_id']; ?>">
                                         <i class="ecicon eci-trash-o"></i>
                                     </a>
                                 </td>
@@ -1052,7 +1032,8 @@ $shipping_cost = 8000; // هزینه ارسال
             </div>
         </div>
     </div>
-    <button class="btn btn-primary">پرداخت</button>
+    <form action="checkout.php" method="post"> <button class="btn btn-primary" type="submit">پرداخت</button>
+</form>
 </div>
   
                         <!-- Sidebar Summary Block -->
