@@ -1,20 +1,13 @@
 ﻿<?php
+session_start();
+
 include('../../config/db.php'); // اتصال به دیتابیس
-// //کاربر تو کادر جستجو چیزی نوشته یا نه
-// $search="";
-// if(isset($_GET['search'])&& $_GET['SEARCH']!=""){
-//     $search=mysqli_real_escape_string($conn,$_GET['search']);
-// }
-// //تعریف sql
-// if($search!=""){
-//     //درصورت وجود عبارت جستجو
-//     $sql="SELECT*FROM books WHERE name LIKE '%search%'ORDER BY created_at DESC";
-// }else{
-//     //بدون عبارت حستحو
-//     $sql="SELECT*FROM books ORDER BY created_at DESC";
-// }
-// $result=mysqli_query($conn,$sql);
-//دریافت محصولات از جدول به ترتیب تازه اضاقه شده
+
+if(!isset($_SESSION['sellers_id'])){
+    die("دسترسی غیرمجاز");
+}
+$seller_id=$_SESSION['sellers_id'];
+
 $sql="SELECT*FROM books ORDER BY created_at DESC";
 $result=mysqli_query($conn,$sql);
 ?>

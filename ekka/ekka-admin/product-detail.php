@@ -1,12 +1,19 @@
 ﻿<?php
 
+session_start();
+
+include('../../config/db.php'); // اتصال به دیتابیس
+
+if(!isset($_SESSION['sellers_id'])){
+    die("دسترسی غیرمجاز");
+}
+$seller_id=$_SESSION['sellers_id'];
 
 if (isset($_GET['id']) ) {
     $id=intval($_GET['id']);
 }else{
     die("NOT FOUND");
 }
-include('../../config/db.php'); // اتصال به دیتابیس
 
 $sql = "SELECT * FROM books WHERE id = $id";
 $result = mysqli_query($conn, $sql);

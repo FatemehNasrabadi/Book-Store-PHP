@@ -4,11 +4,11 @@ session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
 //اگر لاگین نبود
-if(!isset($_SESSION['user_id'])){
+if(!isset($_SESSION['users_id'])){
     header("Location: login.html");
     exit();
 }
-$user_id=$_SESSION['user_id'];
+$user_id=$_SESSION['users_id'];
 //گرفتن اطلاعات کاربر
 $sql="SELECT *FROM users WHERE id=$user_id LIMIT 1";
 $result=mysqli_query($conn,$sql);

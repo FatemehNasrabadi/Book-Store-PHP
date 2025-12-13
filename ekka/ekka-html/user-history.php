@@ -2,19 +2,20 @@
 session_start();
 
 include('../../config/db.php'); // اتصال به دیتابیس
-//بررسی ورود کاربر
-if(!isset($_SESSION['user_id'])){
-    die("لطفا وارد حساب شوید");
-}
-$user_id=$_SESSION['user_id'];
 
-$sql="
-SELECT o.id AS order_id, o.quantity, o.price AS total_price , o.order_time
+$user_id = $_SESSION['users_id'];
+
+$sql = "
+SELECT o.*, b.name, b.image
 FROM orders o
-JOIN books b ON o.product_id=b.id
-WHERE o.user_id=$user_id
-ORDER BY o.order_time DESC";
-$result=mysqli_query($conn,$sql);
+JOIN books b ON o.product_id = b.id
+WHERE o.user_id = $user_id
+ORDER BY o.order_time DESC
+";
+
+$result = mysqli_query($conn, $sql);
+
+
 
 //عدد سبد خرید
 $cart_count=0;
@@ -23,6 +24,15 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
         $cart_count+=intval($qty);
     }
 }
+
+$username = "اکانت";
+if (isset($_SESSION['users_id'])) {
+    $uid=$_SESSION['users_id'];
+    $q=mysqli_query($conn,"SELECT name FROM users WHERE id=$uid LIMIT 1");
+    $u=mysqli_fetch_assoc($q);
+    if($u)$username=$u['name'];
+}
+
 ?>
 
 <!--========================================================= 
@@ -139,7 +149,7 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                             <!-- Header User Start -->
                             <div class="ec-header-user dropdown">
                                 <button class="dropdown-toggle" data-bs-toggle="dropdown"><img
-                                        src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""></button>
+                                        src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""><?php echo $username;?></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                     <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
@@ -914,15 +924,15 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                     <?php while($row=mysqli_fetch_assoc($result)):?>
                                     <tbody>
                                         <tr>
-                                            <th scope="row"><span><?php echo $row['order_id'];?></span></th>
+                                            <th scope="row"><span><?php echo htmlspecialchars($row['product_id']) ;?></span></th>
                                             <td><img class="prod-img" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($row['image']);?>"
                                                     alt="product image"></td>
-                                            <td><span><?echo  htmlspecialchars($row['name']);?></span></td>
-                                            <td><span><?echo htmlspecialchars($row['order_time']);?></span></td>
-                                            <td><span> <?echo htmlspecialchars($row['price']);?></span></td>
+                                            <td><span><? echo  htmlspecialchars($row['name']);?></span></td>
+                                            <td><span><? echo htmlspecialchars($row['order_time']);?></span></td>
+                                            <td><span> <? echo htmlspecialchars($row['price']);?></span></td>
                                             <!-- <td><span>فعال</span></td> -->
                                             <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
+                                                        href="product-full-width.php?id<?php echo $row['product_id'];?>">مشاهده</a></span></td>
                                         </tr>
                                         <?php endwhile;?>
                                         <!-- <tr>

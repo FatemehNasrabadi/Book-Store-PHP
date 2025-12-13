@@ -2,10 +2,12 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
-if(!isset($_SESSION['user_id'])){
-    die("ابتدا وارد حساب شوید");
+
+if(!isset($_SESSION['users_id'])){
+    header("Location:login.html");
+    exit();
 }
-$user_id=$_SESSION['user_id'];
+$user_id=$_SESSION['users_id'];
 $product_id=$_GET['id'];
 
 //بررسی وجود محصول در سبد خرید کاربر

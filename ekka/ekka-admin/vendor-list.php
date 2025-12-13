@@ -1,5 +1,12 @@
 ﻿<?php 
+session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
+
+if(!isset($_SESSION['sellers_id'])){
+    die("دسترسی غیرمجاز");
+}
+$seller_id=$_SESSION['sellers_id'];
+
 //گرقتن اطلاعات فروشنده ها از حدول 
 $sql="SELECT*FROM sellers ORDER BY created_at DESC";
 $result=mysqli_query($conn,$sql);

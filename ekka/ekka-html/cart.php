@@ -1,36 +1,52 @@
 ﻿<?php
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
-if(!isset($_SESSION['user_id'])){
-    header("Location:login.html");
-    exit();
-}
-$user_id=$_SESSION['user_id'];
+// if(!isset($_SESSION['user_id'])){
+//     header("Location:login.html");
+//     exit();
+// }
+// $user_id=$_SESSION['users_id'];
 
-// اگر درخواست حذف محصول آمده:
-if (isset($_GET['remove'])) {
-    $remove_id = $_GET['remove'];
-    $user_id=$_SESSION['user_id'];
-   //حذف از جدول cart
-   $delete_sql="DELETE FROM carts WHERE user_id=$user_id AND product_id=$remove_id";
-   mysqli_query($conn,$delete_sql);
-    unset($_SESSION['cart'][$remove_id]);
+// // اگر درخواست حذف محصول آمده:
+// if (isset($_GET['remove'])) {
+//     $remove_id = $_GET['remove'];
+//     $user_id=$_SESSION['user_id'];
+//    //حذف از جدول cart
+//    $delete_sql="DELETE FROM carts WHERE user_id=$user_id AND product_id=$remove_id";
+//    mysqli_query($conn,$delete_sql);
+//     unset($_SESSION['cart'][$remove_id]);
     
-    // رفرش به cart.php برای جلوگیری از تکرار حذف در رفرش صفحه
-    header("Location: cart.php");
+//     // رفرش به cart.php برای جلوگیری از تکرار حذف در رفرش صفحه
+//     header("Location: cart.php");
+//     exit();
+// }
+
+
+// // گرفتن محصولات کاربر
+// $sql = "SELECT c.quantity, c.product_id, b.*
+//         FROM carts c 
+//         JOIN books b ON c.product_id = b.id
+//         WHERE c.user_id = $user_id";
+// $result = mysqli_query($conn, $sql);
+// $total_price = 0;
+
+
+
+if (!isset($_SESSION['users_id'])) {
+    header("Location: login.php");
     exit();
 }
 
+$user_id = $_SESSION['users_id'];
 
-// گرفتن محصولات کاربر
-$sql = "SELECT c.quantity, c.product_id, b.*
-        FROM carts c 
-        JOIN books b ON c.product_id = b.id
-        WHERE c.user_id = $user_id";
+$sql = "
+SELECT c.product_id, c.quantity, b.name, b.price, b.image
+FROM carts c
+JOIN books b ON c.product_id = b.id
+WHERE c.user_id = $user_id
+";
+
 $result = mysqli_query($conn, $sql);
-$total_price = 0;
-
-
 ?>
 
 
@@ -1032,7 +1048,7 @@ $shipping_cost = 8000; // هزینه ارسال
             </div>
         </div>
     </div>
-    <form action="checkout.php" method="post"> <button class="btn btn-primary" type="submit">پرداخت</button>
+    <form > <button href="checkout.php" class="btn btn-primary" type="submit">پرداخت</button>
 </form>
 </div>
   

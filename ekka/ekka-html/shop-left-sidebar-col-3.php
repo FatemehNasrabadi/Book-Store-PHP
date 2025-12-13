@@ -5,7 +5,7 @@ include('../../config/db.php'); // اتصال به دیتابیس
 
 $username = "اکانت";
 if (isset($_SESSION['users_id'])) {
-    $uid=$_SESSION['user_id'];
+    $uid=$_SESSION['users_id'];
     $q=mysqli_query($conn,"SELECT name FROM users WHERE id=$uid LIMIT 1");
     $u=mysqli_fetch_assoc($q);
     if($u)$username=$u['name'];
