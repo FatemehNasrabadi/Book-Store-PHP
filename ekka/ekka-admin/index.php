@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+﻿<?php
+session_start();
+include('../../config/db.php'); // اتصال به دیتابیس
+
+// if(!isset($_SESSION['sellers_id'])){
+//     die("دسترسی غیرمجاز");
+// }
+// $seller_id=$_SESSION['sellers_id'];
+
+//تعداد ثبتنام روزانه کاربران
+$sql_users="SELECT COUNT (*) AS total_users FROM users";
+$res_users=mysqli_query($conn,$sql_users);
+$row_users=mysqli_fetch_assoc($res_users);
+$total_users=$row_users['total_users'];
+
+?>
+
+
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -376,8 +394,8 @@
                         <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
                             <div class="card card-mini dash-card card-1">
                                 <div class="card-body">
-                                    <h2 class="mb-1">1,503</h2>
-                                    <p>ثبت نام روزانه</p><span class="mdi mdi-account-arrow-left"></span>
+                                    <h2 class="mb-1"><?php echo $total_users;?></h2>
+                                    <p>تعداد کل کاربران  </p><span class="mdi mdi-account-arrow-left"></span>
                                 </div>
                             </div>
                         </div>
