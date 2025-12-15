@@ -2,17 +2,49 @@
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
-// if(!isset($_SESSION['sellers_id'])){
-//     die("دسترسی غیرمجاز");
-// }
-// $seller_id=$_SESSION['sellers_id'];
+if(!isset($_SESSION['sellers_id'])){
+    header("Location: sign-in.html");
+    exit();
+}
+$seller_id=intval($_SESSION['sellers_id']);
 
-//تعداد ثبتنام روزانه کاربران
-$sql_users="SELECT COUNT (*) AS total_users FROM users";
+//تعداد ثبتنام کاربران
+$sql_users="SELECT COUNT(*) AS total_users FROM users";
 $res_users=mysqli_query($conn,$sql_users);
 $row_users=mysqli_fetch_assoc($res_users);
 $total_users=$row_users['total_users'];
 
+//تعداد کل سفارش ها
+$sql_orders="SELECT COUNT(*) AS total_orders FROM orders";
+$res_orders=mysqli_query($conn,$sql_orders);
+$row_orders=mysqli_fetch_assoc($res_orders);
+$total_orders=$row_orders['total_orders'];
+
+//تعداد سفارش فروشنده
+$sql_orders_seller = "
+    SELECT COUNT(*) AS total_seller_orders
+    FROM orders
+    WHERE seller_id = $seller_id
+";
+
+$seller_order = mysqli_query($conn, $sql_orders_seller);
+if (!$seller_order) {
+    die("خطا در اجرای کوئری سفارش‌ها: " . mysqli_error($conn));
+}
+$row_seller_order = mysqli_fetch_assoc($seller_order);
+$total_seller_orders = $row_seller_order['total_seller_orders'] ?? 0;
+
+//درامد کل فروشنده
+$sql_income="
+SELECT SUM(price) AS total_income
+FROM orders
+WHERE seller_id=$seller_id";
+$res_income=mysqli_query($conn,$sql_income);
+if(!$res_income){
+    die("خطا در اجرای کوئری".mysqli_error($conn));
+}
+$row_income=mysqli_fetch_assoc($res_income);
+$total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
 ?>
 
 
@@ -402,24 +434,24 @@ $total_users=$row_users['total_users'];
                         <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
                             <div class="card card-mini dash-card card-2">
                                 <div class="card-body">
-                                    <h2 class="mb-1">79,503</h2>
-                                    <p>بازدید کننده روزانه</p><span class="mdi mdi-account-clock"></span>
+                                    <h2 class="mb-1"><?php echo $total_seller_orders;?></h2>
+                                    <p>تعداد کل سفارش شما  </p><span class="mdi mdi-account-clock"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
                             <div class="card card-mini dash-card card-3">
                                 <div class="card-body">
-                                    <h2 class="mb-1">15,503</h2>
-                                    <p>سفارش روزانه</p><span class="mdi mdi-package-variant"></span>
+                                    <h2 class="mb-1"><?php echo $total_orders;?></h2>
+                                    <p>تعداد کل سفارش ها </p><span class="mdi mdi-package-variant"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
                             <div class="card card-mini dash-card card-4">
                                 <div class="card-body">
-                                    <h2 class="mb-1">98,503 تومان</h2>
-                                    <p>درآمد روزانه</p><span class="mdi mdi-currency-usd"></span>
+                                    <h2 class="mb-1"><?php echo $total_income;?></h2>
+                                    <p>درآمد کل فروشنده</p><span class="mdi mdi-currency-usd"></span>
                                 </div>
                             </div>
                         </div>
