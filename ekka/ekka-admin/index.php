@@ -8,17 +8,20 @@ if(!isset($_SESSION['sellers_id'])){
 }
 $seller_id=intval($_SESSION['sellers_id']);
 
+
 //تعداد ثبتنام کاربران
 $sql_users="SELECT COUNT(*) AS total_users FROM users";
 $res_users=mysqli_query($conn,$sql_users);
 $row_users=mysqli_fetch_assoc($res_users);
 $total_users=$row_users['total_users'];
 
+
 //تعداد کل سفارش ها
 $sql_orders="SELECT COUNT(*) AS total_orders FROM orders";
 $res_orders=mysqli_query($conn,$sql_orders);
 $row_orders=mysqli_fetch_assoc($res_orders);
 $total_orders=$row_orders['total_orders'];
+
 
 //تعداد سفارش فروشنده
 $sql_orders_seller = "
@@ -34,6 +37,7 @@ if (!$seller_order) {
 $row_seller_order = mysqli_fetch_assoc($seller_order);
 $total_seller_orders = $row_seller_order['total_seller_orders'] ?? 0;
 
+
 //درامد کل فروشنده
 $sql_income="
 SELECT SUM(price) AS total_income
@@ -45,12 +49,86 @@ if(!$res_income){
 }
 $row_income=mysqli_fetch_assoc($res_income);
 $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
+
+
+
+/* فروش سالانه نمودار*/
+// ایجاد آرایه‌ای برای ماه‌های شمسی با مقدار اولیه صفر
+$months = ['فروردین'=>0,'اردیبهشت'=>0,'خرداد'=>0,'تیر'=>0,'مرداد'=>0,'شهریور'=>0,'مهر'=>0,'آبان'=>0,'آذر'=>0,'دی'=>0,'بهمن'=>0,'اسفند'=>0];
+
+// کوئری گرفتن مجموع فروش هر ماه از جدول orders برای فروشنده
+$sql_yearly = "
+    SELECT MONTH(order_time) AS month, SUM(price * quantity) AS total
+    FROM orders
+    WHERE seller_id = $seller_id AND YEAR(order_time) = YEAR(CURDATE())
+    GROUP BY MONTH(order_time)
+";
+
+$res_yearly = mysqli_query($conn, $sql_yearly);
+if(!$res_yearly) {
+    die("خطا در دریافت داده‌های نمودار: " . mysqli_error($conn));
+}
+
+// پر کردن آرایه ماه‌ها با مقدار واقعی
+while($row = mysqli_fetch_assoc($res_yearly)){
+    $month_index = (int)$row['month'] - 1; // MONTH() عدد 1 تا 12 میده
+    $months[array_keys($months)[$month_index]] = (float)$row['total'];
+}
+
+// آماده کردن آرایه‌ها برای جاوااسکریپت
+$labels = json_encode(array_keys($months));
+$data = json_encode(array_values($months));
+
+
+//لیست سقارشات اخیر
+// گرفتن آخرین 10 سفارش فروشنده
+$sql_recent_orders = "
+SELECT o.id AS order_id, o.quantity, o.price, o.order_time, b.name AS product_name, b.image AS product_image
+FROM orders o
+JOIN books b ON o.product_id = b.id
+WHERE o.seller_id = $seller_id
+ORDER BY o.order_time DESC
+LIMIT 10
+";
+
+$result_recent_orders = mysqli_query($conn, $sql_recent_orders);
+if(!$result_recent_orders){
+    die("خطا در اجرای کوئری سفارشات اخیر: " . mysqli_error($conn));
+}
+
+
+//لیست مشتریان اخیر
+$sql_new_users="
+SELECT 
+ u.id, u.name, u.username, 
+ COUNT(o.id) AS total_orders,
+ COALESCE(SUM(o.price*o.quantity), 0) AS total_spent
+ FROM users u
+ LEFT JOIN orders o ON u.id=o.user_id 
+ GROUP BY u.id
+ ORDER BY u.created_at DESC LIMIT 5";
+ $res_new_users=mysqli_query($conn,$sql_new_users);
+ if(!$res_new_users){
+    die("خطا در دریافت مشتریان جدید:".mysqli_error($conn));
+ }
+
+
+ //لیست پرفروش ترین 
+$sql_top_product="
+SELECT id,name,price,category,image,sold_count
+FROM books
+WHERE sold_count>0
+AND status='actives'
+ORDER BY sold_count DESC LIMIT 5";
+$res_top_product=mysqli_query($conn,$sql_top_product);
+if(!$res_top_product){
+    die('خطا:'.mysqli_error($conn));
+}
 ?>
 
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -457,7 +535,7 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xl-8 col-md-12 p-b-15">
+                        <!-- <div class="col-xl-8 col-md-12 p-b-15">
                             <div id="user-acquisition" class="card card-default">
                                 <div class="card-header">
                                     <h2> گزارش فروش </h2>
@@ -477,8 +555,26 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                                     </div>
                                 </div>
                             </div>
+                        </div> -->
+                        <div class="row justify-content-center mb-4"> 
+                             <div class=" col-xl-8 col-md-12 p-b-15 col-12 mb-4">
+                          <div id="user-acquisition-yearly" class="card card-default" style="width: 100%; " >
+                                 <div class="card-header">
+                                       <h2>گزارش فروش سالانه</h2>
+                                   </div>
+                            <div class="card-body" >
+                         <div class="mb-6" style="max-height:300px">
+                          <canvas id="chartYearlySales"></canvas>
+                         <div id="legendYearlySales" class="customLegend mb-2"></div>
                         </div>
-                        <div class="col-xl-4 col-md-12 p-b-15">
+                        </div>
+             </div>
+            </div></div>
+                      
+
+
+
+                        <!-- <div class="col-xl-4 col-md-12 p-b-15">
                             <div class="card card-default">
                                 <div class="card-header justify-content-center">
                                     <h2>نظارت بر سفارشات</h2>
@@ -506,9 +602,9 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
+                        </div> -->
+                    <!-- </div> -->
+                    <!-- <div class="row">
                         <div class="col-xl-8 col-md-12 p-b-15">
                             <div class="card card-default" id="user-activity">
                                 <div class="no-gutters">
@@ -536,8 +632,8 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                                 <div class="card-footer d-flex flex-wrap bg-white border-top"><a href="#" class="text-uppercase py-3">گزارش جزئیات</a></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
+                    </div> -->
+                    <!-- <div class="row">
                         <div class="col-xl-8 col-12 p-b-15">
                             <div class="card card-default" id="analytics-country">
                                 <div class="card-header justify-content-between">
@@ -643,109 +739,48 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                                 <div class="card-footer d-flex flex-wrap bg-white"><a href="#" class="text-uppercase py-3"> مشاهده گزارش </a></div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
+                    
+                    <!-- لیست سفارشات اخیر -->
                     <div class="row">
                         <div class="col-12 p-b-15">
                             <div class="card card-table-border-none card-default recent-orders" id="recent-orders">
                                 <div class="card-header justify-content-between">
                                     <h2>سفارشات اخیر</h2>
-                                    <div class="date-range-report"><span></span></div>
+                                    <!-- <div class="date-range-report"><span></span></div> -->
                                 </div>
                                 <div class="card-body pt-0 pb-5">
                                     <table class="table card-table table-responsive table-responsive-large" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>شماره سفارش</th>
+                                                <th>ایدی سفارش</th>
                                                 <th>نام محصول</th>
-                                                <th class="d-none d-lg-table-cell">واحد</th>
+                                                <th class="d-none d-lg-table-cell">تعداد</th>
                                                 <th class="d-none d-lg-table-cell">تاریخ سفارش</th>
                                                 <th class="d-none d-lg-table-cell">هزینه سفارش</th>
-                                                <th>وضع</th>
+                                                <th>تصویر</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <?php while($row=mysqli_fetch_assoc($result_recent_orders)):?>
                                             <tr>
-                                                <td>24541</td>
-                                                <td><a class="text-dark" href="#">مربی</a></td>
-                                                <td class="d-none d-lg-table-cell">1 واحد</td>
-                                                <td class="d-none d-lg-table-cell">دی 20, 1401</td>
-                                                <td class="d-none d-lg-table-cell"> 230 تومان</td>
-                                                <td><span class="badge badge-success">تکمیل شده</span></td>
+                                                <td><?php echo $row['order_id'];?></td>
+                                                <td><a class="text-dark" href="#"><?php echo htmlspecialchars( $row['product_name']);?></a></td>
+                                                <td class="d-none d-lg-table-cell"><?php echo htmlspecialchars( $row['quantity']);?></td>
+                                                <td class="d-none d-lg-table-cell"> <?php echo jdate('d F Y', strtotime($row['order_time'])); ?> </td>
+                                                <td class="d-none d-lg-table-cell"> <?php echo htmlspecialchars( $row['price']);?></td>
+                                                <td><span class="badge badge-success"> <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars( $row['product_image']);?>" style="width: 50px; height:auto;" ></span></td>
                                                 <td class="text-right">
                                                     <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-recent-order1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
                                                         <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li class="dropdown-item"><a href="#"> مشاهده </a></li>
-                                                            <li class="dropdown-item"><a href="#"> حذف </a></li>
+                                                            <li class="dropdown-item"><a href="product-detail.php?id=<?php echo $row['order_id'];?>"> مشاهده </a></li>
+                                                            <!-- <li class="dropdown-item"><a href="#"> حذف </a></li> -->
                                                         </ul>
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>24541</td>
-                                                <td><a class="text-dark" href="#">کفش های کودک نو پا</a></td>
-                                                <td class="d-none d-lg-table-cell">2 واحد</td>
-                                                <td class="d-none d-lg-table-cell">آذر 15, 1401</td>
-                                                <td class="d-none d-lg-table-cell">550 تومان</td>
-                                                <td><span class="badge badge-primary"> تاخیر </span></td>
-                                                <td class="text-right">
-                                                    <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-recent-order2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                                        <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li class="dropdown-item"><a href="#"> مشاهده </a></li>
-                                                            <li class="dropdown-item"><a href="#"> حذف </a></li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>24541</td>
-                                                <td><a class="text-dark" href="#"> کلاه سیاه مناسب </a></td>
-                                                <td class="d-none d-lg-table-cell">1 واحد</td>
-                                                <td class="d-none d-lg-table-cell">آذر 18, 1401</td>
-                                                <td class="d-none d-lg-table-cell"> 325 تومان</td>
-                                                <td><span class="badge badge-warning">معلق</span></td>
-                                                <td class="text-right">
-                                                    <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-recent-order3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                                        <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li class="dropdown-item"><a href="#"> مشاهده </a></li>
-                                                            <li class="dropdown-item"><a href="#"> حذف </a></li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>24541</td>
-                                                <td><a class="text-dark" href="#">کوله پشتی مردانه،  کلاه شنا</a>
-                                                </td>
-                                                <td class="d-none d-lg-table-cell">5 واحد</td>
-                                                <td class="d-none d-lg-table-cell">خرداد 13, 1401</td>
-                                                <td class="d-none d-lg-table-cell">200 تومان</td>
-                                                <td><span class="badge badge-success">تکمیل شده</span></td>
-                                                <td class="text-right">
-                                                    <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-recent-order4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                                        <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li class="dropdown-item"><a href="#"> مشاهده </a></li>
-                                                            <li class="dropdown-item"><a href="#"> حذف </a></li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>24541</td>
-                                                <td><a class="text-dark" href="#">تابلو سرعت  </a></td>
-                                                <td class="d-none d-lg-table-cell">1 واحد</td>
-                                                <td class="d-none d-lg-table-cell">خرداد 23, 1401</td>
-                                                <td class="d-none d-lg-table-cell">150 تومان</td>
-                                                <td><span class="badge badge-danger"> لغو شده </span></td>
-                                                <td class="text-right">
-                                                    <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-recent-order5" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                                        <ul class="dropdown-menu dropdown-menu-right">
-                                                            <li class="dropdown-item"><a href="#"> مشاهده </a></li>
-                                                            <li class="dropdown-item"><a href="#"> حذف </a></li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                      <?php endwhile;?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -756,98 +791,35 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                         <div class="col-xl-5">
                             <div class="card ec-cust-card card-table-border-none card-default">
                                 <div class="card-header justify-content-between">
-                                    <h2>مشتریان جدید</h2>
-                                    <div><button class="text-black-50 mr-2 font-size-20"><i class="mdi mdi-cached"></i></button>
-                                        <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-customar" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li class="dropdown-item"><a href="#">فعالیت</a></li>
-                                                <li class="dropdown-item"><a href="#">فعالیت دیگر</a></li>
-                                                <li class="dropdown-item"><a href="#">یک فعالیت دیگر</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <h2>مشتریان جدیدا اضافه شده</h2>
                                 </div>
                                 <div class="card-body pt-0 pb-15px">
                                     <table class="table">
                                         <tbody>
+                                            <?php if(mysqli_num_rows($res_new_users)==0): ?>
+                                                <tr>
+                                                    <td>مشتری جدیدی ثبتنام نکرده است</td>
+                                                </tr>
+                                                <?php 
+                                            else: 
+                                            while($user=mysqli_fetch_assoc($res_new_users)):
+                                            ?>
                                             <tr>
                                                 <td>
                                                     <div class="media">
-                                                        <div class="media-image mr-3 rounded-circle"><a href="profile.html"><img class="profile-img rounded-circle w-45" src="assets/img/user/u1.jpg" alt="customer image"></a></div>
+                                                        <div class="media-image mr-3 rounded-circle"><a href="user-profile.html?id=<?php echo $user['id'];?>"><img class="profile-img rounded-circle w-45" src="assets/img/user/u1.jpg" alt="customer image"></a></div>
                                                         <div class="media-body align-self-center"><a href="profile.html">
-                                                                <h6 class="mt-0 text-dark font-weight-medium">سلنا
-                                                                    واگن</h6>
-                                                            </a> <small>@selena.oi</small></div>
+                                                                <h6 class="mt-0 text-dark font-weight-medium"><?php echo $user['name'];?>
+                                                                   </h6>
+                                                            </a> <small><?php echo $user['username'];?></small></div>
                                                     </div>
                                                 </td>
-                                                <td>2 سفارش</td>
-                                                <td class="text-dark d-none d-md-block">150 تومان</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-image mr-3 rounded-circle"><a href="profile.html"><img class="profile-img rounded-circle w-45" src="assets/img/user/u2.jpg" alt="customer image"></a></div>
-                                                        <div class="media-body align-self-center"><a href="profile.html">
-                                                                <h6 class="mt-0 text-dark font-weight-medium">والتر
-                                                                    روتر</h6>
-                                                            </a> <small>@walter.me</small></div>
-                                                    </div>
-                                                </td>
-                                                <td>5 سفارش</td>
-                                                <td class="text-dark d-none d-md-block">200 تومان</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-image mr-3 rounded-circle"><a href="profile.html"><img class="profile-img rounded-circle w-45" src="assets/img/user/u3.jpg" alt="customer image"></a></div>
-                                                        <div class="media-body align-self-center"><a href="profile.html">
-                                                                <h6 class="mt-0 text-dark font-weight-medium">لاریسا
-                                                                    گرگارد</h6>
-                                                            </a> <small>@larissa.gb</small></div>
-                                                    </div>
-                                                </td>
-                                                <td>1 سفارش</td>
-                                                <td class="text-dark d-none d-md-block">50 تومان</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-image mr-3 rounded-circle"><a href="profile.html"><img class="profile-img rounded-circle w-45" src="assets/img/user/u4.jpg" alt="customer image"></a></div>
-                                                        <div class="media-body align-self-center"><a href="profile.html">
-                                                                <h6 class="mt-0 text-dark font-weight-medium">البرخت
-                                                                    سخت</h6>
-                                                            </a> <small>@albrech.as</small></div>
-                                                    </div>
-                                                </td>
-                                                <td>2 سفارش</td>
-                                                <td class="text-dark d-none d-md-block">100 تومان</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-image mr-3 rounded-circle"><a href="profile.html"><img class="profile-img rounded-circle w-45" src="assets/img/user/u5.jpg" alt="customer image"></a></div>
-                                                        <div class="media-body align-self-center"><a href="profile.html">
-                                                                <h6 class="mt-0 text-dark font-weight-medium">لئوپولد
-                                                                    اربات</h6>
-                                                            </a> <small>@leopold.et</small></div>
-                                                    </div>
-                                                </td>
-                                                <td>1 سفارش</td>
-                                                <td class="text-dark d-none d-md-block">60 تومان</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="media">
-                                                        <div class="media-image mr-3 rounded-circle"><a href="profile.html"><img class="profile-img rounded-circle w-45" src="assets/img/user/u3.jpg" alt="customer image"></a></div>
-                                                        <div class="media-body align-self-center"><a href="profile.html">
-                                                                <h6 class="mt-0 text-dark font-weight-medium">لاریسا
-                                                                    گرگارد</h6>
-                                                            </a> <small>@larissa.gb</small></div>
-                                                    </div>
-                                                </td>
-                                                <td>1 سفارش</td>
-                                                <td class="text-dark d-none d-md-block">50 تومان</td>
-                                            </tr>
+                                                <td><?php echo $user['total_orders'];?> سفارش</td>
+                                                <td class="text-dark d-none d-md-block"> تومان <?php echo number_format($user['total_spent']); ?></td>
+                                                <?php
+                                                endwhile;
+                                            endif;
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -857,54 +829,29 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                             <div class="card card-default ec-card-top-prod">
                                 <div class="card-header justify-content-between">
                                     <h2>محصولات برتر</h2>
-                                    <div><button class="text-black-50 mr-2 font-size-20"><i class="mdi mdi-cached"></i></button>
-                                        <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-product" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li class="dropdown-item"><a href="#">بروزرسانی اطلاعات</a></li>
-                                                <li class="dropdown-item"><a href="#"> جزییات </a></li>
-                                                <li class="dropdown-item"><a href="#">آمار</a></li>
-                                                <li class="dropdown-item"><a href="#">اطلاعات روشن</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
-                                <div class="card-body mt-10px mb-10px py-0">
+                                <div class="card-body mt-10px mb-10px py-0" >
+                                    <?php if(mysqli_num_rows($res_top_product)==0):?>
+                                        <p class="text-center py-4">محصول فروخته شده وجود ندارد</p>
+                                        <?php else: 
+                                            while($row=mysqli_fetch_assoc($res_top_product)):
+                                            ?>
                                     <div class="row media d-flex pt-15px pb-15px">
-                                        <div class="col-lg-3 col-md-3 col-2 media-image align-self-center rounded"><a href="#"><img src="assets/img/products/p1.jpg" alt="customer image"></a>
+                                        <div class="col-lg-3 col-md-3 col-2 media-image align-self-center rounded"><a href="product-detail.php?id=<?php echo $row['id'];?>"><img src="../ekka-html/assets/images/products/<?php echo $row['image'];?>" alt="customer image"></a>
                                         </div>
                                         <div class="col-lg-9 col-md-9 col-10 media-body align-self-center ec-pos"><a href="#">
-                                                <h6 class="mb-10px text-dark font-weight-medium">کفش پنبه کودک</h6>
+                                                <h6 class="mb-10px text-dark font-weight-medium"><?php echo $row['name'];?>  </h6>
                                             </a>
-                                            <p class="float-md-right sale"><span class="mr-2">58</span>تخفیف</p>
-                                            <p class="d-none d-md-block">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
-                                            <p class="mb-0 ec-price"><span class="text-dark">520 تومان</span> <del>580 تومان</del>
+                                            <p class="float-md-right sale"><span class="mr-2"> <?php echo $row['category'];?>:دسته بندی</span></p>
+                                            <!-- <p class="d-none d-md-block">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p> -->
+                                            <p class="mb-0 ec-price"><span class="text-dark"><?php echo $row['price'];?> تومان</span> 
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="row media d-flex pt-15px pb-15px">
-                                        <div class="col-lg-3 col-md-3 col-2 media-image align-self-center rounded"><a href="#"><img src="assets/img/products/p2.jpg" alt="customer image"></a>
-                                        </div>
-                                        <div class="col-lg-9 col-md-9 col-10 media-body align-self-center ec-pos"><a href="#">
-                                                <h6 class="mb-10px text-dark font-weight-medium">هودی برای مردان</h6>
-                                            </a>
-                                            <p class="float-md-right sale"><span class="mr-2">20</span>تخفیف</p>
-                                            <p class="d-none d-md-block">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
-                                            <p class="mb-0 ec-price"><span class="text-dark">250 تومان</span> <del>300 تومان</del>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="row media d-flex pt-15px pb-15px">
-                                        <div class="col-lg-3 col-md-3 col-2 media-image align-self-center rounded"><a href="#"><img src="assets/img/products/p3.jpg" alt="customer image"></a>
-                                        </div>
-                                        <div class="col-lg-9 col-md-9 col-10 media-body align-self-center ec-pos"><a href="#">
-                                                <h6 class="mb-10px text-dark font-weight-medium">تی شرت آستین بلند</h6>
-                                            </a>
-                                            <p class="float-md-right sale"><span class="mr-2">10</span>تخفیف</p>
-                                            <p class="d-none d-md-block">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
-                                            <p class="mb-0 ec-price"><span class="text-dark">480 تومان</span> <del>654 تومان</del>
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <?php
+                                    endwhile;
+                                endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -940,6 +887,34 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
     <script src="assets/js/date-range.js"></script>
     <script src="assets/plugins/options-sidebar/optionswitcher.js"></script>
     <script src="assets/js/ekka.js"></script>
+    <!-- نمودار فروش -->
+    <script>
+var ctxYearly = document.getElementById('chartYearlySales').getContext('2d');
+var chartYearlySales = new Chart(ctxYearly, {
+    type: 'bar',
+    data: {
+        labels: <?php echo $labels; ?>,
+        datasets: [{
+            label: 'فروش ماهانه (تومان)',
+            data: <?php echo $data; ?>,
+            backgroundColor: '#4e73df'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
 </body>
 
 </html>

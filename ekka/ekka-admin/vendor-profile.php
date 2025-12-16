@@ -1,14 +1,15 @@
 ﻿<?php 
-include('../../config/db.php'); // اتصال به دیتابیس
 session_start();
+include('../../config/db.php'); // اتصال به دیتابیس
+
 if(!isset($_SESSION['sellers_id'])){
-    // header("Location:sign-in.html");
-    // exit();
-    echo "notfound";
+    header("Location: sign-in.html");
+    exit();
 }
-$sellers_id=intval($_SESSION['sellers_id']);//ای دی فروشنده وارد شده
+$seller_id=intval($_SESSION['sellers_id']);
+
 //گرفتن اطلاعات فروشنده از دیتابیس
-$sql="SELECT*FROM sellers WHERE id=$sellers_id";
+$sql="SELECT*FROM sellers WHERE id=$seller_id";
 $result=mysqli_query($conn,$sql);
 //بررسی وجود نتیجه
 if($result&&mysqli_num_rows($result)>0){
@@ -16,6 +17,35 @@ if($result&&mysqli_num_rows($result)>0){
 }else{
     die("اظلاعات فروشنده یافت نشد");
 }
+
+//لیست سقارشات اخیر
+// گرفتن آخرین 10 سفارش فروشنده
+$sql_recent_orders = "
+SELECT o.id AS order_id, o.quantity, o.price, o.order_time, b.name AS product_name, b.image AS product_image
+FROM orders o
+JOIN books b ON o.product_id = b.id
+WHERE o.seller_id = $seller_id
+ORDER BY o.order_time DESC
+LIMIT 10
+";
+
+$result_recent_orders = mysqli_query($conn, $sql_recent_orders);
+if(!$result_recent_orders){
+    die("خطا در اجرای کوئری سفارشات اخیر: " . mysqli_error($conn));
+}
+
+
+//درامد کل فروشنده
+$sql_income="
+SELECT SUM(price) AS total_income
+FROM orders
+WHERE seller_id=$seller_id";
+$res_income=mysqli_query($conn,$sql_income);
+if(!$res_income){
+    die("خطا در اجرای کوئری".mysqli_error($conn));
+}
+$row_income=mysqli_fetch_assoc($res_income);
+$total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
 ?>
 <!DOCTYPE html>
 
@@ -453,7 +483,7 @@ if($result&&mysqli_num_rows($result)>0){
                                         <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                             <div class="tab-widget mt-5">
                                                 <div class="row">
-                                                    <div class="col-xl-4">
+                                                    <!-- <div class="col-xl-4">
                                                         <div class="media widget-media p-3 bg-white border">
                                                             <div class="icon rounded-circle mr-3 bg-primary"><i class="mdi mdi-account-outline text-white"></i>
                                                             </div>
@@ -462,8 +492,8 @@ if($result&&mysqli_num_rows($result)>0){
                                                                 <p>کاربران جدید</p>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-xl-4">
+                                                    </div> -->
+                                                    <!-- <div class="col-xl-4">
                                                         <div class="media widget-media p-3 bg-white border">
                                                             <div class="icon rounded-circle bg-warning mr-3"><i class="mdi mdi-cart-outline text-white"></i></div>
                                                             <div class="media-body align-self-center">
@@ -471,13 +501,14 @@ if($result&&mysqli_num_rows($result)>0){
                                                                 <p>سفارش ثبت شد</p>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="col-xl-4">
                                                         <div class="media widget-media p-3 bg-white border">
                                                             <div class="icon rounded-circle mr-3 bg-success"><i class="mdi mdi-diamond-stone text-white"></i></div>
                                                             <div class="media-body align-self-center">
-                                                                <h4 class="text-primary mb-2">1450</h4>
+                                                                <h4 class="text-primary mb-2"><?php echo $total_income;?></h4>
                                                                 <p>کل فروش</p>
+                                                                
                                                             </div>
                                                         </div>
                                                     </div>
@@ -485,20 +516,7 @@ if($result&&mysqli_num_rows($result)>0){
                                                 <div class="row">
                                                     <div class="col-xl-12">
                                                         <div class="card card-default mb-24px">
-                                                            <div class="card-header justify-content-between mb-1">
-                                                                <h2>آخرین اعلان ها</h2>
-                                                                <div><button class="text-black-50 mr-2 font-size-20"><i class="mdi mdi-cached"></i></button>
-                                                                    <div class="dropdown show d-inline-block widget-dropdown">
-                                                                        <a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-notification" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-notification">
-                                                                            <li class="dropdown-item"><a href="#">فعالیت</a></li>
-                                                                            <li class="dropdown-item"><a href="#">فعالیت دیگر</a></li>
-                                                                            <li class="dropdown-item"><a href="#">یک فعالیت دیگر</a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            
                                                             <div class="card-body compact-notifications" data-simplebar="" style="height:434px">
                                                                 <div class="media pb-3 align-items-center justify-content-between">
                                                                     <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
@@ -509,60 +527,6 @@ if($result&&mysqli_num_rows($result)>0){
                                                                     </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
                                                                         صبح</span>
                                                                 </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-success text-white">
-                                                                        <i class="mdi mdi-email-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">استعلام جدید</a>
-                                                                        <p>فیلین سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 9
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-warning text-white">
-                                                                        <i class="mdi mdi-stack-exchange font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#"> بلیط پشتیبانی </a>
-                                                                        <p> اما سفارش جدیدی داده است </p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
-                                                                        <i class="mdi mdi-cart-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">سفارش جدید</a>
-                                                                        <p> رایان سفارش جدیدی داده است </p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-info text-white">
-                                                                        <i class="mdi mdi-calendar-blank font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">شرکت میت آپ</a>
-                                                                        <p>فیلین سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-warning text-white">
-                                                                        <i class="mdi mdi-stack-exchange font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#"> بلیط پشتیبانی </a>
-                                                                        <p> اما سفارش جدیدی داده است </p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-success text-white">
-                                                                        <i class="mdi mdi-email-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">استعلام جدید</a>
-                                                                        <p>فیلین سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 9
-                                                                        صبح</span>
-                                                                </div>
                                                             </div>
                                                             <div class="mt-3"></div>
                                                         </div>
@@ -571,9 +535,9 @@ if($result&&mysqli_num_rows($result)>0){
                                                         <div class="card card-default card-table-border-none ec-tbl" id="recent-orders">
                                                             <div class="card-header justify-content-between">
                                                                 <h2>اخیر سفارش</h2>
-                                                                <div class="date-range-report"><span></span></div>
+                                                                
                                                             </div>
-                                                            <div class="card-body pt-0 pb-0 table-responsive">
+                                                            <!-- <div class="card-body pt-0 pb-0 table-responsive">
                                                                 <table class="table">
                                                                     <thead>
                                                                         <tr>
@@ -680,7 +644,42 @@ if($result&&mysqli_num_rows($result)>0){
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
-                                                            </div>
+                                                            </div> -->
+                                                            <div class="card-body pt-0 pb-5">
+                                    <table class="table card-table table-responsive table-responsive-large" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>ایدی سفارش</th>
+                                                <th>نام محصول</th>
+                                                <th class="d-none d-lg-table-cell">تعداد</th>
+                                                <th class="d-none d-lg-table-cell">تاریخ سفارش</th>
+                                                <th class="d-none d-lg-table-cell">هزینه سفارش</th>
+                                                <th>تصویر</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php while($row=mysqli_fetch_assoc($result_recent_orders)):?>
+                                            <tr>
+                                                <td><?php echo $row['order_id'];?></td>
+                                                <td><a class="text-dark" href="#"><?php echo htmlspecialchars( $row['product_name']);?></a></td>
+                                                <td class="d-none d-lg-table-cell"><?php echo htmlspecialchars( $row['quantity']);?></td>
+                                                <td class="d-none d-lg-table-cell"> <?php echo jdate('d F Y', strtotime($row['order_time'])); ?> </td>
+                                                <td class="d-none d-lg-table-cell"> <?php echo htmlspecialchars( $row['price']);?></td>
+                                                <td><span class="badge badge-success"> <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars( $row['product_image']);?>" style="width: 50px; height:auto;" ></span></td>
+                                                <td class="text-right">
+                                                    <div class="dropdown show d-inline-block widget-dropdown"><a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-recent-order1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
+                                                        <ul class="dropdown-menu dropdown-menu-right">
+                                                            <li class="dropdown-item"><a href="product-detail.php?id=<?php echo $row['order_id'];?>"> مشاهده </a></li>
+                                                            <!-- <li class="dropdown-item"><a href="#"> حذف </a></li> -->
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                      <?php endwhile;?>
+                                        </tbody>
+                                    </table>
+                                </div>
                                                         </div>
                                                     </div>
                                                 </div>
