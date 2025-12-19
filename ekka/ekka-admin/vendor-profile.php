@@ -46,6 +46,16 @@ if(!$res_income){
 }
 $row_income=mysqli_fetch_assoc($res_income);
 $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
+
+//اعلان ثبت سفارش جدید
+$sql_notification="
+SELECT o.id AS order_id, o.order_time, u.id AS user_id, u.name AS username
+FROM orders o
+JOIN users u ON o.user_id=u.id
+WHERE o.seller_id=$seller_id
+ORDER BY o.order_time DESC
+limit 10 ";
+$res_notifications=mysqli_query($conn,$sql_notification);
 ?>
 <!DOCTYPE html>
 
@@ -517,17 +527,38 @@ $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
                                                     <div class="col-xl-12">
                                                         <div class="card card-default mb-24px">
                                                             
-                                                            <div class="card-body compact-notifications" data-simplebar="" style="height:434px">
-                                                                <div class="media pb-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
-                                                                        <i class="mdi mdi-cart-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">سفارش جدید</a>
-                                                                        <p>سلنا سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                            </div>
+                                                            <<div class="card-body compact-notifications" data-simplebar="" style="height:434px">
+
+<?php if(mysqli_num_rows($res_notifications) == 0): ?>
+    <p class="text-center">سفارشی ثبت نشده است</p>
+<?php else: ?>
+    <?php while($row = mysqli_fetch_assoc($res_notifications)): ?>
+        <div class="media pb-3 align-items-center justify-content-between">
+            
+            <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
+                <i class="mdi mdi-cart-outline font-size-20"></i>
+            </div>
+
+            <div class="media-body pr-3">
+                <a class="mt-0 mb-1 font-size-15 text-dark" 
+                   href="user-profile.html?id=<?php echo $row['user_id']; ?>">
+                    سفارش جدید
+                </a>
+                <p>
+                    <?php echo htmlspecialchars($row['username']); ?> سفارش جدیدی داده است
+                </p>
+            </div>
+
+            <span class="font-size-12 d-inline-block">
+                <i class="mdi mdi-clock-outline"></i>
+                <?php echo date('H:i', strtotime($row['order_time'])); ?>
+            </span>
+
+        </div>
+    <?php endwhile; ?>
+<?php endif; ?>
+
+</div>
                                                             <div class="mt-3"></div>
                                                         </div>
                                                     </div>
