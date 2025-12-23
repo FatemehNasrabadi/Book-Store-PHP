@@ -1,4 +1,64 @@
-﻿<!DOCTYPE html>
+﻿<?php
+include('../../config/db.php'); // اتصال به دیتابیس
+include('../../config/jdf.php');
+
+// -------- 1) دریافت و اعتبارسنجی id از URL ----------
+$order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($order_id <= 0) {
+    // اگر id ارسال نشده یا معتبر نیست، پیام بده و متوقف کن
+    echo "<p>شناسه سفارش مشخص نشده است.</p>";
+    exit;
+}
+
+
+// -------- 2) گرفتن اطلاعات سفارش از دیتابیس (با JOIN برای اطلاعات محصول و خریدار) ----------
+$sql = "
+SELECT 
+    o.id AS order_id,
+    o.user_id AS buyer_id,
+    o.product_id,
+    o.seller_id,
+    o.quantity AS order_quantity,
+    o.price AS order_price,
+    o.order_time AS order_at,
+    b.name AS product_name,
+    b.image AS product_image,
+    b.price AS product_unit_price,
+    u.name AS buyer_name,
+    u.email AS buyer_email,
+    u.mobile_number AS buyer_mobile,
+    u.address AS buyer_address,
+    u.country AS buyer_country
+FROM orders o
+JOIN books b ON o.product_id = b.id
+JOIN users u ON o.user_id = u.id
+WHERE o.id = $order_id
+LIMIT 1
+";
+
+$res = mysqli_query($conn, $sql);
+if (!$res) {
+    die("خطا در اجرای کوئری: " . mysqli_error($conn));
+}
+
+if (mysqli_num_rows($res) == 0) {
+    die("سفارشی با این شناسه پیدا نشد.");
+}
+
+$order = mysqli_fetch_assoc($res);
+
+/* محاسبه جمع کل */
+$grand_total = 0;
+$items = [];
+while ($r = mysqli_fetch_assoc($order)) {
+    $line_total = $r['order_price']; 
+    $grand_total += $line_total;
+    $items[] = $r;
+}
+?>
+
+
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -9,7 +69,8 @@
     <title>اکا - داشبرد مدیریتی اچ تی ام ال</title>
       
      
-    <link href="assets/css/materialdesignicons.min.css" rel="stylesheet">    <link href="assets/plugins/simplebar/simplebar.css" rel="stylesheet">
+    <link href="assets/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="assets/plugins/simplebar/simplebar.css" rel="stylesheet">
     <link id="ekka-css" rel="stylesheet" href="assets/css/ekka.css">
     <link href="assets/img/favicon.png" rel="shortcut icon">
 </head>
@@ -18,27 +79,33 @@
     <div class="wrapper">
         <div class="ec-left-sidebar ec-bg-sidebar">
             <div id="sidebar" class="sidebar ec-sidebar-footer">
-                <div class="ec-brand"><a href="index.html" title="Ekka"><img class="ec-brand-icon" src="assets/img/logo/ec-site-logo.png" alt=""> <span class="ec-brand-name text-truncate">اکا </span></a></div>
+                <div class="ec-brand"><a href="index.html" title="Ekka"><img class="ec-brand-icon" src="assets/img/logo/ec-site-logo.png" alt=""> <span class="ec-brand-name text-truncate">اکا
+                        </span></a></div>
                 <div class="ec-navigation" data-simplebar="">
                     <ul class="nav sidebar-inner" id="sidebar-menu">
                         <li><a class="sidenav-item-link" href="index.html"><i class="mdi mdi-view-dashboard-outline"></i> <span class="nav-text">داشبرد</span></a>
                             <hr>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span> <b class="caret"></b></a>
+                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span>
+                                <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="vendors" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید فروشندگان</span></a></li>
-                                    <li><a class="sidenav-item-link" href="vendor-list.html"><span class="nav-text">لیست فروشندگان</span></a></li>
+                                    <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید
+                                                فروشندگان</span></a></li>
+                                    <li><a class="sidenav-item-link" href="vendor-list.html"><span class="nav-text">لیست
+                                                فروشندگان</span></a></li>
                                     <li><a class="sidenav-item-link" href="vendor-profile.html"><span class="nav-text">پروفایل فروشنده</span></a></li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="has-sub active expand"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group"></i> <span class="nav-text">کاربران</span> <b class="caret"></b></a>
-                            <div class="collapse show">
+                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group"></i> <span class="nav-text">کاربران</span> <b class="caret"></b></a>
+                            <div class="collapse">
                                 <ul class="sub-menu" id="users" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید کاربران</span></a></li>
-                                    <li><a class="sidenav-item-link" href="user-list.html"><span class="nav-text">لیست کاربران</span></a></li>
-                                    <li class="active"><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li>
+                                    <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید
+                                                کاربران</span></a></li>
+                                    <li><a class="sidenav-item-link" href="user-list.html"><span class="nav-text">لیست
+                                                کاربران</span></a></li>
+                                    <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li>
                                 </ul>
                             </div>
                             <hr>
@@ -61,13 +128,14 @@
                                 </ul>
                             </div>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-cart"></i> <span class="nav-text">سفارشات</span> <b class="caret"></b></a>
-                            <div class="collapse">
+                        <li class="has-sub active expand"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-cart"></i> <span class="nav-text">سفارشات</span> <b class="caret"></b></a>
+                            <div class="collapse show">
                                 <ul class="sub-menu" id="orders" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li>
                                     <li><a class="sidenav-item-link" href="order-history.html"><span class="nav-text">گزارش سفارش </span></a></li>
-                                    <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li>
-                                    <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li>
+                                    <li class="active"><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li>
+                                    <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور
+                                            </span></a></li>
                                 </ul>
                             </div>
                         </li>
@@ -86,9 +154,11 @@
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="icons" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="material-icon.html"><span class="nav-text"> متریال آیکون </span></a></li>
+                                    <li><a class="sidenav-item-link" href="material-icon.html"><span class="nav-text">
+                                                متریال آیکون </span></a></li>
                                     <li><a class="sidenav-item-link" href="font-awsome-icons.html"><span class="nav-text"> فونت آوسام آیکون </span></a></li>
-                                    <li><a class="sidenav-item-link" href="flag-icon.html"><span class="nav-text"> فلگ آیکون </span></a></li>
+                                    <li><a class="sidenav-item-link" href="flag-icon.html"><span class="nav-text"> فلگ
+                                                آیکون </span></a></li>
                                 </ul>
                             </div>
                         </li>
@@ -117,7 +187,7 @@
                             <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
                                 <ul class="dropdown-menu dropdown-menu-right ec-dropdown-menu">
                                     <li class="dropdown-header"><img src="assets/img/user/user.png" class="img-circle" alt="User Image">
-                                        <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="402a2f282e6e2538212d302c2500272d21292c6e232f2d">john.example@gmail.com</a></small>
+                                        <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="85efeaedebabe0fde4e8f5e9e0c5e2e8e4ece9abe6eae8">john.example@gmail.com</a></small>
                                         </div>
                                     </li>
                                     <li><a href="user-profile.html"><i class="mdi mdi-account"></i>پروفایل من </a></li>
@@ -133,7 +203,7 @@
                                         <h2> اطلاعیه ها </h2>
                                     </div>
                                     <div class="card-body px-0 py-0">
-                                        <ul class="nav nav-tabs nav-style-border p-0 justify-content-between" id="myNotificationTab" role="tablist">
+                                        <ul class="nav nav-tabs nav-style-border p-0 justify-content-between" id="myTab" role="tablist">
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link active pb-3" id="home2-tab" data-bs-toggle="tab" data-bs-target="#home2" role="tab" aria-controls="home2" aria-selected="true">همه (10)</a>
                                             </li>
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link pb-3" id="profile2-tab" data-bs-toggle="tab" data-bs-target="#profile2" role="tab" aria-controls="profile2" aria-selected="false">پیام (5)</a></li>
@@ -371,208 +441,129 @@
             </header>
             <div class="ec-content-wrapper">
                 <div class="content">
-                    <div class="breadcrumb-wrapper breadcrumb-contacts">
-                        <div>
-                            <h1>پروفایل کاربری</h1>
-                            <p class="breadcrumbs"><span><a href="index.html">خانه</a></span> <span><i class="mdi mdi-chevron-left"></i></span>پروفایل</p>
-                        </div>
-                        <div><a href="user-list.html" class="btn btn-primary">ویرایش</a></div>
+                    <div class="breadcrumb-wrapper breadcrumb-wrapper-2">
+                        <h1>جزییات سفارش </h1>
+                        <p class="breadcrumbs"><span><a href="index.html">خانه</a></span> <span><i class="mdi mdi-chevron-left"></i></span>سفارشات</p>
                     </div>
-                    <div class="card bg-white profile-content">
-                        <div class="row">
-                            <div class="col-lg-4 col-xl-3">
-                                <div class="profile-content-left profile-left-spacing">
-                                    <div class="text-center widget-profile px-0 border-0">
-                                        <div class="card-img mx-auto rounded-circle"><img src="assets/img/user/u1.jpg" alt="user image"></div>
-                                        <div class="card-body">
-                                            <h4 class="py-2 text-dark">مارک دو</h4>
-                                            <p><a class="__cf_email__" data-cfemail="afc2ceddc481cad7cec2dfc3caefc8c2cec6c381ccc0c2">john.example@gmail.com</a>
-                                            </p><a class="btn btn-primary my-3" href="#">دنبال کردن</a>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="ec-odr-dtl card card-default">
+                                <div class="card-header card-header-border-bottom d-flex justify-content-between">
+                                    <h2 class="ec-odr">جزییات سفارش <br><span class="small"> شناسه سفارش: #<?php echo $order_id ;?></span></h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-xl-3 col-lg-6">
+                                            <address class="info-grid">
+                                                <div class="info-title"><strong> مشتری: </strong></div><br>
+                                                <div class="info-content"><?php echo $order['buyer_address'];?> <br>    
+                                                    <br> <?php echo $order['buyer_country'];?> <br><abbr title="Phone">شماره تماس:</abbr>
+                                                    <?php echo $order['buyer_mobile'];?></div>
+                                            </address>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-6">
+                                            <address class="info-grid">
+                                                <div class="info-title"><strong>فروشنده  :</strong></div><br>
+                                                <div class="info-content">فروشگاه کتاب اکا <br>  <br>   <br><abbr title="Phone"> :</abbr> </div>
+                                            </address>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-6">
+                                            <address class="info-grid">
+                                                <div class="info-title"><strong>روش پرداخت:</strong></div><br>
+                                                <div class="info-content">کارت با پایان **** 1234<br><a class="__cf_email__" data-cfemail="31591f545d50585f5471565c50585d1f525e5c">john.example@gmail.com</a><br>
+                                                </div>
+                                            </address>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-6">
+                                            <address class="info-grid">
+                                                <div class="info-title"><strong> تاریخ سفارش: </strong></div><br>
+                                                <div class="info-content"><br><?php  $timestamp=strtotime($order['order_at']);
+                                                                           echo jdate('Y/m/d', $timestamp); ?>  </div>
+                                            </address>
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="text-center pb-4">
-                                            <h6 class="text-dark pb-2">546</h6>
-                                            <p>خرید</p>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h3 class="tbl-title"> خلاصه محصول </h3>
+                                            <div class="table-responsive">
+                                                <table class="table table-striped o-tbl">
+                                                    <thead>
+                                                        <tr class="line">
+                                                            <td class="text-center"><strong>تصویر</strong></td>
+                                                            <td class="text-center"><strong>محصولات</strong></td>
+                                                            <td class="text-center"><strong>قیمت/واحد</strong></td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if(empty($items)): ?>
+                                                            <tr>llllll</tr>
+                                                            <?php else:
+                                                            $i=1;
+                                                            foreach($items as $it): ?>
+                                                        <tr>
+                                                            <td><img class="product-img" src="../ekka-html/assets/images/products/<?php echo $it['product_image'];?>" alt=""></td>
+                                                            <td><strong>کفش کودک صورتی</strong><br>کفش بسیار صاف و راحت برای کودک.</td>
+                                                            <td class="text-right">112500 تومان</td>
+                                                        </tr>                                                
+                                                        <?php endforeach;?>
+                                                        <tr>
+                                                            <td colspan="4"></td>
+                                                            <td class="text-right"><strong>جمع</strong></td>
+                                                            <td class="text-right"><strong>240000 تومان</strong></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4"></td>
+                                                            <td class="text-right"><strong> وضعیت پرداخت</strong></td>
+                                                            <td class="text-right"><strong>پرداخت شده</strong></td>
+                                                        </tr>
+                                                        <?php endif; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                        <div class="text-center pb-4">
-                                            <h6 class="text-dark pb-2">32</h6>
-                                            <p>لیست علاقه مندی</p>
-                                        </div>
-                                        <div class="text-center pb-4">
-                                            <h6 class="text-dark pb-2">1150</h6>
-                                            <p>فالویینگ</p>
-                                        </div>
-                                    </div>
-                                    <hr class="w-100">
-                                    <div class="contact-info pt-4">
-                                        <h5 class="text-dark">اطلاعات تماس</h5>
-                                        <p class="text-dark font-weight-medium pt-24px mb-2"> آدرس ایمیل </p>
-                                        <p><a class="__cf_email__" data-cfemail="147975667f3a716c7579647871547379757d783a777b79">john.example@gmail.com</a>
-                                        </p>
-                                        <p class="text-dark font-weight-medium pt-24px mb-2"> شماره تلفن </p>
-                                        <p>+00 1234 5678 91</p>
-                                        <p class="text-dark font-weight-medium pt-24px mb-2"> تاریخ تولد</p>
-                                        <p>خرداد 10, 1401</p>
-                                        <p class="text-dark font-weight-medium pt-24px mb-2"> مشخصات اجتماعی </p>
-                                        <p class="social-button"><a href="#" class="mb-1 btn btn-outline btn-twitter rounded-circle"><i class="mdi mdi-twitter"></i></a> <a href="#" class="mb-1 btn btn-outline btn-linkedin rounded-circle"><i class="mdi mdi-linkedin"></i></a> <a href="#" class="mb-1 btn btn-outline btn-facebook rounded-circle"><i class="mdi mdi-facebook"></i></a> <a href="#" class="mb-1 btn btn-outline btn-skype rounded-circle"><i class="mdi mdi-skype"></i></a></p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-8 col-xl-9">
-                                <div class="profile-content-right profile-right-spacing py-5">
-                                    <ul class="nav nav-tabs px-3 px-xl-5 nav-style-border" id="myProfileTab" role="tablist">
-                                        <li class="nav-item" role="presentation"><button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">پروفایل</button></li>
-                                        <li class="nav-item" role="presentation"><button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">تنظیمات</button></li>
-                                    </ul>
-                                    <div class="tab-content px-3 px-xl-5" id="myTabContent">
-                                        <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                            <div class="tab-widget mt-5">
-                                                <div class="row">
-                                                    <div class="col-xl-4">
-                                                        <div class="media widget-media p-3 bg-white border">
-                                                            <div class="icon rounded-circle mr-3 bg-primary"><i class="mdi mdi-account-outline text-white"></i>
-                                                            </div>
-                                                            <div class="media-body align-self-center">
-                                                                <h4 class="text-primary mb-2">546</h4>
-                                                                <p>خرید</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xl-4">
-                                                        <div class="media widget-media p-3 bg-white border">
-                                                            <div class="icon rounded-circle bg-warning mr-3"><i class="mdi mdi-cart-outline text-white"></i></div>
-                                                            <div class="media-body align-self-center">
-                                                                <h4 class="text-primary mb-2">1953</h4>
-                                                                <p>لیست علاقه مندی</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xl-4">
-                                                        <div class="media widget-media p-3 bg-white border">
-                                                            <div class="icon rounded-circle mr-3 bg-success"><i class="mdi mdi-ticket-percent text-white"></i></div>
-                                                            <div class="media-body align-self-center">
-                                                                <h4 class="text-primary mb-2">02</h4>
-                                                                <p> کوپن </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-xl-12">
-                                                        <div class="card card-default">
-                                                            <div class="card-header justify-content-between mb-1">
-                                                                <h2>آخرین اعلان ها</h2>
-                                                                <div><button class="text-black-50 mr-2 font-size-20"><i class="mdi mdi-cached"></i></button>
-                                                                    <div class="dropdown show d-inline-block widget-dropdown">
-                                                                        <a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-notification" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
-                                                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-notification">
-                                                                            <li class="dropdown-item"><a href="#">فعالیت</a></li>
-                                                                            <li class="dropdown-item"><a href="#">فعالیت دیگر</a></li>
-                                                                            <li class="dropdown-item"><a href="#">یک فعالیت دیگر</a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="card-body compact-notifications" data-simplebar="" style="height:434px">
-                                                                <div class="media pb-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
-                                                                        <i class="mdi mdi-cart-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">سفارش جدید</a>
-                                                                        <p>سلنا سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-success text-white">
-                                                                        <i class="mdi mdi-email-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">استعلام جدید</a>
-                                                                        <p>فیلین سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 9
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-warning text-white">
-                                                                        <i class="mdi mdi-stack-exchange font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#"> بلیط پشتیبانی </a>
-                                                                        <p> اما سفارش جدیدی داده است </p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
-                                                                        <i class="mdi mdi-cart-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">سفارش جدید</a>
-                                                                        <p> رایان سفارش جدیدی داده است </p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-info text-white">
-                                                                        <i class="mdi mdi-calendar-blank font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">شرکت میت آپ</a>
-                                                                        <p>فیلین سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-warning text-white">
-                                                                        <i class="mdi mdi-stack-exchange font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#"> بلیط پشتیبانی </a>
-                                                                        <p> اما سفارش جدیدی داده است </p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 10
-                                                                        صبح</span>
-                                                                </div>
-                                                                <div class="media py-3 align-items-center justify-content-between">
-                                                                    <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-success text-white">
-                                                                        <i class="mdi mdi-email-outline font-size-20"></i>
-                                                                    </div>
-                                                                    <div class="media-body pr-3"><a class="mt-0 mb-1 font-size-15 text-dark" href="#">استعلام جدید</a>
-                                                                        <p>فیلین سفارش جدیدی داده است</p>
-                                                                    </div><span class="font-size-12 d-inline-block"><i class="mdi mdi-clock-outline"></i> 9
-                                                                        صبح</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="mt-3"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                            <div class="card mt-4 trk-order">
+                                <div class="p-4 text-center text-white text-lg bg-dark rounded-top"><span class="text-uppercase">شماره پیگیری سفارش -</span> <span class="text-medium">34VB5540K83</span></div>
+                                <div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary">
+                                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">حمل شده
+                                            از طريق:</span> یو پی اس </div>
+                                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">وضع:</span>
+                                        بررسی کیفیت</div>
+                                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">تاریخ تخمینی تحویل:</span> 9 دی 1401 </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                                        <div class="step completed">
+                                            <div class="step-icon-wrap">
+                                                <div class="step-icon"><i class="mdi mdi-cart"></i></div>
                                             </div>
+                                            <h4 class="step-title">سفارش تایید شده</h4>
                                         </div>
-                                        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-                                            <div class="tab-pane-content mt-5">
-                                                <form>
-                                                    <div class="form-group row mb-6"><label for="coverImage" class="col-sm-4 col-lg-2 col-form-label">  تصویر </label>
-                                                        <div class="col-sm-8 col-lg-10">
-                                                            <div class="custom-file mb-1"><input type="file" class="custom-file-input" id="coverImage" required=""><label class="custom-file-label" for="coverImage">انتخاب فایل...</label>
-                                                                <div class="invalid-feedback"> مثال سفارشی نامعتبر
-                                                                    بازخورد پرونده </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-lg-6">
-                                                            <div class="form-group"><label for="firstName">نام</label><input class="form-control" id="firstName" value="نام"></div>
-                                                        </div>
-                                                        <div class="col-lg-6">
-                                                            <div class="form-group"><label for="lastName">نام خانوادگی</label><input class="form-control" id="lastName" value="نام خانوادگی"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group mb-4"><label for="userName">نام کاربری</label><input class="form-control" id="userName" value="نام کاربری"> <span class="d-block mt-1">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. </span></div>
-                                                    <div class="form-group mb-4"><label for="email">ایمیل:</label><input type="email" class="form-control" id="email" value="ekka.example@gmail.com"></div>
-                                                    <div class="form-group mb-4"><label for="oldPassword">پسورد قدیمی</label><input type="password" class="form-control" id="oldPassword"></div>
-                                                    <div class="form-group mb-4"><label for="newPassword">پسورد جدید</label><input type="password" class="form-control" id="newPassword"></div>
-                                                    <div class="form-group mb-4"><label for="conPassword"> تایید پسورد </label><input type="password" class="form-control" id="conPassword"></div>
-                                                    <div class="d-flex justify-content-end mt-5"><button type="submit" class="btn btn-primary mb-2 btn-pill"> به روز رسانی پروفایل </button></div>
-                                                </form>
+                                        <div class="step completed">
+                                            <div class="step-icon-wrap">
+                                                <div class="step-icon"><i class="mdi mdi-tumblr-reblog"></i></div>
                                             </div>
+                                            <h4 class="step-title">در حال پردازش سفارش</h4>
+                                        </div>
+                                        <div class="step completed">
+                                            <div class="step-icon-wrap">
+                                                <div class="step-icon"><i class="mdi mdi-gift"></i></div>
+                                            </div>
+                                            <h4 class="step-title">محصول اعزام شده</h4>
+                                        </div>
+                                        <div class="step">
+                                            <div class="step-icon-wrap">
+                                                <div class="step-icon"><i class="mdi mdi-truck-delivery"></i></div>
+                                            </div>
+                                            <h4 class="step-title">تحویل</h4>
+                                        </div>
+                                        <div class="step">
+                                            <div class="step-icon-wrap">
+                                                <div class="step-icon"><i class="mdi mdi-hail"></i></div>
+                                            </div>
+                                            <h4 class="step-title">محصول تحویل داده شده</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -583,8 +574,8 @@
             </div>
             <footer class="footer mt-auto">
                 <div class="copyright bg-white">
-                    <p>&copy;  کپی رایت  <span>1401</span><a class="text-primary" href="user-profile.html" target="_blank"> داشبرد مدیریتی اکا </a>.
-                       همه حقوق محفوظ است.</p>
+                    <p>&copy; کپی رایت<span>1401</span><a class="text-primary" href="order-detail.html" target="_blank"> داشبرد مدیریتی
+                            اکا </a>همه حقوق محفوظ است</p>
                 </div>
             </footer>
         </div>

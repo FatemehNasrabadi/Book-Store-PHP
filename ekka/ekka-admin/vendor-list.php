@@ -1,6 +1,7 @@
 ﻿<?php 
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
+include('../../config/jdf.php');
 
 if(!isset($_SESSION['sellers_id'])){
     die("دسترسی غیرمجاز");
@@ -8,18 +9,23 @@ if(!isset($_SESSION['sellers_id'])){
 $seller_id=$_SESSION['sellers_id'];
 
 //گرقتن اطلاعات فروشنده ها از حدول 
-$sql_vendors = "
+ $sql_vendors = "
 SELECT 
-    s.id, s.name,s.email,s.created_at,
-     COUNT(DISTINCT b.id) AS total_products,
-    IFNULL(SUM(o.price * o.quantity), 0) AS total_sales
+    s.id,
+    s.name,
+    s.email,
+    s.created_at,
+    IFNULL(SUM(o.price * o.quantity), 0) AS total_sales,
+    COUNT(o.id) AS total_orders
+
 FROM sellers s
-LEFT JOIN orders o ON o.seller_id = s.id
+LEFT JOIN orders o ON s.id = o.seller_id
 GROUP BY s.id
 ORDER BY total_sales DESC
 ";
 
 $res_vendors = mysqli_query($conn, $sql_vendors);
+
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -414,22 +420,26 @@ $res_vendors = mysqli_query($conn, $sql_vendors);
                                                     <th>پروفایل</th>
                                                     <th>نام</th>
                                                     <th>ایمیل:</th>
-                                                    <th>محصولات تعداد</th>
+                                                    <!-- <th>محصولات تعداد</th> -->
                                                     <th>فروش کل</th>
                                                     <th>پیوستن </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                <?php
+                             
                                                 while($row=mysqli_fetch_assoc($res_vendors)): ?>
-                                                 <tr>
+                                                 <tr onclick="window.location='vendor-profile.php?id=<?php echo $row['id'];?>'">
                                                     <td><img class="vendor-thumb" src="assets/img/vendor/u1.jpg" alt="vendor image"></td>
                                                     <td><?php echo htmlspecialchars($row['name']); ?> </td>
                                                     <td><a class="__cf_email__" data-cfemail="305d51425c555542555e5170575d51595c1e535f5d"><?php echo htmlspecialchars($row['email']); ?></a>
                                                     </td>
-                                                    <td><?php echo htmlspecialchars($row['total_product']); ?></td>
+                                                    <!-- <td><?php echo htmlspecialchars($row['product_count']); ?></td> -->
                                                     <td> <?php echo number_format($row['total_sales']);?> </td>
-                                                    <td><?php echo $row['created_at'];?></td>
+                                                    <td><?php
+                                                                       $timestamp=strtotime($row['created_at']);
+                                                                           echo jdate('Y/m/d', $timestamp);
+                                                     ?></td>
                                                     <td>
                                                     </td>
                                                 </tr>
