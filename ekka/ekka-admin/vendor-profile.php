@@ -57,83 +57,84 @@ ORDER BY o.order_time DESC
 limit 10 ";
 $res_notifications=mysqli_query($conn,$sql_notification);
 ?>
+
+
+
 <!DOCTYPE html>
-
 <html lang="en" dir="ltr">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Ekka - Admin Dashboard HTML Template.">
-    <title>اکا - داشبرد مدیریتی اچ تی ام ال</title>
+    <meta name="description" content="اکا - داشبرد مدیریتی فروشگاهی اچ تی ام ال">
+    <title>اکا - داشبرد مدیریتی فروشگاهی اچ تی ام ال.</title>
       
      
-    <link href="assets/css/materialdesignicons.min.css" rel="stylesheet">    <link href="assets/plugins/simplebar/simplebar.css" rel="stylesheet">
-    <link href="assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
-    <link id="ekka-css" rel="stylesheet" href="assets/css/ekka.css">
+    <link href="assets/css/materialdesignicons.min.css" rel="stylesheet">    <link href="assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="assets/plugins/simplebar/simplebar.css" rel="stylesheet">
+    <link id="ekka-css" href="assets/css/ekka.css" rel="stylesheet">
     <link href="assets/img/favicon.png" rel="shortcut icon">
 </head>
 
-<body class="ec-header-fixed ec-sidebar-fixed ec-sidebar-dark ec-header-light" id="body">
+<body class="ec-header-fixed ec-sidebar-fixed ec-sidebar-light ec-header-light" id="body">
     <div class="wrapper">
         <div class="ec-left-sidebar ec-bg-sidebar">
             <div id="sidebar" class="sidebar ec-sidebar-footer">
                 <div class="ec-brand"><a href="index.html" title="Ekka"><img class="ec-brand-icon" src="assets/img/logo/ec-site-logo.png" alt=""> <span class="ec-brand-name text-truncate">اکا </span></a></div>
                 <div class="ec-navigation" data-simplebar="">
                     <ul class="nav sidebar-inner" id="sidebar-menu">
-                        <li><a class="sidenav-item-link" href="index.html"><i class="mdi mdi-view-dashboard-outline"></i> <span class="nav-text">داشبرد</span></a>
+                        <li class="active"><a class="sidenav-item-link" href="index.html"><i class="mdi mdi-view-dashboard-outline"></i> <span class="nav-text">داشبرد</span></a>
                             <hr>
                         </li>
-                        <li class="has-sub active expand"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span> <b class="caret"></b></a>
-                            <div class="collapse show">
+                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span> <b class="caret"></b></a>
+                            <div class="collapse">
                                 <ul class="sub-menu" id="vendors" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید فروشندگان</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید فروشندگان</span></a></li> -->
                                     <li><a class="sidenav-item-link" href="vendor-list.html"><span class="nav-text">لیست فروشندگان</span></a></li>
-                                    <li class="active"><a class="sidenav-item-link" href="vendor-profile.html"><span class="nav-text">پروفایل فروشنده</span></a></li>
+                                    <li><a class="sidenav-item-link" href="vendor-profile.html"><span class="nav-text">پروفایل فروشنده</span></a></li>
                                 </ul>
                             </div>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group"></i> <span class="nav-text">کاربران</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="users" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید کاربران</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید کاربران</span></a></li> -->
                                     <li><a class="sidenav-item-link" href="user-list.html"><span class="nav-text">لیست کاربران</span></a></li>
-                                    <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li> -->
                                 </ul>
                             </div>
                             <hr>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-dns-outline"></i> <span class="nav-text">دسته‌بندی‌ها</span> <b class="caret"></b></a>
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-dns-outline"></i> <span class="nav-text">دسته‌بندی‌ها</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="categorys" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="main-category.html"><span class="nav-text">دسته‌بندی‌ اصلی</span></a></li>
                                     <li><a class="sidenav-item-link" href="sub-category.html"><span class="nav-text">دسته‌بندی‌ فرعی</span></a></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> -->
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-palette-advanced"></i> <span class="nav-text">محصولات</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="products" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="product-add.html"><span class="nav-text">افزودن محصول</span></a></li>
-                                    <li><a class="sidenav-item-link" href="product-list.html"><span class="nav-text">لیست محصولات</span></a></li>
-                                    <li><a class="sidenav-item-link" href="product-grid.html"><span class="nav-text">گرید محصولات</span></a></li>
-                                    <li><a class="sidenav-item-link" href="product-detail.html"><span class="nav-text">جزییات محصول</span></a></li>
+                                     <li><a class="sidenav-item-link" href="product-list.html"><span class="nav-text">لیست  کل محصولات</span></a></li>
+                                    <li><a class="sidenav-item-link" href="product-grid.html"><span class="nav-text">گرید محصولات شما(فروشنده)</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="product-detail.html"><span class="nav-text">جزییات محصول</span></a></li> -->
                                 </ul>
                             </div>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-cart"></i> <span class="nav-text">سفارشات</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="orders" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li> -->
                                     <li><a class="sidenav-item-link" href="order-history.html"><span class="nav-text">گزارش سفارش </span></a></li>
-                                    <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li>
-                                    <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li> -->
+                                    <!-- <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li> -->
                                 </ul>
                             </div>
                         </li>
-                        <li><a class="sidenav-item-link" href="review-list.html"><i class="mdi mdi-star-half"></i> <span class="nav-text">نظرات</span></a></li>
-                        <li><a class="sidenav-item-link" href="brand-list.html"><i class="mdi mdi-tag-faces"></i> <span class="nav-text">برند ها</span></a>
+                        <!-- <li><a class="sidenav-item-link" href="review-list.html"><i class="mdi mdi-star-half"></i> <span class="nav-text">نظرات</span></a></li> -->
+                        <!-- <li><a class="sidenav-item-link" href="brand-list.html"><i class="mdi mdi-tag-faces"></i> <span class="nav-text">برند ها</span></a> -->
                             <hr>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-login"></i> <span class="nav-text">احراز هویت</span> <b class="caret"></b></a>
@@ -141,10 +142,12 @@ $res_notifications=mysqli_query($conn,$sql_notification);
                                 <ul class="sub-menu" id="authentication" data-parent="#sidebar-menu">
                                     <li><a href="sign-in.html"><span class="nav-text">ورود</span></a></li>
                                     <li><a href="sign-up.html"><span class="nav-text">ثبت نام</span></a></li>
+                                     <li><a href="sign-in.html"><span class="nav-text"> خروج</span></a></li>
+
                                 </ul>
                             </div>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="icons" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="material-icon.html"><span class="nav-text"> متریال آیکون </span></a></li>
@@ -152,14 +155,14 @@ $res_notifications=mysqli_query($conn,$sql_notification);
                                     <li><a class="sidenav-item-link" href="flag-icon.html"><span class="nav-text"> فلگ آیکون </span></a></li>
                                 </ul>
                             </div>
-                        </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-image-filter-none"></i> <span class="nav-text"> صفحات دیگر </span> <b class="caret"></b></a>
+                        </li> -->
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-image-filter-none"></i> <span class="nav-text"> صفحات دیگر </span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="otherpages" data-parent="#sidebar-menu">
                                     <li class="has-sub"><a href="404.html"> صفحه 404 </a></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>
@@ -167,18 +170,18 @@ $res_notifications=mysqli_query($conn,$sql_notification);
         <div class="ec-page-wrapper">
             <header class="ec-main-header" id="header">
                 <nav class="navbar navbar-static-top navbar-expand-lg"><button id="sidebar-toggler" class="sidebar-toggle"></button>
-                    <div class="search-form d-lg-inline-block">
+                    <!-- <div class="search-form d-lg-inline-block">
                         <div class="input-group"><input name="query" id="search-input" class="form-control" placeholder="جستجو..." autofocus="" autocomplete="off"> <button type="button" name="search" id="search-btn" class="btn btn-flat"><i class="mdi mdi-magnify"></i></button></div>
                         <div id="search-results-container">
                             <ul id="search-results"></ul>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="navbar-right">
                         <ul class="nav navbar-nav">
-                            <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
+                            <!-- <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
                                 <ul class="dropdown-menu dropdown-menu-right ec-dropdown-menu">
                                     <li class="dropdown-header"><img src="assets/img/user/user.png" class="img-circle" alt="User Image">
-                                        <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="ee84818680c08b968f839e828bae89838f8782c08d8183">john.example@gmail.com</a></small>
+                                        <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="4c262324226229342d213c20290c2b212d2520622f2321">john.example@gmail.com</a></small>
                                         </div>
                                     </li>
                                     <li><a href="user-profile.html"><i class="mdi mdi-account"></i>پروفایل من </a></li>
@@ -187,21 +190,21 @@ $res_notifications=mysqli_query($conn,$sql_notification);
                                     <li class="right-sidebar-in"><a href="javascript:0"><i class="mdi mdi-settings-outline"></i> تنظیمات </a></li>
                                     <li class="dropdown-footer"><a href="index.html"><i class="mdi mdi-logout"></i> خروج </a></li>
                                 </ul>
-                            </li>
-                            <li class="dropdown notifications-menu custom-dropdown"><button class="dropdown-toggle notify-toggler custom-dropdown-toggler"><i class="mdi mdi-bell-outline"></i></button>
+                            </li> -->
+                            <!-- <li class="dropdown notifications-menu custom-dropdown"><button class="dropdown-toggle notify-toggler custom-dropdown-toggler"><i class="mdi mdi-bell-outline"></i></button>
                                 <div class="card card-default dropdown-notify dropdown-menu-right mb-0">
                                     <div class="card-header card-header-border-bottom px-3">
                                         <h2> اطلاعیه ها </h2>
                                     </div>
                                     <div class="card-body px-0 py-0">
-                                        <ul class="nav nav-tabs nav-style-border p-0 justify-content-between" id="myNotificationTab" role="tablist">
+                                        <ul class="nav nav-tabs nav-style-border p-0 justify-content-between" id="myTab" role="tablist">
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link active pb-3" id="home2-tab" data-bs-toggle="tab" data-bs-target="#home2" role="tab" aria-controls="home2" aria-selected="true">همه (10)</a>
                                             </li>
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link pb-3" id="profile2-tab" data-bs-toggle="tab" data-bs-target="#profile2" role="tab" aria-controls="profile2" aria-selected="false">پیام (5)</a></li>
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link pb-3" id="contact2-tab" data-bs-toggle="tab" data-bs-target="#contact2" role="tab" aria-controls="contact2" aria-selected="false">دیگر (5)</a></li>
                                         </ul>
-                                        <div class="tab-content" id="myTabContent3">
-                                            <div class="tab-pane fade show active" id="home2" role="tabpanel" aria-labelledby="home2-tab">
+                                        <div class="tab-content" id="myNotifications">
+                                            <div class="tab-pane fade show active" id="home2" role="tabpanel">
                                                 <ul class="list-unstyled" data-simplebar="" style="height:360px">
                                                     <li><a href="javscript:void(0)" class="media media-message media-notification">
                                                             <div class="position-relative mr-3"><img class="rounded-circle" src="assets/img/user/u2.jpg" alt="Image"> <span class="status away"></span></div>
@@ -295,7 +298,7 @@ $res_notifications=mysqli_query($conn,$sql_notification);
                                                         </a></li>
                                                 </ul>
                                             </div>
-                                            <div class="tab-pane fade" id="profile2" role="tabpanel" aria-labelledby="profile2-tab">
+                                            <div class="tab-pane fade" id="profile2" role="tabpanel">
                                                 <ul class="list-unstyled" data-simplebar="" style="height:360px">
                                                     <li><a href="javscript:void(0)" class="media media-message media-notification">
                                                             <div class="position-relative mr-3"><img class="rounded-circle" src="assets/img/user/u6.jpg" alt="Image"> <span class="status away"></span></div>
@@ -349,7 +352,7 @@ $res_notifications=mysqli_query($conn,$sql_notification);
                                                         </a></li>
                                                 </ul>
                                             </div>
-                                            <div class="tab-pane fade" id="contact2" role="tabpanel" aria-labelledby="contact2-tab">
+                                            <div class="tab-pane fade" id="contact2" role="tabpanel">
                                                 <ul class="list-unstyled" data-simplebar="" style="height:360px">
                                                     <li><a href="javscript:void(0)" class="media media-message media-notification event-active">
                                                             <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-info text-white">
@@ -424,7 +427,7 @@ $res_notifications=mysqli_query($conn,$sql_notification);
                                     <li><a href="#"><i class="mdi mdi-server-network-off"></i> سرور بیش از حد استفاده شده <span class="font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 05 صبح</span></a></li>
                                     <li class="dropdown-footer"><a class="text-center" href="#"> مشاهده همه </a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li class="right-sidebar-in right-sidebar-2-menu"><i class="mdi mdi-settings-outline mdi-spin"></i></li>
                         </ul>
                     </div>

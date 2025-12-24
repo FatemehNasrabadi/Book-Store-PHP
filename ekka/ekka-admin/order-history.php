@@ -1,97 +1,136 @@
-﻿<!DOCTYPE html>
-<html lang="en" dir="ltr">
+﻿<?php
+session_start();
+include('../../config/db.php'); // اتصال به دیتابیس
+include('../../config/jdf.php');
 
+if(!isset($_SESSION['sellers_id'])){
+    header("Location: sign-in.html");
+    exit();
+}
+$seller_id=intval($_SESSION['sellers_id']);
+
+
+// گرفتن  سفارش  کاربر
+$sql = "
+SELECT 
+    o.id AS order_id,
+    u.name AS buyer_name,
+    u.email AS buyer_email,
+    COUNT(o.product_id) AS product_count,
+    o.order_time AS order_date,
+    s.name AS seller_name,
+    SUM(o.price) AS total_amount
+FROM orders o
+JOIN users u ON o.user_id = u.id
+JOIN sellers s ON o.seller_id = s.id
+GROUP BY o.id, o.user_id, o.order_time
+ORDER BY o.order_time DESC
+";
+$res_orders = mysqli_query($conn, $sql);
+?>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Ekka - Admin Dashboard HTML Template.">
-    <title>اکا - داشبرد مدیریتی اچ تی ام ال</title>
-    <link href="assets/img/favicon.png" rel="shortcut icon">
+    <meta name="description" content="اکا - داشبرد مدیریتی فروشگاهی اچ تی ام ال">
+    <title>اکا - داشبرد مدیریتی فروشگاهی اچ تی ام ال.</title>
       
      
-    <link href="assets/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="assets/css/materialdesignicons.min.css" rel="stylesheet">    <link href="assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
     <link href="assets/plugins/simplebar/simplebar.css" rel="stylesheet">
-    <link href="assets/plugins/flag-icons/css/flag-icon.min.css" rel="stylesheet">
     <link id="ekka-css" href="assets/css/ekka.css" rel="stylesheet">
+    <link href="assets/img/favicon.png" rel="shortcut icon">
 </head>
 
-<body class="ec-header-fixed ec-sidebar-fixed ec-sidebar-dark ec-header-light" id="body">
+<body class="ec-header-fixed ec-sidebar-fixed ec-sidebar-light ec-header-light" id="body">
     <div class="wrapper">
         <div class="ec-left-sidebar ec-bg-sidebar">
             <div id="sidebar" class="sidebar ec-sidebar-footer">
-                <div class="ec-brand"><a href="index.html" title="Ekka"><img class="ec-brand-icon" src="assets/img/logo/ec-site-logo.png" alt=""> <span class="ec-brand-name text-truncate">اکا
-                        </span></a></div>
+                <div class="ec-brand"><a href="index.html" title="Ekka"><img class="ec-brand-icon" src="assets/img/logo/ec-site-logo.png" alt=""> <span class="ec-brand-name text-truncate">اکا </span></a></div>
                 <div class="ec-navigation" data-simplebar="">
                     <ul class="nav sidebar-inner" id="sidebar-menu">
-                        <li><a class="sidenav-item-link" href="index.html"><i class="mdi mdi-view-dashboard-outline"></i> <span class="nav-text">داشبرد</span></a>
+                        <li class="active"><a class="sidenav-item-link" href="index.html"><i class="mdi mdi-view-dashboard-outline"></i> <span class="nav-text">داشبرد</span></a>
                             <hr>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span>
-                                <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="vendors" data-parent="#sidebar-menu">
-                                <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید
-                                            فروشندگان</span></a></li>
-                                <li><a class="sidenav-item-link" href="vendor-list.html"><span class="nav-text">لیست
-                                            فروشندگان</span></a></li>
-                                <li><a class="sidenav-item-link" href="vendor-profile.html"><span class="nav-text">پروفایل فروشنده</span></a></li>
-                            </ul>
+                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span> <b class="caret"></b></a>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="vendors" data-parent="#sidebar-menu">
+                                    <!-- <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید فروشندگان</span></a></li> -->
+                                    <li><a class="sidenav-item-link" href="vendor-list.html"><span class="nav-text">لیست فروشندگان</span></a></li>
+                                    <li><a class="sidenav-item-link" href="vendor-profile.html"><span class="nav-text">پروفایل فروشنده</span></a></li>
+                                </ul>
+                            </div>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group"></i> <span class="nav-text">کاربران</span> <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="users" data-parent="#sidebar-menu">
-                                <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید
-                                            کاربران</span></a></li>
-                                <li><a class="sidenav-item-link" href="user-list.html"><span class="nav-text">لیست
-                                            کاربران</span></a></li>
-                                <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل
-                                            کاربر</span></a></li>
-                            </ul>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="users" data-parent="#sidebar-menu">
+                                    <!-- <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید کاربران</span></a></li> -->
+                                    <li><a class="sidenav-item-link" href="user-list.html"><span class="nav-text">لیست کاربران</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li> -->
+                                </ul>
+                            </div>
                             <hr>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-dns-outline"></i> <span class="nav-text">دسته‌بندی‌ها</span> <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="categorys" data-parent="#sidebar-menu">
-                                <li><a class="sidenav-item-link" href="main-category.html"><span class="nav-text">دسته‌بندی‌ اصلی</span></a></li>
-                                <li><a class="sidenav-item-link" href="sub-category.html"><span class="nav-text">دسته‌بندی‌ فرعی</span></a></li>
-                            </ul>
-                        </li>
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-dns-outline"></i> <span class="nav-text">دسته‌بندی‌ها</span> <b class="caret"></b></a>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="categorys" data-parent="#sidebar-menu">
+                                    <li><a class="sidenav-item-link" href="main-category.html"><span class="nav-text">دسته‌بندی‌ اصلی</span></a></li>
+                                    <li><a class="sidenav-item-link" href="sub-category.html"><span class="nav-text">دسته‌بندی‌ فرعی</span></a></li>
+                                </ul>
+                            </div>
+                        </li> -->
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-palette-advanced"></i> <span class="nav-text">محصولات</span> <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="products" data-parent="#sidebar-menu">
-                                <li><a class="sidenav-item-link" href="product-add.html"><span class="nav-text">افزودن محصول</span></a></li>
-                                <li><a class="sidenav-item-link" href="product-list.html"><span class="nav-text">لیست محصولات</span></a></li>
-                                <li><a class="sidenav-item-link" href="product-grid.html"><span class="nav-text">گرید محصولات</span></a></li>
-                                <li><a class="sidenav-item-link" href="product-detail.html"><span class="nav-text">جزییات محصول</span></a></li>
-                            </ul>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="products" data-parent="#sidebar-menu">
+                                    <li><a class="sidenav-item-link" href="product-add.html"><span class="nav-text">افزودن محصول</span></a></li>
+                                    <li><a class="sidenav-item-link" href="product-list.html"><span class="nav-text">لیست  کل محصولات</span></a></li>
+                                    <li><a class="sidenav-item-link" href="product-grid.html"><span class="nav-text">گرید محصولات شما(فروشنده)</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="product-detail.html"><span class="nav-text">جزییات محصول</span></a></li> -->
+                                </ul>
+                            </div>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-cart"></i> <span class="nav-text">سفارشات</span> <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="orders" data-parent="#sidebar-menu">
-                                <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li>
-                                <li><a class="sidenav-item-link" href="order-history.html"><span class="nav-text">گزارش سفارش </span></a></li>
-                                <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li>
-                                <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li>
-                            </ul>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="orders" data-parent="#sidebar-menu">
+                                    <!-- <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li> -->
+                                    <li><a class="sidenav-item-link" href="order-history.html"><span class="nav-text">گزارش سفارش </span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li> -->
+                                    <!-- <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li> -->
+                                </ul>
+                            </div>
                         </li>
-                        <li><a class="sidenav-item-link" href="review-list.html"><i class="mdi mdi-star-half"></i> <span class="nav-text">نظرات</span></a></li>
-                        <li><a class="sidenav-item-link" href="brand-list.html"><i class="mdi mdi-tag-faces"></i> <span class="nav-text">برند ها</span></a>
+                        <!-- <li><a class="sidenav-item-link" href="review-list.html"><i class="mdi mdi-star-half"></i> <span class="nav-text">نظرات</span></a></li> -->
+                        <!-- <li><a class="sidenav-item-link" href="brand-list.html"><i class="mdi mdi-tag-faces"></i> <span class="nav-text">برند ها</span></a> -->
                             <hr>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-login"></i> <span class="nav-text">احراز هویت</span> <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="authentication" data-parent="#sidebar-menu">
-                                <li><a href="sign-in.html"><span class="nav-text">ورود</span></a></li>
-                                <li><a href="sign-up.html"><span class="nav-text">ثبت نام</span></a></li>
-                            </ul>
-                        </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
-                            <ul class="collapse sub-menu" id="icons" data-parent="#sidebar-menu">
-                                <li><a class="sidenav-item-link" href="material-icon.html"><span class="nav-text"> متریال آیکون </span></a></li>
-                                <li><a class="sidenav-item-link" href="font-awsome-icons.html"><span class="nav-text"> فونت آوسام آیکون </span></a></li>
-                                <li><a class="sidenav-item-link" href="flag-icon.html"><span class="nav-text"> فلگ آیکون </span></a></li>
-                            </ul>
-                        </li>
-                        <li class="has-sub active expand"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-image-filter-none"></i> <span class="nav-text"> صفحات دیگر </span> <b class="caret"></b></a> <span class="collapse show">
-                                <ul class="sub-menu" id="otherpages" data-parent="#sidebar-menu">
-                                    <li class="has-sub active"><a href="404.html"> صفحه 404 </a></li>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="authentication" data-parent="#sidebar-menu">
+                                    <li><a href="sign-in.html"><span class="nav-text">ورود</span></a></li>
+                                    <li><a href="sign-up.html"><span class="nav-text">ثبت نام</span></a></li>
+                                     <li><a href="sign-in.html"><span class="nav-text"> خروج</span></a></li>
+
                                 </ul>
-                            </span></li>
+                            </div>
+                        </li>
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="icons" data-parent="#sidebar-menu">
+                                    <li><a class="sidenav-item-link" href="material-icon.html"><span class="nav-text"> متریال آیکون </span></a></li>
+                                    <li><a class="sidenav-item-link" href="font-awsome-icons.html"><span class="nav-text"> فونت آوسام آیکون </span></a></li>
+                                    <li><a class="sidenav-item-link" href="flag-icon.html"><span class="nav-text"> فلگ آیکون </span></a></li>
+                                </ul>
+                            </div>
+                        </li> -->
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-image-filter-none"></i> <span class="nav-text"> صفحات دیگر </span> <b class="caret"></b></a>
+                            <div class="collapse">
+                                <ul class="sub-menu" id="otherpages" data-parent="#sidebar-menu">
+                                    <li class="has-sub"><a href="404.html"> صفحه 404 </a></li>
+                                </ul>
+                            </div>
+                        </li> -->
                     </ul>
                 </div>
             </div>
@@ -99,18 +138,18 @@
         <div class="ec-page-wrapper">
             <header class="ec-main-header" id="header">
                 <nav class="navbar navbar-static-top navbar-expand-lg"><button id="sidebar-toggler" class="sidebar-toggle"></button>
-                    <div class="search-form d-lg-inline-block">
+                    <!-- <div class="search-form d-lg-inline-block">
                         <div class="input-group"><input name="query" id="search-input" class="form-control" placeholder="جستجو..." autofocus="" autocomplete="off"> <button type="button" name="search" id="search-btn" class="btn btn-flat"><i class="mdi mdi-magnify"></i></button></div>
                         <div id="search-results-container">
                             <ul id="search-results"></ul>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="navbar-right">
                         <ul class="nav navbar-nav">
-                            <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
+                            <!-- <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
                                 <ul class="dropdown-menu dropdown-menu-right ec-dropdown-menu">
                                     <li class="dropdown-header"><img src="assets/img/user/user.png" class="img-circle" alt="User Image">
-                                        <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="92f8fdfafcbcf7eaf3ffe2fef7d2f5fff3fbfebcf1fdff">john.example@gmail.com</a></small>
+                                        <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="4c262324226229342d213c20290c2b212d2520622f2321">john.example@gmail.com</a></small>
                                         </div>
                                     </li>
                                     <li><a href="user-profile.html"><i class="mdi mdi-account"></i>پروفایل من </a></li>
@@ -119,8 +158,8 @@
                                     <li class="right-sidebar-in"><a href="javascript:0"><i class="mdi mdi-settings-outline"></i> تنظیمات </a></li>
                                     <li class="dropdown-footer"><a href="index.html"><i class="mdi mdi-logout"></i> خروج </a></li>
                                 </ul>
-                            </li>
-                            <li class="dropdown notifications-menu custom-dropdown"><button class="dropdown-toggle notify-toggler custom-dropdown-toggler"><i class="mdi mdi-bell-outline"></i></button>
+                            </li> -->
+                            <!-- <li class="dropdown notifications-menu custom-dropdown"><button class="dropdown-toggle notify-toggler custom-dropdown-toggler"><i class="mdi mdi-bell-outline"></i></button>
                                 <div class="card card-default dropdown-notify dropdown-menu-right mb-0">
                                     <div class="card-header card-header-border-bottom px-3">
                                         <h2> اطلاعیه ها </h2>
@@ -132,8 +171,8 @@
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link pb-3" id="profile2-tab" data-bs-toggle="tab" data-bs-target="#profile2" role="tab" aria-controls="profile2" aria-selected="false">پیام (5)</a></li>
                                             <li class="nav-item mx-3 my-0 py-0"><a href="#" class="nav-link pb-3" id="contact2-tab" data-bs-toggle="tab" data-bs-target="#contact2" role="tab" aria-controls="contact2" aria-selected="false">دیگر (5)</a></li>
                                         </ul>
-                                        <div class="tab-content" id="myTabContent3">
-                                            <div class="tab-pane fade show active" id="home2" role="tabpanel" aria-labelledby="home2-tab">
+                                        <div class="tab-content" id="myNotifications">
+                                            <div class="tab-pane fade show active" id="home2" role="tabpanel">
                                                 <ul class="list-unstyled" data-simplebar="" style="height:360px">
                                                     <li><a href="javscript:void(0)" class="media media-message media-notification">
                                                             <div class="position-relative mr-3"><img class="rounded-circle" src="assets/img/user/u2.jpg" alt="Image"> <span class="status away"></span></div>
@@ -227,7 +266,7 @@
                                                         </a></li>
                                                 </ul>
                                             </div>
-                                            <div class="tab-pane fade" id="profile2" role="tabpanel" aria-labelledby="profile2-tab">
+                                            <div class="tab-pane fade" id="profile2" role="tabpanel">
                                                 <ul class="list-unstyled" data-simplebar="" style="height:360px">
                                                     <li><a href="javscript:void(0)" class="media media-message media-notification">
                                                             <div class="position-relative mr-3"><img class="rounded-circle" src="assets/img/user/u6.jpg" alt="Image"> <span class="status away"></span></div>
@@ -281,7 +320,7 @@
                                                         </a></li>
                                                 </ul>
                                             </div>
-                                            <div class="tab-pane fade" id="contact2" role="tabpanel" aria-labelledby="contact2-tab">
+                                            <div class="tab-pane fade" id="contact2" role="tabpanel">
                                                 <ul class="list-unstyled" data-simplebar="" style="height:360px">
                                                     <li><a href="javscript:void(0)" class="media media-message media-notification event-active">
                                                             <div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-info text-white">
@@ -356,7 +395,7 @@
                                     <li><a href="#"><i class="mdi mdi-server-network-off"></i> سرور بیش از حد استفاده شده <span class="font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 05 صبح</span></a></li>
                                     <li class="dropdown-footer"><a class="text-center" href="#"> مشاهده همه </a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li class="right-sidebar-in right-sidebar-2-menu"><i class="mdi mdi-settings-outline mdi-spin"></i></li>
                         </ul>
                     </div>
@@ -364,20 +403,71 @@
             </header>
             <div class="ec-content-wrapper">
                 <div class="content">
-                    <div class="error-wrapper border bg-white px-5">
-                        <div class="row justify-content-center align-items-center text-center">
-                            <div class="col-xl-4">
-                                <h1 class="text-primary bold error-title">404</h1>
-                                <p class="pt-4 pb-5 error-subtitle"> به نظر می رسد چیزی اشتباه است. </p><a href="index.html" class="btn btn-primary btn-pill"> بازگشت به صفحه اصلی </a>
+                    <div class="breadcrumb-wrapper breadcrumb-wrapper-2">
+                        <h1> تاریخچه سفارشات</h1>
+                        <p class="breadcrumbs"><span><a href="index.html">خانه</a></span> <span><i class="mdi mdi-chevron-left"></i></span>تاریخچه</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-default">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="" class="table" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>شناسه</th>
+                                                    <th>مشتری</th>
+                                                    <th>ایمیل:</th>
+                                                    <th>مورد</th>
+                                                    <th>قیمت</th>
+                                                    <th>فروشنده</th>
+                                                    <!-- <th>وضعیت</th> -->
+                                                    <th>تاریخ</th>
+                                                    <!-- <th>فعالیت</th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if(mysqli_num_rows($res_orders)==0): ?>
+                                                                    <p>فعالیتی ثبت نشده</p>
+                                                                    <?php 
+                                                                    else:
+                                                                        while($row=mysqli_fetch_assoc($res_orders)): ?>
+                                                <tr  >
+                                                    <td><?php echo htmlspecialchars($row['order_id']); ?></td>
+                                                    <td > <?php echo htmlspecialchars($row['buyer_name']); ?></td>
+                                                    <td><?php echo $row['buyer_email']; ?></a>
+                                                    </td>
+                                                    <td><?php echo $row['product_count']; ?></td>
+                                                    <td><?php echo number_format($row['total_amount']); ?> تومان</td>
+                                                    <td> <?php echo number_format($row['seller_name']); ?></td>
+                                                    <!-- <td><span class="mb-2 mr-2 badge badge-secondary">لغو</span></td> -->
+                                                    <td>
+                                                        <?php  $timestamp = strtotime($row['order_date']);
+                    echo jdate('Y/m/d H:i', $timestamp);  ?>
+                                                    </td>
+                                                    <td><a href="order-detail.php?id=<?php echo $row['order_id'];?>"> جزئیات</a></td>
+                                                    <!-- <td>
+                                                        <div class="btn-group mb-1"><button  type="button" class="btn btn-outline-success">اطلاعات</button> <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"><span  class="sr-only">اطلاعات</span></button>
+                                                            <div class="dropdown-menu"><a class="dropdown-item" href="#"> جزییات </a> <a class="dropdown-item" href="#"> پیگیری </a> <a class="dropdown-item" href="#">لغو</a></div>
+                                                        </div>
+                                                    </td> -->
+                                                </tr>
+                                               
+                                            </tbody>
+                                            <?php
+                                            endwhile;
+                                        endif;?>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-xl-6 pt-5 pt-xl-0 text-center"><img src="assets/img/lightenning.png" class="img-fluid" alt="Error Page Image"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <footer class="footer mt-auto">
                 <div class="copyright bg-white">
-                    <p>&copy;  کپی رایت  <span>1401</span><a class="text-primary" href="404.html" target="_blank"> داشبرد مدیریتی اکا </a>.
+                    <p>&copy;  کپی رایت  <span>1401</span><a class="text-primary" href="order-history.html" target="_blank"> داشبرد مدیریتی اکا </a>.
                        همه حقوق محفوظ است.</p>
                 </div>
             </footer>
@@ -391,6 +481,9 @@
     <script src="assets/plugins/simplebar/simplebar.min.js"></script>
     <script src="assets/plugins/jquery-zoom/jquery.zoom.min.js"></script>
     <script src="assets/plugins/slick/slick.min.js"></script>
+    <script src="assets/plugins/data-tables/jquery.datatables.min.js"></script>
+    <script src="assets/plugins/data-tables/datatables.bootstrap5.min.js"></script>
+    <script src="assets/plugins/data-tables/datatables.responsive.min.js"></script>
     <script src="assets/plugins/options-sidebar/optionswitcher.js"></script>
     <script src="assets/js/ekka.js"></script>
 </body>

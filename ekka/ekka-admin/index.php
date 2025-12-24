@@ -50,6 +50,17 @@ if(!$res_income){
 $row_income=mysqli_fetch_assoc($res_income);
 $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
 
+//تعداد کل محصولات
+$sql_total_product="SELECT COUNT(*) AS total_product FROM books";
+$res_total_product=mysqli_query($conn,$sql_total_product);
+$row_total_products=mysqli_fetch_assoc($res_total_product);
+$total_products=isset($row_total_products['total_products']) ? $row_total_products['total_products']:0;
+
+//تعداد کل محصولات فروشنده
+$sql_seller_products="SELECT COUNT(*) AS total_products FROM books WHERE seller_id=$seller_id";
+$res_seller_products=mysqli_query($conn,$sql_seller_products);
+$row_seller_products=mysqli_fetch_assoc($res_seller_products);
+$total_seller_products=isset($row_seller_products['total_products']) ? $row_seller_products['total_products']:0;
 
 
 /* فروش سالانه نمودار*/
@@ -156,7 +167,7 @@ if(!$res_top_product){
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group-outline"></i> <span class="nav-text">فروشندگان</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="vendors" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید فروشندگان</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="vendor-card.html"><span class="nav-text">گرید فروشندگان</span></a></li> -->
                                     <li><a class="sidenav-item-link" href="vendor-list.html"><span class="nav-text">لیست فروشندگان</span></a></li>
                                     <li><a class="sidenav-item-link" href="vendor-profile.html"><span class="nav-text">پروفایل فروشنده</span></a></li>
                                 </ul>
@@ -165,43 +176,43 @@ if(!$res_top_product){
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-account-group"></i> <span class="nav-text">کاربران</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="users" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید کاربران</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="user-card.html"><span class="nav-text">گرید کاربران</span></a></li> -->
                                     <li><a class="sidenav-item-link" href="user-list.html"><span class="nav-text">لیست کاربران</span></a></li>
-                                    <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="user-profile.html"><span class="nav-text">پروفایل کاربر</span></a></li> -->
                                 </ul>
                             </div>
                             <hr>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-dns-outline"></i> <span class="nav-text">دسته‌بندی‌ها</span> <b class="caret"></b></a>
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-dns-outline"></i> <span class="nav-text">دسته‌بندی‌ها</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="categorys" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="main-category.html"><span class="nav-text">دسته‌بندی‌ اصلی</span></a></li>
                                     <li><a class="sidenav-item-link" href="sub-category.html"><span class="nav-text">دسته‌بندی‌ فرعی</span></a></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> -->
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-palette-advanced"></i> <span class="nav-text">محصولات</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="products" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="product-add.html"><span class="nav-text">افزودن محصول</span></a></li>
-                                    <li><a class="sidenav-item-link" href="product-list.html"><span class="nav-text">لیست محصولات</span></a></li>
-                                    <li><a class="sidenav-item-link" href="product-grid.html"><span class="nav-text">گرید محصولات</span></a></li>
-                                    <li><a class="sidenav-item-link" href="product-detail.html"><span class="nav-text">جزییات محصول</span></a></li>
+                                    <li><a class="sidenav-item-link" href="product-list.html"><span class="nav-text">لیست  کل محصولات</span></a></li>
+                                    <li><a class="sidenav-item-link" href="product-grid.html"><span class="nav-text">گرید محصولات شما(فروشنده)</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="product-detail.html"><span class="nav-text">جزییات محصول</span></a></li> -->
                                 </ul>
                             </div>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-cart"></i> <span class="nav-text">سفارشات</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="orders" data-parent="#sidebar-menu">
-                                    <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="new-order.html"><span class="nav-text">سفارش جدید</span></a></li> -->
                                     <li><a class="sidenav-item-link" href="order-history.html"><span class="nav-text">گزارش سفارش </span></a></li>
-                                    <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li>
-                                    <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li>
+                                    <!-- <li><a class="sidenav-item-link" href="order-detail.html"><span class="nav-text">جزییات سفارش </span></a></li> -->
+                                    <!-- <li><a class="sidenav-item-link" href="invoice.html"><span class="nav-text">فاکتور </span></a></li> -->
                                 </ul>
                             </div>
                         </li>
-                        <li><a class="sidenav-item-link" href="review-list.html"><i class="mdi mdi-star-half"></i> <span class="nav-text">نظرات</span></a></li>
-                        <li><a class="sidenav-item-link" href="brand-list.html"><i class="mdi mdi-tag-faces"></i> <span class="nav-text">برند ها</span></a>
+                        <!-- <li><a class="sidenav-item-link" href="review-list.html"><i class="mdi mdi-star-half"></i> <span class="nav-text">نظرات</span></a></li> -->
+                        <!-- <li><a class="sidenav-item-link" href="brand-list.html"><i class="mdi mdi-tag-faces"></i> <span class="nav-text">برند ها</span></a> -->
                             <hr>
                         </li>
                         <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-login"></i> <span class="nav-text">احراز هویت</span> <b class="caret"></b></a>
@@ -209,10 +220,12 @@ if(!$res_top_product){
                                 <ul class="sub-menu" id="authentication" data-parent="#sidebar-menu">
                                     <li><a href="sign-in.html"><span class="nav-text">ورود</span></a></li>
                                     <li><a href="sign-up.html"><span class="nav-text">ثبت نام</span></a></li>
+                                     <li><a href="sign-in.html"><span class="nav-text"> خروج</span></a></li>
+
                                 </ul>
                             </div>
                         </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-diamond-stone"></i> <span class="nav-text">آیکون ها</span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="icons" data-parent="#sidebar-menu">
                                     <li><a class="sidenav-item-link" href="material-icon.html"><span class="nav-text"> متریال آیکون </span></a></li>
@@ -220,14 +233,14 @@ if(!$res_top_product){
                                     <li><a class="sidenav-item-link" href="flag-icon.html"><span class="nav-text"> فلگ آیکون </span></a></li>
                                 </ul>
                             </div>
-                        </li>
-                        <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-image-filter-none"></i> <span class="nav-text"> صفحات دیگر </span> <b class="caret"></b></a>
+                        </li> -->
+                        <!-- <li class="has-sub"><a class="sidenav-item-link" href="javascript:void(0)"><i class="mdi mdi-image-filter-none"></i> <span class="nav-text"> صفحات دیگر </span> <b class="caret"></b></a>
                             <div class="collapse">
                                 <ul class="sub-menu" id="otherpages" data-parent="#sidebar-menu">
                                     <li class="has-sub"><a href="404.html"> صفحه 404 </a></li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>
@@ -235,15 +248,15 @@ if(!$res_top_product){
         <div class="ec-page-wrapper">
             <header class="ec-main-header" id="header">
                 <nav class="navbar navbar-static-top navbar-expand-lg"><button id="sidebar-toggler" class="sidebar-toggle"></button>
-                    <div class="search-form d-lg-inline-block">
+                    <!-- <div class="search-form d-lg-inline-block">
                         <div class="input-group"><input name="query" id="search-input" class="form-control" placeholder="جستجو..." autofocus="" autocomplete="off"> <button type="button" name="search" id="search-btn" class="btn btn-flat"><i class="mdi mdi-magnify"></i></button></div>
                         <div id="search-results-container">
                             <ul id="search-results"></ul>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="navbar-right">
                         <ul class="nav navbar-nav">
-                            <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
+                            <!-- <li class="dropdown user-menu"><button class="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown" aria-expanded="false"><img src="assets/img/user/user.png" class="user-image" alt="User Image"></button>
                                 <ul class="dropdown-menu dropdown-menu-right ec-dropdown-menu">
                                     <li class="dropdown-header"><img src="assets/img/user/user.png" class="img-circle" alt="User Image">
                                         <div class="d-inline-block"> جلال شمس <small class="pt-1"><a class="__cf_email__" data-cfemail="4c262324226229342d213c20290c2b212d2520622f2321">john.example@gmail.com</a></small>
@@ -255,8 +268,8 @@ if(!$res_top_product){
                                     <li class="right-sidebar-in"><a href="javascript:0"><i class="mdi mdi-settings-outline"></i> تنظیمات </a></li>
                                     <li class="dropdown-footer"><a href="index.html"><i class="mdi mdi-logout"></i> خروج </a></li>
                                 </ul>
-                            </li>
-                            <li class="dropdown notifications-menu custom-dropdown"><button class="dropdown-toggle notify-toggler custom-dropdown-toggler"><i class="mdi mdi-bell-outline"></i></button>
+                            </li> -->
+                            <!-- <li class="dropdown notifications-menu custom-dropdown"><button class="dropdown-toggle notify-toggler custom-dropdown-toggler"><i class="mdi mdi-bell-outline"></i></button>
                                 <div class="card card-default dropdown-notify dropdown-menu-right mb-0">
                                     <div class="card-header card-header-border-bottom px-3">
                                         <h2> اطلاعیه ها </h2>
@@ -492,7 +505,7 @@ if(!$res_top_product){
                                     <li><a href="#"><i class="mdi mdi-server-network-off"></i> سرور بیش از حد استفاده شده <span class="font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 05 صبح</span></a></li>
                                     <li class="dropdown-footer"><a class="text-center" href="#"> مشاهده همه </a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <li class="right-sidebar-in right-sidebar-2-menu"><i class="mdi mdi-settings-outline mdi-spin"></i></li>
                         </ul>
                     </div>
@@ -533,6 +546,22 @@ if(!$res_top_product){
                                 </div>
                             </div>
                         </div>
+                        <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
+                            <div class="card card-mini dash-card card-4">
+                                <div class="card-body">
+                                    <h2 class="mb-1"><?php echo $total_seller_products; ?></h2>
+                                    <p>تعداد محصولات شما(فروشنده)</p><span class="mdi mdi-currency-usd"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
+                            <div class="card card-mini dash-card card-4">
+                                <div class="card-body">
+                                    <h2 class="mb-1"><?php echo $total_products;?></h2>
+                                    <p>تعداد کل محصولات</p><span class="mdi mdi-currency-usd"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <!-- <div class="col-xl-8 col-md-12 p-b-15">
@@ -560,7 +589,7 @@ if(!$res_top_product){
                              <div class=" col-xl-8 col-md-12 p-b-15 col-12 mb-4">
                           <div id="user-acquisition-yearly" class="card card-default" style="width: 100%; " >
                                  <div class="card-header">
-                                       <h2>گزارش فروش سالانه</h2>
+                                       <h2>گزارش فروش سالانه فروشنده</h2>
                                    </div>
                             <div class="card-body" >
                          <div class="mb-6" style="max-height:300px">
@@ -746,7 +775,7 @@ if(!$res_top_product){
                         <div class="col-12 p-b-15">
                             <div class="card card-table-border-none card-default recent-orders" id="recent-orders">
                                 <div class="card-header justify-content-between">
-                                    <h2>سفارشات اخیر</h2>
+                                    <h2> سفارشات اخیر فروشنده</h2>
                                     <!-- <div class="date-range-report"><span></span></div> -->
                                 </div>
                                 <div class="card-body pt-0 pb-5">
@@ -828,7 +857,7 @@ if(!$res_top_product){
                         <div class="col-xl-7">
                             <div class="card card-default ec-card-top-prod">
                                 <div class="card-header justify-content-between">
-                                    <h2>محصولات برتر</h2>
+                                    <h2>محصولات برتر فروشنده</h2>
                                     
                                 </div>
                                 <div class="card-body mt-10px mb-10px py-0" >

@@ -2,14 +2,30 @@ RewriteEngine On
 # ریدایرکت product-list.html به product-list.php
 RewriteRule ^product-list\.html$ product-list.php [L]
 
-# ریدایرکت product-list.html به product-list.php
+# ریدایرکت product-gride.html به product-gride.php
 RewriteRule ^product-grid\.html$ product-grid.php [L]
 
-# ریدایرکت product-list.html به product-list.php
+# ریدایرکت product-detail.html به product-detail.php
 RewriteRule ^product-detail\.html$ product-detail.php [L]
 
-# ریدایرکت product-list.html به product-list.php
+# ریدایرکت vendor-list.html به vendor-list.php
 RewriteRule ^vendor-list\.html$ vendor-list.php [L]
 
-# ریدایرکت product-list.html به product-list.php
+# ریدایرکت vendor-profile.html به vendor-profile.php
 RewriteRule ^vendor-profile\.html$ vendor-profile.php [L]
+
+# ریدایرکت index.html به index.php
+RewriteRule ^index\.html$ index.php [L]
+
+# ریدایرکت order-detail.html به order-detail.php
+RewriteRule ^order-detail\.html$ order-detail.php [L]
+
+# ریدایرکت user-list.html به user-list.php
+RewriteRule ^user-list\.html$ user-list.php [L]
+
+# ریدایرکت user-profile.html به user-profile.php
+RewriteRule ^user-profile\.html$ user-profile.php [L]
+
+# ریدایرکت order-history.html به order-history.php
+RewriteRule ^order-history\.html$ order-history.php [L]
+

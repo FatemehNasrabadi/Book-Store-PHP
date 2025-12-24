@@ -20,6 +20,7 @@ if(isset($_POST['submit'])){
     $description = mysqli_real_escape_string($conn, $_POST['description']);
     $category=mysqli_real_escape_string($conn,$_POST['category']);
 
+
     // مسیر ذخیره عکس
     $target_dir = "../ekka-html/assets/images/products/";
     $image_name = basename($_FILES["image"]["name"]); // اسم فایل آپلود شده
@@ -30,9 +31,9 @@ if(isset($_POST['submit'])){
 
         // آماده کردن دستور INSERT برای ذخیره اطلاعات در دیتابیس
         $sql = "INSERT INTO books 
-        (name, price, quantity, description, discount, sold_count, status, created_at, image, category) 
+        (name, price, quantity, description, discount, sold_count, status, created_at, image, category, seller_id) 
         VALUES 
-        ('$name', '$price', '$quantity', '$description', '$discount', 0, '$status', NOW(), '$image_name','$category')";
+        ('$name', '$price', '$quantity', '$description', '$discount', 0, '$status', NOW(), '$image_name','$category', $seller_id)";
 
         // اجرای دستور INSERT
         if(mysqli_query($conn, $sql)){
