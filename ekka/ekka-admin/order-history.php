@@ -439,7 +439,7 @@ $res_orders = mysqli_query($conn, $sql);
                                                     </td>
                                                     <td><?php echo $row['product_count']; ?></td>
                                                     <td><?php echo number_format($row['total_amount']); ?> تومان</td>
-                                                    <td> <?php echo number_format($row['seller_name']); ?></td>
+                                                    <td> <?php echo $row['seller_name']; ?></td>
                                                     <!-- <td><span class="mb-2 mr-2 badge badge-secondary">لغو</span></td> -->
                                                     <td>
                                                         <?php  $timestamp = strtotime($row['order_date']);

@@ -3,6 +3,7 @@ session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 include('../../config/jdf.php');
 
+
 // بررسی ورود فروشنده
 if (!isset($_SESSION['sellers_id'])) {
     die("لطفا وارد حساب فروشنده شوید.");

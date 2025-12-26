@@ -14,26 +14,22 @@ if (isset($_SESSION['users_id'])) {
  
 
 //عدد سبد خرید
-$cart_count=0;
-if(isset($_SESSION['user_id'])){
-    $uid=$_SESSION['user_id'];
-    $q=mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
-    $row=mysqli_fetch_assoc($q);
-    $cart_count=$row['total']??0;
-}
-echo $cart_count;
-// session_start();
-// // چک  که کاربر وارد شده یا نه
-// if(!isset($_SESSION['users_id'])){
-//     header("Location: login.html");
-//     exit();
+// $cart_count=0;
+// if(isset($_SESSION['user_id'])){
+//     $uid=$_SESSION['user_id'];
+//     $q=mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
+//     $row=mysqli_fetch_assoc($q);
+//     $cart_count=$row['total']??0;
 // }
-// $user_id = $_SESSION['users_id'];
-// $sql = "SELECT * FROM users WHERE id='$user_id' LIMIT 1";
-// $result = mysqli_query($conn, $sql);
-// $user = mysqli_fetch_assoc($result);
-
-// echo "خوش آمدید، " . htmlspecialchars($user['name']);
+// echo $cart_count;
+// تعداد کل محصولات در سبد خرید
+$cart_count = 0;
+if(isset($_SESSION['users_id'])){   // همون user_id که تو سشن داری
+    $uid = $_SESSION['users_id'];
+    $q = mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
+    $row = mysqli_fetch_assoc($q);
+    $cart_count = $row['total'] ?? 0;
+}
 
 
 //گرفتن همه کتاب ها از دیتابیس
@@ -69,20 +65,6 @@ if($category){
 
 $display_books = !empty($books_category) ? $books_category : $books;
 
-
-
-// گرفتن آخرین 4 کتاب تخفیف‌دار، اگر کمتر از 4 بود همونارو برمی‌گردونه
-// $sql_last_discounted = "SELECT * FROM books WHERE discount != 0 ORDER BY created_at DESC LIMIT 4";
-// $result_last_discounted = mysqli_query($conn, $sql_last_discounted);
-
-// $last_discounted_books = [];
-// if($result_last_discounted && mysqli_num_rows($result_last_discounted) > 0){
-//     while($row = mysqli_fetch_assoc($result_last_discounted)){
-//         // محاسبه قیمت بعد از تخفیف
-//         $row['final_price'] = $row['price'] - ($row['price'] * $row['discount'] / 100);
-//         $last_discounted_books[] = $row;
-//     }
-// }
 
 
 
@@ -285,6 +267,7 @@ $('.add-to-cart-btn').click(function(e){
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                         <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                        <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
@@ -300,7 +283,7 @@ $('.add-to-cart-btn').click(function(e){
                                 <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">سبد
                                         خرید</span>
                                 </a>
                                 <!-- Header Cart End -->
@@ -975,7 +958,41 @@ $('.add-to-cart-btn').click(function(e){
     <!-- Main Slider End -->
 
     <!--  category Section Start -->
- 
+ <style>
+    .ec-pro-price {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* فاصله بین قیمت‌ها */
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+.new-price {
+    color: #e59c35ff;
+    font-size: 16px;
+    font-weight: bold;
+}
+.ec-pro-image {
+    position: relative;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px; /* اگه چپ می‌خوای: left:10px */
+    background: #e53935;
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 20px;
+    z-index: 10;
+}
+ </style>
     <section class="section ec-category-section section-space-p">
         <div class="container">
             <div class="row">
@@ -992,7 +1009,17 @@ $('.add-to-cart-btn').click(function(e){
             <div class="row">
        <?php
        $last_four=array_slice($books,0,4);
-       foreach($last_four as $book){?>
+       foreach($last_four as $book){
+         $price = (float)$book['price'];
+$discount = (int)$book['discount']; // درصد تخفیف
+
+if ($discount > 0) {
+    $discount_amount = ($price * $discount) / 100;
+    $final_price = $price - $discount_amount;
+} else {
+    $final_price = $price;
+}
+        ?>
        
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
         <div class="ec-product-inner">
@@ -1001,66 +1028,33 @@ $('.add-to-cart-btn').click(function(e){
                     <a href="product-full-width.php?id=<?php echo $book['id']; ?>">
                         <img src="assets/images/products/<?php echo $book['image']; ?>" alt=""  style="width:600px; height:500px; object-fit:cover;">
                     </a>
+                    <!-- تخفیف -->
+                        <?php if($discount>0){ ?>
+                            <span class="percentage discount-badge"><?php echo $discount; ?>%</span>
+                        <?php } ?>
                 </div>
             </div>
 
             <div class="ec-pro-content">
                 <h6 class="ec-pro-title"><?php echo $book['name']; ?></h6>
-                <span class="ec-price"><?php echo $book['price']; ?> تومان</span>
+
+                     <div class="ec-pro-price"> 
+ <?php if($discount>0){ ?>
+                        <span class="old-price"><?php echo number_format($price); ?> تومان</span>
+                          <span class="new-price"><?php echo number_format($final_price); ?> تومان</span>
+                          <?php }else{ ?>
+                              <span class="new-price"><?php echo number_format($price); ?> تومان</span>
+                              <?php } ?>
+                        </div>
                 <a href="add_to_cart.php?id=<?php echo $book['id']; ?>" class="add-to-cart-btn"> افزودن به سبد خرید</a></div>
         </div>
     </div>
                             <?php }?>
-                            <!-- <div class="ec-cat-desc">
-                                <span class="ec-section-btn"><a href="shop-left-sidebar-col-3.html"
-                                        class="btn-primary">پرفروش ترین ها</a></span>
-                            </div> -->
+                           
                         </div>
                     </div>
-                    <!-- <div class="ec_cat_content">
-                        <div class="ec_cat_inner">
-                            <div class="ec-cat-image">
-                                <img src="assets/images/category-image/2.jpg" alt="" />
-                            </div>
-                            <div class="ec-cat-desc">
-                                <span class="ec-section-btn"><a href="shop-left-sidebar-col-3.html"
-                                        class="btn-primary">جدیدترین ها</a></span>
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- <div class="ec_cat_content">
-                        <div class="ec_cat_inner">
-                            <div class="ec-cat-image">
-                                <img src="assets/images/category-image/3.jpg" alt="" />
-                            </div>
-                            <div class="ec-cat-desc">
-                                <span class="ec-section-btn"><a href="shop-left-sidebar-col-3.html"
-                                        class="btn-primary">جدیدترین ها</a></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ec_cat_content">
-                        <div class="ec_cat_inner">
-                            <div class="ec-cat-image">
-                                <img src="assets/images/category-image/4.jpg" alt="" />
-                            </div>
-                            <div class="ec-cat-desc">
-                                <span class="ec-section-btn"><a href="shop-left-sidebar-col-3.html"
-                                        class="btn-primary">برترین کتاب های کودک</a></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ec_cat_content">
-                        <div class="ec_cat_inner">
-                            <div class="ec-cat-image">
-                                <img src="assets/images/category-image/5.jpg" alt="" />
-                            </div>
-                            <div class="ec-cat-desc">
-                                <span class="ec-section-btn"><a href="shop-left-sidebar-col-3.html"
-                                        class="btn-primary">برترین رمان های ادبیات نوجوان</a></span>     عکس لود نشد
-                            </div>
-                        </div>
-                    </div> -->
+                    
+           
                 </div>
             </div>
         </div>
@@ -1077,7 +1071,15 @@ $('.add-to-cart-btn').click(function(e){
                     <?php 
                     if(!empty($books)){
                     $lastBook=$books[0];
+         $price = (float)$book['price'];
+$discount = (int)$book['discount']; // درصد تخفیف
 
+if ($discount > 0) {
+    $discount_amount = ($price * $discount) / 100;
+    $final_price = $price - $discount_amount;
+} else {
+    $final_price = $price;
+}
                     ?>
                     <div class="banner-block"  >
                        
@@ -1086,7 +1088,18 @@ $('.add-to-cart-btn').click(function(e){
                             <div class="banner-text">
                                 <span class="ec-banner-stitle">بیا باهم کتاب بخونیم</span>
                                 <span class="ec-banner-title"><?php echo $lastBook['name']; ?></span>
-                                <p> <?php echo $lastBook['price']; ?> <br> تومان</p>
+ <div class="ec-pro-price"> <!-- تخفیف -->
+                        <?php if($discount>0){ ?>
+                            <span class="percentage"><?php echo $discount; ?>%</span>
+                        <?php } ?>
+ <?php if($discount>0){ ?>
+                        <span class="old-price"><?php echo number_format($price); ?> تومان</span>
+                          <span class="new-price"><?php echo number_format($final_price); ?> تومان</span>
+                          <?php }else{ ?>
+                              <span class="new-price"><?php echo number_format($price); ?> تومان</span>
+                              <?php } ?>
+                        </div>
+
                             </div>
                             <?php }?>
                             <span class="ec-banner-btn"><a href="product-full-width.php?id=<?php echo htmlentities($lastBook['id']);?>" class="btn-primary" type="submit">کشف کن </a></span>
@@ -1108,6 +1121,8 @@ $('.add-to-cart-btn').click(function(e){
                             <div class="banner-text">
                                 <span class="ec-banner-stitle">بیا باهم کتاب بخونیم</span>
                                 <span class="ec-banner-title"><?php echo $firstBook['name']; ?></span>
+
+                                
                                 <p> <?php echo $firstBook['price']; ?> <br> تومان</p>
                             </div>
                             <?php }?>
@@ -1116,46 +1131,7 @@ $('.add-to-cart-btn').click(function(e){
                     </div>
                 </div>
             </div>
-            <!-- <div class="ec-banner-right col-sm-6">
-                <div class="ec-banner-block ec-banner-block-2 col-sm-12">
-                    <div class="banner-block">
-                        <img src="assets/images/banner/16.jpg" alt="" />
-                        <div class="banner-content"> -->
-                            <!-- <div class="banner-text">
-                                <span class="ec-banner-stitle">استثنایی</span>
-                                <span class="ec-banner-title">طراحی داخلی<br> زیبا</span>
-                            </div> -->
-                            <!-- <span class="ec-banner-btn"><a href="#" class="btn-primary">کشف کن</a></span>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- <div class="ec-banner-block ec-banner-block-3 col-sm-6">
-                    <div class="banner-block">
-                        <a href="#">
-                            <img src="assets/images/banner/17.jpg" alt="" />
-                            <div class="banner-content">
-                                <div class="banner-text">
-                                    <span class="ec-banner-stitle">انحصاری</span>
-                                    <span class="ec-banner-title">مبل زندگی</span>
-                                    <span class="ec-banner-desc">برای فروش فقط <span>50000 تومان</span></span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="ec-banner-block ec-banner-block-4 col-sm-6">
-                    <div class="banner-block">
-                        <a href="#">
-                            <img src="assets/images/banner/18.jpg" alt="" />
-                            <div class="banner-content">
-                                <div class="banner-text">
-                                    <span class="ec-banner-stitle">بهترین های 1402</span>
-                                    <span class="ec-banner-title">میز مینی</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div> -->
+       
             </div>
         </div>
     </section>
@@ -1170,7 +1146,6 @@ $('.add-to-cart-btn').click(function(e){
                 <div class="col-md-12 section-title-block">
                     <div class="section-title">
                         <h2 class="ec-title">بررسی کنید</h2>
-                        <!-- <p class="sub-title">فرصت محدود.</p> -->
                     </div>
                     <?php $category=isset($_GET['category'])?trim($_GET['category']):null;?>
                     <div class="section-btn">
@@ -1184,13 +1159,11 @@ $('.add-to-cart-btn').click(function(e){
                         </ul>
                     </div>
                 </div>
-            </div>
-             
+            </div>          
 <?php
 $category = isset($_GET['category']) ? trim($_GET['category']) : null;
 $display_books = $category ? $books_category : $books;
 ?>
-
 <div class="row">
 <style>
     .ec-product-inner img{
@@ -1200,8 +1173,17 @@ $display_books = $category ? $books_category : $books;
         border-radius: 10px;
     } </style>
 <?php if (!empty($display_books)): ?>
-    <?php foreach ($display_books as $book): ?>
-    
+    <?php foreach ($display_books as $book):
+                 $price = (float)$book['price'];
+$discount = (int)$book['discount']; // درصد تخفیف
+
+if ($discount > 0) {
+    $discount_amount = ($price * $discount) / 100;
+    $final_price = $price - $discount_amount;
+} else {
+    $final_price = $price;
+}
+        ?>   
         <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-6">
             <div class="ec-product-inner">
                 <div class="ec-pro-image">
@@ -1209,26 +1191,40 @@ $display_books = $category ? $books_category : $books;
                         <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($book['image']); ?>" 
                              alt="<?php echo htmlspecialchars($book['name']); ?>" />
                     </a>
-                    <div class="ec-pro-actions">
-                        <button href="add_to_cart.php?id=<?php echo $book['id']; ?>" title="افزودن به سبد" class="add-to-cart">
-                            <img src="assets/images/icons/cart.svg" class="svg_img pro_svg" alt="">
-                        </button>
-                        <a href="#" class="ec-btn-group wishlist" title="علاقه‌مندی">
-                            <img src="assets/images/icons/pro_wishlist.svg" class="svg_img pro_svg" alt="">
-                        </a>
-                    </div>
+                    <!-- تخفیف -->
+                        <?php if($discount>0){ ?>
+                            <span class="percentage discount-badge"><?php echo $discount; ?>%</span>
+                        <?php } ?>
+                   
                 </div>
-
                 <div class="ec-pro-content">
                     <h5 class="ec-pro-title">
                         <a href="product-full-width.php?id=<?php echo $book['id']; ?>">
                             <?php echo htmlspecialchars($book['name']); ?>
                         </a>
                     </h5>
+                    <style>
+                        .hover-text{
+                            color: black;
+                            font-weight: bold;
+                            cursor: pointer;
+                            transition: color 0.3s ease;
+                        }
+                        .hover-text:hover{
+                            color: blue;
+                        }
+                    </style>
+                    <a href="add_to_cart.php?id=<?php echo $book['id']; ?>" class="add-to-cart-btn hover-text">افزودن به سبد خرید</a>
 
-                    <span class="ec-price">
-                        <span class="new-price"><?php echo htmlspecialchars($book['price']); ?> تومان</span>
-                    </span>
+
+                <div class="ec-pro-price">
+                 <?php if($discount>0){ ?>
+                        <span class="old-price"><?php echo number_format($price); ?> تومان</span>
+                          <span class="new-price"><?php echo number_format($final_price); ?> تومان</span>
+                          <?php }else{ ?>
+                              <span class="new-price"><?php echo number_format($price); ?> تومان</span>
+                              <?php } ?>
+                        </div>
 
                     <a href="product-full-width.php?id=<?php echo $book['id']; ?>" class="btn btn-primary mt-2">
                         جزئیات
@@ -1236,7 +1232,6 @@ $display_books = $category ? $books_category : $books;
                 </div>
             </div>
         </div>
-
     <?php endforeach; ?>
 <?php endif; ?>
 

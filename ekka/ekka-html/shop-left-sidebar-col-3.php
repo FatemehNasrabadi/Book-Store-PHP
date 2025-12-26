@@ -145,6 +145,7 @@ $('.add-to-cart-btn').click(function(e){
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                     <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                        <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                 </ul>
                             </div>
                             <!-- Header User End -->
@@ -159,8 +160,8 @@ $('.add-to-cart-btn').click(function(e){
                           <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
-                                        خرید</span>
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">
+                                        </span>
                                 </a>
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
@@ -217,6 +218,7 @@ $('.add-to-cart-btn').click(function(e){
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                         <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                        <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
@@ -231,8 +233,8 @@ $('.add-to-cart-btn').click(function(e){
                                   <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
-                                        خرید</span>  
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">
+                                        </span>  
                                 </a>
                               
                                 <!-- Header Cart End -->
@@ -828,7 +830,8 @@ $('.add-to-cart-btn').click(function(e){
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
-                <div class="ec-shop-rightside col-lg-9 order-lg-last col-md-12 order-md-first margin-b-30">
+
+                                
                     <!-- Shop Top Start -->
                     
                     
@@ -839,6 +842,7 @@ $('.add-to-cart-btn').click(function(e){
 
                     <div class="shop-pro-content">
                         <div class="shop-pro-inner">
+                            
                         <style>
                             .product-info {
     text-align: center; /* متن وسط کارت */
@@ -859,29 +863,74 @@ $('.add-to-cart-btn').click(function(e){
     font-weight: bold;
     display: block;
 }
+
+.ec-pro-price {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* فاصله بین قیمت‌ها */
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+.new-price {
+    color: #e53935;
+    font-size: 16px;
+    font-weight: bold;
+}
                         </style>
                            <?php
 if(mysqli_num_rows($result) > 0) {
     echo '<div class="row">'; // والد کارت‌ها
     
     while($row = mysqli_fetch_assoc($result)) { 
+
+        $price = (float)$row['price'];
+$discount = (int)$row['discount']; // درصد تخفیف
+
+if ($discount > 0) {
+    $discount_amount = ($price * $discount) / 100;
+    $final_price = $price - $discount_amount;
+} else {
+    $final_price = $price;
+}
         ?>
         <div class="col-6 col-sm-4 col-md-3 mn-4 col-md-4 col-lg-3 mb-4 pro-gl-content">
             <div class="ec-product-inner">
                 <div class="ec-pro-image-outer">
                     <div class="ec-pro-image">
                         <a href="product-full-width.php?id=<?php echo $row['id']; ?>">
-                            <img src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($row['image']); ?>" alt="" style="width:600px; height:500px; object-fit:cover;">
-                        </a>
+
+                            <img class="main-image" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($row['image']); ?> " style="width:600px; height:500px; object-fit:cover;"
+                               alt="Product">
+                                 
+                        </a> 
+                        <!-- تخفیف -->
+                        <?php if($discount>0){ ?>
+                            <span class="percentage"><?php echo $discount; ?>%</span>
+                        <?php } ?>
                         <div class="ec-pro-actions">
                         </div>
                     </div>
 
-                    <div class="product-info">
+                    <div class="ec-pro-content">
                            <a href="add_to_cart.php?id=<?php echo $row['id']; ?>" class="add-to-cart-btn"> افزودن به سبد خرید</a>
 
-                        <h5><?php echo $row['name']; ?></h5>
-                        <span class="price"><?php echo $row['price']; ?> تومان</span>
+                        <h5 class="ec-pro-title"><?php echo $row['name']; ?></h5>
+                        <div class="ec-pro-price">
+ <?php if($discount>0){ ?>
+                        <span class="old-price"><?php echo number_format($price); ?> تومان</span>
+                          <span class="new-price"><?php echo number_format($final_price); ?> تومان</span>
+                          <?php }else{ ?>
+                              <span class="new-price"><?php echo number_format($price); ?> تومان</span>
+                              <?php } ?>
+                        </div>
+                       
+
+
 
                     </div>
                 </div>
@@ -895,6 +944,7 @@ if(mysqli_num_rows($result) > 0) {
     echo "<p>محصولی یافت نشد</p>";
 }
 ?>
+
                             
                         </div>
                         <!-- Ec Pagination Start -->

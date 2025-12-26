@@ -1,6 +1,8 @@
 ﻿<?php 
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
+include('../../config/jdf.php');
+
 
 if(!isset($_SESSION['sellers_id'])){
     header("Location: sign-in.html");

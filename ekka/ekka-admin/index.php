@@ -1,6 +1,7 @@
 ﻿<?php
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
+include('../../config/jdf.php');
 
 if(!isset($_SESSION['sellers_id'])){
     header("Location: sign-in.html");
@@ -51,7 +52,7 @@ $row_income=mysqli_fetch_assoc($res_income);
 $total_income=isset($row_income['total_income'])? $row_income['total_income']:0;
 
 //تعداد کل محصولات
-$sql_total_product="SELECT COUNT(*) AS total_product FROM books";
+$sql_total_product="SELECT COUNT(*) AS total_products FROM books";
 $res_total_product=mysqli_query($conn,$sql_total_product);
 $row_total_products=mysqli_fetch_assoc($res_total_product);
 $total_products=isset($row_total_products['total_products']) ? $row_total_products['total_products']:0;
@@ -62,6 +63,12 @@ $res_seller_products=mysqli_query($conn,$sql_seller_products);
 $row_seller_products=mysqli_fetch_assoc($res_seller_products);
 $total_seller_products=isset($row_seller_products['total_products']) ? $row_seller_products['total_products']:0;
 
+
+//تعداد کل فروشندگان
+$sql_sellers="SELECT COUNT(*) AS total_sellers FROM sellers";
+$res=mysqli_query($conn,$sql_sellers);
+$row=mysqli_fetch_assoc($res);
+$total_sellers=$row['total_sellers']??0;
 
 /* فروش سالانه نمودار*/
 // ایجاد آرایه‌ای برای ماه‌های شمسی با مقدار اولیه صفر
@@ -562,6 +569,14 @@ if(!$res_top_product){
                                 </div>
                             </div>
                         </div>
+                         <div class="col-xl-3 col-sm-6 p-b-15 lbl-card">
+                            <div class="card card-mini dash-card card-4">
+                                <div class="card-body">
+                                    <h2 class="mb-1"><?php echo $total_sellers?></h2>
+                                    <p>تعداد کل فروشندگان</p><span class="mdi mdi-currency-usd"></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <!-- <div class="col-xl-8 col-md-12 p-b-15">
@@ -837,7 +852,7 @@ if(!$res_top_product){
                                                 <td>
                                                     <div class="media">
                                                         <div class="media-image mr-3 rounded-circle"><a href="user-profile.html?id=<?php echo $user['id'];?>"><img class="profile-img rounded-circle w-45" src="assets/img/user/u1.jpg" alt="customer image"></a></div>
-                                                        <div class="media-body align-self-center"><a href="profile.html">
+                                                        <div class="media-body align-self-center"><a href="user-profile.html?id=<?php echo $user['id'];?>">
                                                                 <h6 class="mt-0 text-dark font-weight-medium"><?php echo $user['name'];?>
                                                                    </h6>
                                                             </a> <small><?php echo $user['username'];?></small></div>

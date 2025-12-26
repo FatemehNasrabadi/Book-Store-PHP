@@ -427,16 +427,16 @@ if (mysqli_num_rows($result) > 0) {
                                                             <div class="single-slide zoom-image-hover"><img class="img-responsive" src="assets/img/products/pd_4.jpg" alt=""></div>
                                                             <div class="single-slide zoom-image-hover"><img class="img-responsive" src="assets/img/products/pd_5.jpg" alt=""></div> -->
                                                         </div>
-                                                        <div class="single-nav-thumb">
+                                                        <!-- <div class="single-nav-thumb">
                                                              <div class="single-slide zoom-image-hover"><img class="img-responsive" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($book['image']);?>" alt="<?php echo  htmlspecialchars($book['name']);?>"></div>
-                                                          <!--  <div class="single-slide zoom-image-hover"><img class="img-responsive" src="assets/img/products/pd_2.jpg" alt=""></div>
+                                                           <div class="single-slide zoom-image-hover"><img class="img-responsive" src="assets/img/products/pd_2.jpg" alt=""></div>
                                                             <div class="single-slide zoom-image-hover"><img class="img-responsive" src="assets/img/products/pd_3.jpg" alt=""></div>
                                                              <div class="single-slide"><img class="img-responsive" src="assets/img/products/pd_1.jpg" alt=""></div>
                                                             <div class="single-slide"><img class="img-responsive" src="assets/img/products/pd_2.jpg" alt=""></div>
                                                             <div class="single-slide"><img class="img-responsive" src="assets/img/products/pd_3.jpg" alt=""></div>
                                                             <div class="single-slide"><img class="img-responsive" src="assets/img/products/pd_4.jpg" alt=""></div>
-                                                            <div class="single-slide"><img class="img-responsive" src="assets/img/products/pd_5.jpg" alt=""></div> -->
-                                                        </div>
+                                                            <div class="single-slide"><img class="img-responsive" src="assets/img/products/pd_5.jpg" alt=""></div>
+                                                        </div> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -461,7 +461,7 @@ if (mysqli_num_rows($result) > 0) {
                                                         </ul> -->
                                                     </div>
                                                     <p class="product-price">قیمت: <?php echo htmlspecialchars($book['price']);?></p>
-                                                    <!-- <p class="product-sku">شناسه#: WH12</p> -->
+                                                    <p class="product-sku">تخفیف:<?php echo htmlspecialchars($book['discount']);?>% </p>
                                                     <!-- <ul class="product-size">
                                                         <li class="size"><span>S</span></li>
                                                         <li class="size"><span>M</span></li>

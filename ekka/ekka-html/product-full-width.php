@@ -29,20 +29,7 @@ if(isset($_GET['id'])) {
     exit();
 }
 
-// include('../../config/db.php'); // اتصال به دیتابیس
-// //گرفتن id محصول از ادرس
-// if(isset($_GET['id'])){
-//     $product_id=intval($_GET['id']); //مطمئن شدن که عدد هست
-//     //گرفتن اطلاعات محصول از دیتابیس
-//     $sqi="SELECT*FROM books WHERE id=$product_id";
-//     $result=mysqli_query($conn,$sql);
-//     if(mysqli_num_rows($result)>0){
-//         $product=mysqli_fetch_assoc($result);
-//     }else{
-//         echo "product not found";
-//         exit();
-//     }
-// }
+
 ?>
 
 <!--========================================================= 
@@ -172,6 +159,7 @@ $('.add-to-cart-btn').click(function(e){
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                     <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                        <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                 </ul>
                             </div>
                             <!-- Header User End -->
@@ -243,6 +231,7 @@ $('.add-to-cart-btn').click(function(e){
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                         <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                        <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
@@ -813,7 +802,41 @@ $('.add-to-cart-btn').click(function(e){
         </div>
     </div>
     <!-- Ec breadcrumb end -->
+ <style>
+    .ec-pro-price {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* فاصله بین قیمت‌ها */
+}
 
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+.new-price {
+    color: #e59c35ff;
+    font-size: 16px;
+    font-weight: bold;
+}
+.ec-pro-image {
+    position: relative;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px; /* اگه چپ می‌خوای: left:10px */
+    background: #e53935;
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 20px;
+    z-index: 10;
+}
+ </style>
     <!-- Sart Single product -->
     <section class="ec-page-content section-space-p">
         <div class="container">
@@ -827,26 +850,25 @@ $('.add-to-cart-btn').click(function(e){
                                 <div class="single-pro-img single-pro-img-no-sidebar">
                                     <div class="single-product-scroll">
                                         <div class="single-product-cover">
-                                            <div class="single-slide ">
-                                                <img class="img-responsive" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($product['image']);?>"
+                                            <?php
+                                                     $price = (float)$product['price'];
+$discount = (int)$product['discount']; // درصد تخفیف
+
+if ($discount > 0) {
+    $discount_amount = ($price * $discount) / 100;
+    $final_price = $price - $discount_amount;
+} else {
+    $final_price = $price;
+} ?>
+                                            <div class="single-slide ec-pro-image  ">
+                                             <img class="img-responsive" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($product['image']);?>"
                                                     alt="">
+                                               <!-- تخفیف -->
+                        <?php if($discount>0){ ?>
+                            <span class="percentage discount-badge"><?php echo $discount; ?>%</span>
+                        <?php } ?>
                                             </div>
-                                            <!-- <div class="single-slide zoom-image-hover">
-                                                <img class="img-responsive" src="assets/images/product-360/1_2.jpg"
-                                                    alt="">
-                                            </div>
-                                            <div class="single-slide zoom-image-hover">
-                                                <img class="img-responsive" src="assets/images/product-360/1_3.jpg"
-                                                    alt="">
-                                            </div>
-                                            <div class="single-slide zoom-image-hover">
-                                                <img class="img-responsive" src="assets/images/product-360/1_4.jpg"
-                                                    alt="">
-                                            </div>
-                                            <div class="single-slide zoom-image-hover">
-                                                <img class="img-responsive" src="assets/images/product-360/1_5.jpg"
-                                                    alt="">
-                                            </div> -->
+                                          
                                         </div>
                                 
                                     </div>
@@ -854,45 +876,27 @@ $('.add-to-cart-btn').click(function(e){
                                 <div class="single-pro-desc single-pro-desc-no-sidebar">
                                     <div class="single-pro-content">
                                         <h5 class="ec-single-title"><?php echo htmlspecialchars($product['name']); ?></h5>
-                                        <!-- <div class="ec-single-rating-wrap">
-                                            <div class="ec-single-rating">
-                                                <i class="ecicon eci-star fill"></i>
-                                                <i class="ecicon eci-star fill"></i>
-                                                <i class="ecicon eci-star fill"></i>
-                                                <i class="ecicon eci-star fill"></i>
-                                                <i class="ecicon eci-star-o"></i>
-                                            </div>
-                                            <span class="ec-read-review"><a href="#ec-spt-nav-review">اولین کسی که نظر
-                                                    میدهد باشید</a></span>
-                                        </div> -->
+                                      
                                         <div class="ec-single-desc">دسته‌بندی:<?php echo htmlspecialchars($product['category']) ?></div>
 
-                                        <!-- <div class="ec-single-sales">
-                                            <div class="ec-single-sales-inner">
-                                                <div class="ec-single-sales-title">فروش اکسسوری</div>
-                                                <div class="ec-single-sales-visitor">در حال حاضر <span>24</span> نفر در
-                                                    حال دیدن این صفحه هستند</div>
-                                                <div class="ec-single-sales-progress">
-                                                    <span class="ec-single-progress-desc">عجله کن فقط 20 عدد از این
-                                                        محصول در انبار باقی مانده</span>
-                                                    <span class="ec-single-progressbar"></span>
-                                                </div>
-                                                <div class="ec-single-sales-countdown">
-                                                    <div class="ec-single-countdown"><span
-                                                            id="ec-single-countdown"></span></div>
-                                                    <div class="ec-single-count-desc">در حال پایان زمان!</div>
-                                                </div>
-                                            </div>
-                                        </div> -->
+                                        
                                         <div class="ec-single-price-stoke">
                                             <div class="ec-single-price">
-                                                <span class="ec-single-ps-title"> قیمت</span>
-                                                <span class="new-price"><?php echo htmlspecialchars($product['price']); ?> </span>
+   <div class="ec-pro-price">
+ <?php if($discount>0){ ?>
+                        <span class="old-price"><?php echo number_format($price); ?> تومان</span>
+                          <span class="new-price"><?php echo number_format($final_price); ?> تومان</span>
+                          <?php }else{ ?>
+                              <span class="new-price"><?php echo number_format($price); ?> تومان</span>
+                              <?php } ?>
+                        </div>
+
+
+
+
+                                    
                                             </div>
-                                            <!-- <div class="ec-single-stoke">
-                                                <span class="ec-single-ps-title">در انبار</span>
-                                                <span class="ec-single-sku">شناسه#: 0012</span>
-                                            </div> -->
+                                           
                                         </div>
                                         <div class="ec-pro-variation">
                                             <div class="ec-pro-variation-inner ec-pro-variation-size">

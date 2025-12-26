@@ -29,3 +29,5 @@ RewriteRule ^user-profile\.html$ user-profile.php [L]
 # ریدایرکت order-history.html به order-history.php
 RewriteRule ^order-history\.html$ order-history.php [L]
 
+# ریدایرکت profile.html به profile.php
+RewriteRule ^profile.html\.html$ profile.php [L]

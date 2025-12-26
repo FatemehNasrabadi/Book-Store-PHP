@@ -1,36 +1,6 @@
 ﻿<?php
 session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
-// if(!isset($_SESSION['user_id'])){
-//     header("Location:login.html");
-//     exit();
-// }
-// $user_id=$_SESSION['users_id'];
-
-// // اگر درخواست حذف محصول آمده:
-// if (isset($_GET['remove'])) {
-//     $remove_id = $_GET['remove'];
-//     $user_id=$_SESSION['user_id'];
-//    //حذف از جدول cart
-//    $delete_sql="DELETE FROM carts WHERE user_id=$user_id AND product_id=$remove_id";
-//    mysqli_query($conn,$delete_sql);
-//     unset($_SESSION['cart'][$remove_id]);
-    
-//     // رفرش به cart.php برای جلوگیری از تکرار حذف در رفرش صفحه
-//     header("Location: cart.php");
-//     exit();
-// }
-
-
-// // گرفتن محصولات کاربر
-// $sql = "SELECT c.quantity, c.product_id, b.*
-//         FROM carts c 
-//         JOIN books b ON c.product_id = b.id
-//         WHERE c.user_id = $user_id";
-// $result = mysqli_query($conn, $sql);
-// $total_price = 0;
-
-
 
 if (!isset($_SESSION['users_id'])) {
     header("Location: login.php");
@@ -47,6 +17,33 @@ WHERE c.user_id = $user_id
 ";
 
 $result = mysqli_query($conn, $sql);
+
+
+//جمع سبدخرید
+
+$total_price = 0;
+$discount_amount = 0;
+$shipping_cost = 8000;
+
+$user_id = $_SESSION['users_id'] ?? 0;
+
+$sql = "
+SELECT 
+    c.quantity,
+    b.price
+FROM carts c
+JOIN books b ON c.product_id = b.id
+WHERE c.user_id = $user_id
+";
+
+$res = mysqli_query($conn, $sql);
+
+while ($row = mysqli_fetch_assoc($res)) {
+    $total_price += $row['price'] * $row['quantity'];
+}
+
+
+
 ?>
 
 
@@ -915,6 +912,7 @@ $result = mysqli_query($conn, $sql);
 <div class="ec-cart-content">
     <div class="ec-cart-inner">
       <?php 
+      $total_price=0;
     while($row = mysqli_fetch_assoc($result)): 
     $line_total = $row['price'] * $row['quantity'];
     $total_price += $line_total;
@@ -943,7 +941,7 @@ $result = mysqli_query($conn, $sql);
                                     </a>
                                 </td>
                                 <td data-label="Price" class="ec-cart-pro-price">
-                                    <span class="amount"><?php echo $row['price']; ?></span>
+                                    <span class="amount"><?php echo number_format( $row['price']); ?></span>
                                 </td>
                                 <td data-label="Quantity" class="ec-cart-pro-qty" style="text-align:center;">
                                     <div class="cart-qty-plus-minus">
@@ -952,10 +950,11 @@ $result = mysqli_query($conn, $sql);
                                     </div>
                                 </td>
                                 <td data-label="Total" class="ec-cart-pro-subtotal">
-                                    <?php echo $line_total; ?>
+                                    <strong> <?php echo number_format($line_total) ; ?> </strong>
+                                    
                                 </td>
                                <td data-label="Remove" class="ec-cart-pro-remove">
-                                    <a href="cart.php?remove=<?php echo $row['product_id']; ?>">
+                                    <a href="remove_from_cart.php?id=<?php echo $row['product_id']; ?>">
                                         <i class="ecicon eci-trash-o"></i>
                                     </a>
                                 </td>
@@ -986,31 +985,15 @@ $result = mysqli_query($conn, $sql);
                                 </div>
                             </div>
 <?php 
-$total_price = 0; // جمع کل محصولات
-$discount_code = '';
-$discount_amount = 0;
-
-if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0){
-    foreach($_SESSION['cart'] as $product_id => $qty){
-        $sql = "SELECT * FROM books WHERE id = $product_id LIMIT 1";
-        $result = mysqli_query($conn, $sql);
-        $product = mysqli_fetch_assoc($result);
-        if(!$product) continue;
-        $subtotal = $product['price'] * $qty;
-        $total_price += $subtotal;
-    }
-}
-
-// بررسی ارسال فرم کد تخفیف
-if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ec-coupan'])){
+//کدنخفیف
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ec-coupan'])) {
     $discount_code = trim($_POST['ec-coupan']);
-    if(strtolower($discount_code) === 'bookstore'){
+
+    if (strtolower($discount_code) === 'bookstore') {
         $discount_amount = $total_price * 0.5; // 50٪ تخفیف
     }
 }
-
-$final_price = $total_price - $discount_amount; // جمع کل بعد از تخفیف
-$shipping_cost = 8000; // هزینه ارسال
+$final_price=max(0,$total_price-$discount_amount)+$shipping_cost;
 ?>
                         <div class="ec-sb-block-content">
    <div class="ec-sb-block-content">
@@ -1018,7 +1001,11 @@ $shipping_cost = 8000; // هزینه ارسال
         <div class="ec-cart-summary">
             <div>
                 <span class="text-left">ریزهزینه</span>
-                <span class="text-right"><?php echo $total_price; ?> تومان</span>
+                <span class="text-right"><?php echo number_format($total_price) ; ?> تومان</span>
+            </div>
+            <div>
+                <span class="text-left">تخفیف</span>
+                <span class="text-right"><?php echo number_format($discount_amount) ; ?> تومان</span>
             </div>
             <div>
                 <span class="text-left">هزینه ارسال</span>
@@ -1037,18 +1024,15 @@ $shipping_cost = 8000; // هزینه ارسال
             <div class="ec-cart-summary-total">
                 <span class="text-left">هزینه کل</span>
                 <span class="text-right">
-                    <?php if($discount_amount > 0): ?>
-                        <span style="text-decoration: line-through; color:#888;"><?php echo $total_price + $shipping_cost; ?> تومان</span>
-                        <br>
-                        <span style="color:red;"><?php echo $final_price + $shipping_cost; ?> تومان</span>
-                    <?php else: ?>
-                        <?php echo $total_price + $shipping_cost; ?> تومان
-                    <?php endif; ?>
+                   <strong>
+                    <?php echo number_format($final_price); ?>
+                   </strong>
                 </span>
             </div>
         </div>
     </div>
-    <form > <button href="checkout.php" class="btn btn-primary" type="submit">پرداخت</button>
+    <form method="post" action="checkout.php"> 
+        <button  class="btn btn-primary w-100" type="submit">پرداخت</button>
 </form>
 </div>
   

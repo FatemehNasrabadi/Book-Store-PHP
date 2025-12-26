@@ -399,7 +399,7 @@ if(!$res_users){
                             <div class="ec-vendor-list card card-default">
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table id="responsive-data-table" class="table">
+                                        <table  class="table">
                                             <thead>
 
                                                 <tr>

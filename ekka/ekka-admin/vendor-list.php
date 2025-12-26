@@ -9,23 +9,23 @@ if(!isset($_SESSION['sellers_id'])){
 $seller_id=$_SESSION['sellers_id'];
 
 //گرقتن اطلاعات فروشنده ها از حدول 
- $sql_vendors = "
+$sql_vendors = "
 SELECT 
     s.id,
     s.name,
     s.email,
     s.created_at,
     IFNULL(SUM(o.price * o.quantity), 0) AS total_sales,
-    COUNT(o.id) AS total_orders
-
+    COUNT(DISTINCT o.id) AS total_orders,
+    COUNT(DISTINCT b.id) AS total_products
 FROM sellers s
 LEFT JOIN orders o ON s.id = o.seller_id
+LEFT JOIN books b ON s.id = b.seller_id
 GROUP BY s.id
 ORDER BY total_sales DESC
 ";
 
 $res_vendors = mysqli_query($conn, $sql_vendors);
-
 ?>
 
 <!DOCTYPE html>
@@ -421,7 +421,7 @@ $res_vendors = mysqli_query($conn, $sql_vendors);
                                                     <th>پروفایل</th>
                                                     <th>نام</th>
                                                     <th>ایمیل:</th>
-                                                    <!-- <th>محصولات تعداد</th> -->
+                                                    <th> تعداد محصولات </th>
                                                     <th>فروش کل</th>
                                                     <th>پیوستن </th>
                                                 </tr>
@@ -430,12 +430,12 @@ $res_vendors = mysqli_query($conn, $sql_vendors);
                                                <?php
                              
                                                 while($row=mysqli_fetch_assoc($res_vendors)): ?>
-                                                 <tr onclick="window.location='vendor-profile.php?id=<?php echo $row['id'];?>'">
+                                                 <tr                                                  >
                                                     <td><img class="vendor-thumb" src="assets/img/vendor/u1.jpg" alt="vendor image"></td>
                                                     <td><?php echo htmlspecialchars($row['name']); ?> </td>
-                                                    <td><a class="__cf_email__" data-cfemail="305d51425c555542555e5170575d51595c1e535f5d"><?php echo htmlspecialchars($row['email']); ?></a>
+                                                    <td><a class="__cf_email__" ><?php echo htmlspecialchars($row['email']); ?></a>
                                                     </td>
-                                                    <!-- <td><?php echo htmlspecialchars($row['product_count']); ?></td> -->
+                                                    <td><?php echo $row['total_products']; ?></td> 
                                                     <td> <?php echo number_format($row['total_sales']);?> </td>
                                                     <td><?php
                                                                        $timestamp=strtotime($row['created_at']);

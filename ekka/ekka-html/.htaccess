@@ -1,8 +1,20 @@
+
 # ریدایرکت shop-left-sidebar-col-3.html به shop-left-sidebar-col-3.php
-RewriteRule ^shop-left-sidebar-col-3\.html$ vendor-shop-left-sidebar-col-3.php [L]
+RewriteRule ^shop-left-sidebar-col-3\.html$ shop-left-sidebar-col-3.php [L]
 
 # ریدایرکت index.html به index.php
-RewriteRule ^index\.html$ vendor-index.php [L]
+RewriteRule ^index\.html$ index.php [L]
 
 # ریدایرکت product-full-width.html به product-full-width.php
-RewriteRule ^product-full-width\.html$ vendor-product-full-width.php [L]
+RewriteRule ^product-full-width\.html$ product-full-width.php [L]
+
+# ریدایرکت user-profile.html به user-profile.php
+RewriteRule ^user-profile\.html$ user-profile.php [L]
+
+# ریدایرکت user-history.html به user-history.php
+RewriteRule ^user-history\.html$ user-history.php [L]
+
+# ریدایرکت user-history.html به user-history.php
+RewriteRule ^user-history\.html$ user-history.php [L]
+
+

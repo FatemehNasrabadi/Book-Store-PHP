@@ -176,6 +176,7 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                     <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                     <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                     <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                 </ul>
                             </div>
                             <!-- Header User End -->
@@ -248,6 +249,7 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                         <li><a class="dropdown-item" href="register.html">ثبت نام</a></li>
                                         <li><a class="dropdown-item" href="user-profile.html">پروفایل کاربر</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
+                                         <li><a class="dropdown-item" href="user-logout.php">خروج</a></li>
                                     </ul>
                                 </div>
                                 <!-- Header User End -->
