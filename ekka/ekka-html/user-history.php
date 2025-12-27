@@ -2,8 +2,14 @@
 session_start();
 
 include('../../config/db.php'); // اتصال به دیتابیس
+include('../../config/jdf.php');
 
-$user_id = $_SESSION['users_id'];
+//اگر لاگین نبود
+if(!isset($_SESSION['users_id'])){
+    header("Location: login.html");
+    exit();
+}
+$user_id=$_SESSION['users_id'];
 
 $sql = "
 SELECT o.*, b.name, b.image
@@ -17,12 +23,13 @@ $result = mysqli_query($conn, $sql);
 
 
 
-//عدد سبد خرید
-$cart_count=0;
-if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
-    foreach($_SESSION['cart'] as $qty){
-        $cart_count+=intval($qty);
-    }
+// تعداد کل محصولات در سبد خرید
+$cart_count = 0;
+if(isset($_SESSION['users_id'])){   // همون user_id که تو سشن داری
+    $uid = $_SESSION['users_id'];
+    $q = mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
+    $row = mysqli_fetch_assoc($q);
+    $cart_count = $row['total'] ?? 0;
 }
 
 $username = "اکانت";
@@ -169,8 +176,8 @@ if (isset($_SESSION['users_id'])) {
                             <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                 <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                         class="svg_img header_svg" alt=""></div>
-                                <span class="ec-header-count cart-count-lable"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span>
-                            </a>
+  <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">
+                                        </span>                            </a>
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
                             <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none">
@@ -240,8 +247,8 @@ if (isset($_SESSION['users_id'])) {
                                 <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt=""></div>
-                                    <span class="ec-header-count cart-count-lable"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span>
-                                </a>
+  <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">
+                                        </span>                                </a>
                                 <!-- Header Cart End -->
                             </div>
                         </div>
@@ -888,8 +895,8 @@ if (isset($_SESSION['users_id'])) {
                                         <li><a href="user-history.html">تاریخچه</a></li>
                                         <!-- <li><a href="wishlist.html">علاقه مندی ها</a></li> -->
                                         <li><a href="cart.html">سبد خرید</a></li>
-                                        <li><a href="checkout.html">ادامه خرید</a></li>
-                                        <li><a href="track-order.html">پیگیری سفارش</a></li>
+                                        <!-- <li><a href="checkout.html">ادامه خرید</a></li> -->
+                                        <!-- <li><a href="track-order.html">پیگیری سفارش</a></li> -->
                                         <!-- <li><a href="user-invoice.html">فاکتور</a></li> -->
                                     </ul>
                                 </div>
@@ -900,15 +907,13 @@ if (isset($_SESSION['users_id'])) {
                 <div class="ec-shop-rightside col-lg-9 col-md-12">
                     <div class="ec-vendor-dashboard-card">
                         <div class="ec-vendor-card-header">
-                            <h5>تاریخچه محصول</h5>
-                            <?php 
+                            <h5>تاریخچه خرید</h5>
+                            
+                        </div>
+                        <?php 
                             if(mysqli_num_rows($result)==0):?>
                             <p>خریدی ثبت نشده است</p>
                             <?php else:?>
-                            <div class="ec-header-btn">
-                                <a class="btn btn-lg btn-primary" href="#">خرید </a>
-                            </div>
-                        </div>
                         <div class="ec-vendor-card-body">
                             <div class="ec-vendor-card-table">
                                 <table class="table ec-table">
@@ -919,90 +924,24 @@ if (isset($_SESSION['users_id'])) {
                                             <th scope="col">نام</th>
                                             <th scope="col">تاریخ</th>
                                             <th scope="col">قیمت</th>
-                                            <!-- <th scope="col">وضعیت</th> -->
-                                            <th scope="col">فعالیت</th>
                                         </tr>
                                     </thead>
                                     <?php while($row=mysqli_fetch_assoc($result)):?>
                                     <tbody>
-                                        <tr>
-                                            <th scope="row"><span><?php echo htmlspecialchars($row['product_id']) ;?></span></th>
+                                              <tr>
+                                            <th scope="row"><span>548</span></th>
                                             <td><img class="prod-img" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($row['image']);?>"
                                                     alt="product image"></td>
-                                            <td><span><? echo  htmlspecialchars($row['name']);?></span></td>
-                                            <td><span><? echo htmlspecialchars($row['order_time']);?></span></td>
-                                            <td><span> <? echo htmlspecialchars($row['price']);?></span></td>
-                                            <!-- <td><span>فعال</span></td> -->
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="product-full-width.php?id<?php echo $row['product_id'];?>">مشاهده</a></span></td>
+                                            <td><span><?php echo  htmlspecialchars($row['name']);?>  </span></td>
+                                            <td><span>  <?php  $timestamp = strtotime($row['order_time']);
+                    echo jdate('Y/m/d H:i', $timestamp);  ?> </span></td>
+                                            <td><span><?php echo htmlspecialchars($row['price']);?></span></td>
+                                            <!-- <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
+                                                        href="#">مشاهده</a></span></td> -->
                                         </tr>
                                         <?php endwhile;?>
-                                        <!-- <tr>
-                                            <th scope="row"><span>548</span></th>
-                                            <td><img class="prod-img" src="assets/images/product-image/2.jpg"
-                                                    alt="product image"></td>
-                                            <td><span>پلیوور راحت هودی</span></td>
-                                            <td><span>13 دی 1398</span></td>
-                                            <td><span>68 تومان</span></td>
-                                            <td><span>نگه داشته شده</span></td>
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><span>684</span></th>
-                                            <td><img class="prod-img" src="assets/images/product-image/3.jpg"
-                                                    alt="product image"></td>
-                                            <td><span>تی شرت دخترانه</span></td>
-                                            <td><span>20 دی 1395</span></td>
-                                            <td><span>360 تومان</span></td>
-                                            <td><span>نگه داشته شده</span></td>
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><span>987</span></th>
-                                            <td><img class="prod-img" src="assets/images/product-image/4.jpg"
-                                                    alt="product image"></td>
-                                            <td><span>کلاه اوول مردانه</span></td>
-                                            <td><span>28 دی 1399</span></td>
-                                            <td><span>584 تومان</span></td>
-                                            <td><span>نگه داشته شده</span></td>
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><span>225</span></th>
-                                            <td><img class="prod-img" src="assets/images/product-image/5.jpg"
-                                                    alt="product image"></td>
-                                            <td><span>کیف چرم زنانه</span></td>
-                                            <td><span>23 دی 1396</span></td>
-                                            <td><span>65 تومان</span></td>
-                                            <td><span>نگه داشته شده</span></td>
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><span>548</span></th>
-                                            <td><img class="prod-img" src="assets/images/product-image/6.jpg"
-                                                    alt="product image"></td>
-                                            <td><span>کیت پزشکی اسباب بازی</span></td>
-                                            <td><span>28 دی 1399</span></td>
-                                            <td><span>68 تومان</span></td>
-                                            <td><span>غیرفعال</span></td>
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><span>684</span></th>
-                                            <td><img class="prod-img" src="assets/images/product-image/7.jpg"
-                                                    alt="product image"></td>
-                                            <td><span>تدی بر</span></td>
-                                            <td><span>16 دی 1399</span></td>
-                                            <td><span>360 تومان</span></td>
-                                            <td><span>نگه داشته شده</span></td>
-                                            <td><span class="tbl-btn"><a class="btn btn-lg btn-primary"
-                                                        href="#">مشاهده</a></span></td>
-                                        </tr> -->
+                                         <tr>
+                                        
                                     </tbody>
                                 </table>
 

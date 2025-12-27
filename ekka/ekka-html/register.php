@@ -46,7 +46,7 @@
 
 </head>
 
-<body class="contact_us_page">
+<body class="register_page">
     <div id="ec-overlay"><span class="loader_img"></span></div>
 
     <!-- Header start  -->
@@ -110,7 +110,7 @@
                     <div class="col d-lg-none ">
                         <div class="ec-header-bottons">
                             <!-- Header User Start -->
-                            <div class="ec-header-user dropdown">
+                            <!-- <div class="ec-header-user dropdown">
                                 <button class="dropdown-toggle" data-bs-toggle="dropdown"><img
                                         src="assets/images/icons/user.svg" class="svg_img header_svg" alt=""></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
@@ -118,21 +118,21 @@
                                     <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
                                     <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                 </ul>
-                            </div>
+                            </div> -->
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
-                            <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                            <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                 <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                         class="svg_img header_svg" alt=""></div>
                                 <span class="ec-header-count">4</span>
-                            </a>
+                            </a> -->
                             <!-- Header Cart End -->
                             <!-- Header Cart Start -->
-                            <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                            <!-- <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                 <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                         class="svg_img header_svg" alt=""></div>
                                 <span class="ec-header-count cart-count-lable">3</span>
-                            </a>
+                            </a> -->
                             <!-- Header Cart End -->
                             <!-- Header menu Start -->
                             <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none">
@@ -162,7 +162,7 @@
                         <!-- Ec Header Logo End -->
 
                         <!-- Ec Header Search Start -->
-                        <div class="align-self-center">
+                        <!-- <div class="align-self-center">
                             <div class="header-search">
                                 <form class="ec-btn-group-form" action="#">
                                     <input class="form-control" placeholder="نام محصول خود را وارد کنید ..."
@@ -171,7 +171,7 @@
                                             class="svg_img header_svg" alt=""></button>
                                 </form>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- Ec Header Search End -->
 
                         <!-- Ec Header Button Start -->
@@ -179,7 +179,7 @@
                             <div class="ec-header-bottons">
 
                                 <!-- Header User Start -->
-                                <div class="ec-header-user dropdown">
+                                <!-- <div class="ec-header-user dropdown">
                                     <button class="dropdown-toggle" data-bs-toggle="dropdown"><img
                                             src="assets/images/icons/user.svg" class="svg_img header_svg"
                                             alt=""></button>
@@ -188,21 +188,21 @@
                                         <li><a class="dropdown-item" href="checkout.html">ادامه خرید</a></li>
                                         <li><a class="dropdown-item" href="login.html">ورود</a></li>
                                     </ul>
-                                </div>
+                                </div> -->
                                 <!-- Header User End -->
                                 <!-- Header wishlist Start -->
-                                <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
+                                <!-- <a href="wishlist.html" class="ec-header-btn ec-header-wishlist">
                                     <div class="header-icon"><img src="assets/images/icons/wishlist.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count">4</span>
-                                </a>
+                                </a> -->
                                 <!-- Header wishlist End -->
                                 <!-- Header Cart Start -->
-                                <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                                <!-- <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt=""></div>
                                     <span class="ec-header-count cart-count-lable">3</span>
-                                </a>
+                                </a> -->
                                 <!-- Header Cart End -->
                             </div>
                         </div>
@@ -252,6 +252,13 @@
                                     <ul class="mega-menu d-block">
                                         <li class="d-flex">
                                             <ul class="d-block">
+                                                
+                                                <li><a href="shop-left-sidebar-col-3.php"> همه محصولات</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=رمان"> رمان</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=کودک">کودک</a></li>
+                                                <li><a href="shop-left-sidebar-col-3.php?category=زبان انگلیسی"> زبان انگلیسی</a></li>
+                                            </ul>  
+                                            <!-- <ul class="d-block">
                                                 <li class="menu_title"><a href="javascript:void(0)">ورژن کلاسیک</a></li>
                                                 <li><a href="shop-left-sidebar-col-3.html">سایدبار چپ 3 ستونه</a>
                                                 </li>
@@ -296,35 +303,27 @@
                                                 <li><a href="shop-list-banner-right-sidebar.html">بنر سایدبار راست</a>
                                                 </li>
                                                 <li><a href="shop-list-full-col-2.html">تمام عرض 2 ستونه</a></li>
-                                            </ul>
+                                            </ul> -->
                                         </li>
                                         <li>
-                                            <ul class="ec-main-banner w-100">
-                                                <li>
-                                                    <a class="p-0" href="shop-left-sidebar-col-3.html"><img
+                                            <!-- <ul class="ec-main-banner w-100">
+                                                <li><a class="p-0" href="shop-left-sidebar-col-3.html"><img
                                                             class="img-responsive" src="assets/images/menu-banner/1.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                                <li>
-                                                    <a class="p-0" href="shop-left-sidebar-col-4.html"><img
+                                                            alt=""></a></li>
+                                                <li><a class="p-0" href="shop-left-sidebar-col-4.html"><img
                                                             class="img-responsive" src="assets/images/menu-banner/2.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                                <li>
-                                                    <a class="p-0" href="shop-right-sidebar-col-3.html"><img
+                                                            alt=""></a></li>
+                                                <li><a class="p-0" href="shop-right-sidebar-col-3.html"><img
                                                             class="img-responsive" src="assets/images/menu-banner/3.jpg"
-                                                            alt=""></a>
-                                                </li>
-                                                <li>
-                                                    <a class="p-0" href="shop-right-sidebar-col-4.html"><img
+                                                            alt=""></a></li>
+                                                <li><a class="p-0" href="shop-right-sidebar-col-4.html"><img
                                                             class="img-responsive" src="assets/images/menu-banner/4.jpg"
-                                                            alt=""></a>
-                                                </li>
+                                                            alt=""></a></li> -->
                                             </ul>
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
+                                <!-- <li class="dropdown"><a href="javascript:void(0)">محصولات</a>
                                     <ul class="sub-menu">
                                         <li class="dropdown position-static"><a href="javascript:void(0)">صفحه محصولات
                                                 <i class="ecicon eci-angle-left"></i></a>
@@ -491,7 +490,7 @@
                                         <li><a href="elemets-blog.html">بلاگ</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="offer.html">پیشنهادات داغ</a></li>
+                                <li><a href="offer.html">پیشنهادات داغ</a></li> -->
                             </ul>
                         </div>
                     </div>
@@ -508,16 +507,7 @@
             <div class="ec-menu-inner">
                 <div class="ec-menu-content">
                     <ul>
-                        <li><a href="javascript:void(0)">خانه</a>
-                            <ul class="sub-menu">
-                                <li><a href="index.html">مد و زیبایی 1</a></li>
-
-
-
-
-                            </ul>
-                        </li>
-
+                        <li><a href="index.html">خانه</a></li>
                         <li><a href="javascript:void(0)">دسته بندی ها</a>
                             <ul class="sub-menu">
                                 <li>
@@ -564,8 +554,7 @@
                                         <li><a href="shop-list-full-col-2.html">تمام عرض 2 ستونه</a></li>
                                     </ul>
                                 </li>
-                                <li>
-                                    <a class="p-0" href="shop-left-sidebar-col-3.html"><img class="img-responsive"
+                                <li><a class="p-0" href="shop-left-sidebar-col-3.html"><img class="img-responsive"
                                             src="assets/images/menu-banner/1.jpg" alt=""></a>
                                 </li>
                             </ul>
@@ -840,13 +829,13 @@
                 <div class="col-12">
                     <div class="row ec_breadcrumb_inner">
                         <div class="col-md-6 col-sm-12">
-                            <h2 class="ec-breadcrumb-title">ارتباط با ما</h2>
+                            <h2 class="ec-breadcrumb-title">ثبت نام</h2>
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <!-- ec-breadcrumb-list start -->
                             <ul class="ec-breadcrumb-list">
                                 <li class="ec-breadcrumb-item"><a href="index.html">خانه</a></li>
-                                <li class="ec-breadcrumb-item active">ارتباط با ما</li>
+                                <li class="ec-breadcrumb-item active">ثبت نام</li>
                             </ul>
                             <!-- ec-breadcrumb-list end -->
                         </div>
@@ -857,86 +846,127 @@
     </div>
     <!-- Ec breadcrumb end -->
 
-    <!-- Ec Contact Us page -->
+    <!-- Start Register -->
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
-                <div class="ec-common-wrapper">
-                    <div class="ec-contact-leftside">
-                        <div class="ec-contact-container">
-                            <div class="ec-contact-form">
-                                <form action="#" method="post">
-                                    <span class="ec-contact-wrap">
-                                        <label>نام *</label>
-                                        <input type="text" name="firstname" placeholder="نام خود را وارد کنید"
-                                            required="">
-                                    </span>
-                                    <span class="ec-contact-wrap">
-                                        <label> نام خانوادگی *</label>
-                                        <input type="text" name="lastname" placeholder="نام خانوادگی خود را وارد کنید"
-                                            required="">
-                                    </span>
-                                    <span class="ec-contact-wrap">
-                                        <label>ایمیل*</label>
-                                        <input type="email" name="email" placeholder="ورود آدرس ایمیل" required="">
-                                    </span>
-                                    <span class="ec-contact-wrap">
-                                        <label>شماره تماس*</label>
-                                        <input type="text" name="phonenumber" placeholder="شماره تماس خود را وارد کنید"
-                                            required="">
-                                    </span>
-                                    <span class="ec-contact-wrap">
-                                        <label>نظرات/ سوال*</label>
-                                        <textarea name="address"
-                                            placeholder="لطفا نظرات خود را اینجا بیان کنید.."></textarea>
-                                    </span>
-                                    <span class="ec-contact-wrap ec-recaptcha">
-                                        <span class="g-recaptcha"
-                                            data-sitekey="6LfKURIUAAAAAO50vlwWZkyK_G2ywqE52NU7YO0S"
-                                            data-callback="verifyRecaptchaCallback"
-                                            data-expired-callback="expiredRecaptchaCallback"></span>
-                                        <input class="form-control d-none" data-recaptcha="true" required=""
-                                            data-error="Please complete the Captcha">
-                                        <span class="help-block with-errors"></span>
-                                    </span>
-                                    <span class="ec-contact-wrap ec-contact-btn">
-                                        <button class="btn btn-primary" type="submit">ارسال</button>
-                                    </span>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ec-contact-rightside">
-                        <div class="ec_contact_map">
-                            <div class="ec_map_canvas">
-                                <iframe id="ec_map_canvas"
-                                    src="assets/maps/embed.html?pb=!1m10!1m8!1m3!1d71263.65594328841!2d144.93151478652146!3d-37.8734290780509!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1615963387757!5m2!1sen!2sus"></iframe>
-                                <a href="assets/view/maps-api-v2/mapv2.html"></a>
-                            </div>
-                        </div>
-                        <div class="ec_contact_info">
-                            <h1 class="ec_contact_info_head">ارتباط با ما</h1>
-                            <ul class="align-items-center">
-                                <li class="ec-contact-item"><i class="ecicon eci-map-marker"
-                                        aria-hidden="true"></i><span>آدرس:</span>یک آدرس کاملا فرضی در این مکان قرار
-                                    دارد</li>
-                                <li class="ec-contact-item align-items-center"><i class="ecicon eci-phone"
-                                        aria-hidden="true"></i><span>تماس با ما:</span><a href="tel:+440123456789">+44
-                                        0123
-                                        456 789</a></li>
-                                <li class="ec-contact-item align-items-center"><i class="ecicon eci-envelope"
-                                        aria-hidden="true"></i><span>ایمیل :</span><a
-                                        href="/cdn-cgi/l/email-protection#b6d3ced7dbc6dad3f6d3d59bd3dbd7dfda98d5d9db"><span
-                                            class="__cf_email__"
-                                            data-cfemail="dcb9a4bdb1acb0b99cb9bff1b9b1bdb5b0f2bfb3b1">[email&#160;protected]</span></a>
-                                </li>
-                            </ul>
-                        </div>
+                <div class="col-md-12 text-center">
+                    <div class="section-title">
+                        <h2 class="ec-bg-title">ثبت نام</h2>
+                        <h2 class="ec-title">ثبت نام</h2>
+                        <p class="sub-title mb-3">بهترین مکان برای خرید و فروش محصولات دیجیتال</p>
                     </div>
                 </div>
+                <div class="ec-register-wrapper">
+    <div class="ec-register-container">
+        <div class="ec-register-form">
+            <form action="register_action.php" method="POST">
+                
+                <span class="ec-register-wrap ec-register-half">
+                    <label>نام *</label>
+                    <input type="text" id="name" name="name" placeholder="نام خود را وارد کنید" required>
+                </span>
+
+                <span class="ec-register-wrap ec-register-half">
+                    <label>نام کاربری *</label>
+                    <input type="text" id="username" name="username" placeholder="نام کاربری خود را وارد کنید" required>
+                </span>
+
+                <span class="ec-register-wrap ec-register-half">
+                    <label>ایمیل *</label>
+                    <input type="email" id="email" name="email" placeholder="وارد کردن ایمیل" required>
+                </span>
+
+                <span class="ec-register-wrap ec-register-half">
+                    <label>شماره تماس *</label>
+                    <input type="text" id="mobile_number" name="mobile_number" placeholder="شماره تماس خود را وارد کنید" required>
+                </span>
+
+                <span class="ec-register-wrap">
+                    <label>آدرس</label>
+                    <input type="text" id="address" name="address" placeholder="آدرس خط اول">
+                </span>
+
+                <span class="ec-register-wrap ec-register-half">
+                    <label>شهر *</label>
+                    <input type="text" id="country" name="country" placeholder="شهر" required>
+                </span>
+
+                <span class="ec-register-wrap ec-register-half">
+                    <label>کد پستی</label>
+                    <input type="text" id="postal_code" name="postal_code" placeholder="کدپستی">
+                </span>
+
+                <span class="ec-register-wrap ec-register-half">
+                    <label>پسورد *</label>
+                    <input type="password" id="password" name="password" placeholder="رمز" required>
+                </span>
+
+                <span class="ec-register-wrap ec-register-btn">
+                    <button class="btn btn-primary" type="submit">ثبت نام</button>
+                </span>
+
+            </form>
+
+            <div id="registerMessage" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+</div>
+                <!-- <div class="ec-register-wrapper">
+
+                    <div class="ec-register-container">
+                        <div class="ec-register-form">
+                           
+                                <form action="register_action.php" method="POST">
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label>نام *</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام خود را وارد کنید" required="">
+                                </span>
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label> نام کاربری *</label>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="نام کاربری خود را وارد کنید"
+                                        required="">
+                                </span>
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label>ایمیل*</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="وارد کردن ایمیل " required="">
+                                </span>
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label>شماره تماس*</label>
+                                    <input type="text" class="form-control" id="mobile_number" name="mobile_number" placeholder="شماره تماس خود را وارد کنید"
+                                        required="">
+                                </span>
+                                <span class="ec-register-wrap">
+                                    <label>آدرس</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="آدرس خط اول">
+                                </span>
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label>شهر *</label>
+                                    <span class="ec-register-wrap">
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="شهر">
+                                </span>
+                                </span>
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label>کد پستی</label>
+                                    <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="کدپستی">
+                                </span>
+                                <span class="ec-register-wrap ec-register-half">
+                                    <label> پسوورد</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="رمز">
+                                </span>
+                                
+                                <span class="ec-register-wrap ec-register-btn">
+                                    <button class="btn btn-primary" type="submit">ثبت نام</button>
+                                </span>
+                            </form>
+                            <div id="registerMessage" style="margin-top: 15px;"></div>
+                        </div>
+                    </div>
+                </div> -->
             </div>
         </div>
     </section>
+    <!-- End Register -->
 
     <!-- Footer Start -->
     <footer class="ec-footer section-space-mt">
@@ -956,23 +986,84 @@
                     <div class="row">
                         <div class="col-sm-12 col-lg-3 ec-footer-contact">
                             <div class="ec-footer-widget">
-                                <div class="ec-footer-logo">
-                                    <a href="#"><img src="assets/images/logo/footer-logo.png" alt=""><img
-                                            class="dark-footer-logo" src="assets/images/logo/dark-logo.png"
-                                            alt="لوگو سایت" style="display: none;"></a>
-                                </div>
-                                <h4 class="ec-footer-heading">ارتباط با ما</h4>
+                                <div class="ec-footer-logo"><a href="#"><img src="assets/images/logo/footer-logo-3.png"
+                                            alt=""><img class="dark-footer-logo"
+                                            src="assets/images/logo/dark-logo-3.png" alt="Site Logo"
+                                            style="display: none;" /></a></div>
+                                <h4 class="ec-footer-heading">محل</h4>
                                 <div class="ec-footer-links">
                                     <ul class="align-items-center">
-                                        <li class="ec-footer-link">یک آدرس فرضی در این مکان قرار گرفته است. غرب تهران
+                                        <li class="ec-footer-link">یک آدرس فرضی در این محل وجود دارد</li>
+                                    </ul>
+                                    <div class="col-sm-12 col-lg-3 ec-footer-social">
+                                        <div class="ec-footer-widget">
+                                            <div class="ec-footer-links">
+                                                <ul class="align-items-center">
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-facebook"></i></a>
+                                                    </li>
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-twitter"></i></a>
+                                                    </li>
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-instagram"></i></a></li>
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-linkedin"></i></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-3 ec-footer-news">
+                            <div class="ec-footer-widget">
+                                <h4 class="ec-footer-heading"> اخبارها</h4>
+                                <div class="ec-footer-links">
+                                    <ul class="align-items-center">
+                                        <li class="ec-footer-link">به روز رسانی های فوری در مورد محصولات جدید و ویژه
+                                            دریافت کنید!</li>
+                                    </ul>
+                                    <div class="ec-subscribe-form">
+                                        <form id="ec-newsletter-form" name="ec-newsletter-form" method="post"
+                                            action="#">
+                                            <!-- <div id="ec_news_signup" class="ec-form">
+                                                <input class="ec-email" type="email" required=""
+                                                    placeholder="ایمیل خود را اینجا وارد کنید..." name="ec-email"
+                                                    value="" />
+                                                <button id="ec-news-btn" class="button btn-secondary" type="submit"
+                                                    name="subscribe" value=""><i class="ecicon eci-paper-plane-o"
+                                                        aria-hidden="true"></i></button>
+                                            </div> -->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-2 ec-footer-account">
+                            <div class="ec-footer-widget">
+                                <h4 class="ec-footer-heading">اکانت</h4>
+                                <div class="ec-footer-links">
+                                    <ul class="align-items-center">
+                                        <li class="ec-footer-link"><a href="user-profile.html">اکانت من</a></li>
+                                        <li class="ec-footer-link"><a href="user-history.html"> تاریخچه سفارش</a></li>
+                                        <li class="ec-footer-link"><a href="cart.php"> سبد خرید  </a></li>
+                                        <!-- <li class="ec-footer-link"><a href="offer.html">ویژه</a></li> -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-2 ec-footer-service">
+                            <div class="ec-footer-widget">
+                                <h4 class="ec-footer-heading">خدمات</h4>
+                                <div class="ec-footer-links">
+                                    <ul class="align-items-center">
+                                        <!-- <li class="ec-footer-link"><a href="#">تخفیف </a></li> -->
+                                        <li class="ec-footer-link"><a href="privacy-policy.html">سیاست حریم شخصی </a>
                                         </li>
-                                        <li class="ec-footer-link"><span>تماس با ما:</span><a
-                                                href="tel:+440123456789">+44
-                                                0123 456 789</a></li>
-                                        <li class="ec-footer-link"><span>ایمیل:</span><a
-                                                href="/cdn-cgi/l/email-protection#6c09140d011c00092c090f4109010d0500420f0301"><span
-                                                    class="__cf_email__"
-                                                    data-cfemail="2c0749544d415c40496c494f0149414d4540024f4341">[email&#160;protected]</span></a>
+                                        <!-- <li class="ec-footer-link"><a href="#">خدمات مشتری</a></li> -->
+                                        <li class="ec-footer-link"><a href="terms-condition.html">قوانین و شرایط</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -985,61 +1076,10 @@
                                     <ul class="align-items-center">
                                         <li class="ec-footer-link"><a href="about-us.html">درباره ما</a></li>
                                         <li class="ec-footer-link"><a href="faq.html">سوالات متداول</a></li>
-                                        <li class="ec-footer-link"><a href="#"> اطلاعات تحویل </a></li>
-                                        <li class="ec-footer-link"><a href="contact-us.html">ارتباط با ما</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-lg-2 ec-footer-account">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading"> اکانت </h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="#"> اکانت من </a></li>
-                                        <li class="ec-footer-link"><a href="track-order.html"> تاریخچه سفارش </a></li>
-                                        <li class="ec-footer-link"><a href="#"> لیست علاقه‌مندیها </a></li>
-                                        <li class="ec-footer-link"><a href="#"> ویژه </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-lg-2 ec-footer-service">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading">خدمات</h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="#"> تخفیف ها</a></li>
-                                        <li class="ec-footer-link"><a href="#">سیاست حفظ حریم خصوصی</a></li>
-                                        <li class="ec-footer-link"><a href="#">خدمات مشتری</a></li>
-                                        <li class="ec-footer-link"><a href="terms-condition.html">قوانین و شرایط</a>
+                                        <!-- <li class="ec-footer-link"><a href="track-order.html">اطلاعات ارسال</a> -->
                                         </li>
+                                        <!-- <li class="ec-footer-link"><a href="contact-us.html">ارتباط با ما</a></li> -->
                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-lg-3 ec-footer-news">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading"> خبرنامه </h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"> !دریافت به روز رسانی های فوری در مورد محصولات ویژه و
-                                            جدید ما
-                                        </li>
-                                    </ul>
-                                    <div class="ec-subscribe-form">
-                                        <form id="ec-newsletter-form" name="ec-newsletter-form" method="post"
-                                            action="#">
-                                            <div id="ec_news_signup" class="ec-form">
-                                                <input class="ec-email" type="email" required=""
-                                                    placeholder="ایمیل خود را اینجا وارد کنید..." name="ec-email"
-                                                    value="">
-                                                <button id="ec-news-btn" class="button btn-primary" type="submit"
-                                                    name="subscribe" value=""><i class="ecicon eci-paper-plane-o"
-                                                        aria-hidden="true"></i></button>
-                                            </div>
-                                        </form>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1281,21 +1321,11 @@
             <div class="ec-tools-sidebar-content ec-change-color ec-color-desc">
                 <h3> تم رنگ </h3>
                 <ul class="bg-panel">
-                    <li class="active" data-color="01">
-                        <a href="#" class="colorcode1"></a>
-                    </li>
-                    <li data-color="02">
-                        <a href="#" class="colorcode2"></a>
-                    </li>
-                    <li data-color="03">
-                        <a href="#" class="colorcode3"></a>
-                    </li>
-                    <li data-color="04">
-                        <a href="#" class="colorcode4"></a>
-                    </li>
-                    <li data-color="05">
-                        <a href="#" class="colorcode5"></a>
-                    </li>
+                    <li class="active" data-color="01"><a href="#" class="colorcode1"></a></li>
+                    <li data-color="02"><a href="#" class="colorcode2"></a></li>
+                    <li data-color="03"><a href="#" class="colorcode3"></a></li>
+                    <li data-color="04"><a href="#" class="colorcode4"></a></li>
+                    <li data-color="05"><a href="#" class="colorcode5"></a></li>
                 </ul>
             </div>
             <div class="ec-tools-sidebar-content">

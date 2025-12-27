@@ -11,17 +11,7 @@ if (isset($_SESSION['users_id'])) {
     if($u)$username=$u['name'];
 }
 
- 
 
-//عدد سبد خرید
-// $cart_count=0;
-// if(isset($_SESSION['user_id'])){
-//     $uid=$_SESSION['user_id'];
-//     $q=mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
-//     $row=mysqli_fetch_assoc($q);
-//     $cart_count=$row['total']??0;
-// }
-// echo $cart_count;
 // تعداد کل محصولات در سبد خرید
 $cart_count = 0;
 if(isset($_SESSION['users_id'])){   // همون user_id که تو سشن داری
@@ -43,6 +33,17 @@ if($result_all && mysqli_num_rows($result_all)>0){
         $books[]=$row;
     }
 }
+
+
+//3 کتاب رندوم
+$slider_sql = "
+SELECT id, name, price, description, image
+FROM books
+ORDER BY RAND()
+LIMIT 3
+";
+
+$slider_result = mysqli_query($conn, $slider_sql);
 
 
 // گرفتن دسته‌بندی از URL
@@ -897,64 +898,177 @@ $('.add-to-cart-btn').click(function(e){
 
     <!-- Main Slider Start-->
 
-    <div class="ec-main-slider section section-space-mb">
-        <div class="ec-slider">
-             
-            <div class="ec-slide-item d-flex slide-1">
-                <img src="assets/images/main-slider-banner/arrow-7.jpg" class="main_banner_arrow_img" alt="" />
-                <div class="container align-self-center">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-7 col-md-7 col-sm-7 align-self-center">
-                            <div class="ec-slide-content slider-animation">
-                                <h2 class="ec-slide-stitle">کتابتو باز کن-تو داستان پرواز کن</h2>
-                                <h1 class="ec-slide-title">بیا کتاب بخونیم</h1>
-                                <p>در این کلینیک اسرارآمیز، گربه‌ها نقش درمانگرانی مهربان را ایفا می‌کنند. آن‌ها به بیماران کمک می‌کنند که از نگرانی‌های غیرضروری رها شوند، زندگی را با دیدی تازه ببینند و به لحظه‌ی حال توجه کنند. د</p>
-                                <span class="ec-slide-disc">شروع از<span>150 تومان</span></span>
-                                <a href="#" class="btn btn-lg btn-secondary">خرید</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- Book Slider Wrapper -->
+<div class="book-slider-wrapper">
+    <div class="book-slides">
+        <?php while($slide = mysqli_fetch_assoc($slider_result)): ?>
+        <div class="book-slide">
+            <div class="slide-left ">
+                <img class="book-slide-img" src="../ekka-html/assets/images/products/<?php echo htmlspecialchars($slide['image']); ?>" alt="<?php echo htmlspecialchars($slide['name']); ?>">
             </div>
-            <div class="ec-slide-item d-flex slide-2">
-                 <img src="assets/images/main-slider-banner/arrow-7.jpg" class="main_banner_arrow_img" alt="" />
-                <div class="container align-self-center">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-7 col-md-7 col-sm-7 align-self-center">
-                            <div class="ec-slide-content slider-animation">
-                                <h2 class="ec-slide-stitle">استایل و مبلمان</h2>
-                                <h1 class="ec-slide-title">صندلی خاص</h1>
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
-                                <span class="ec-slide-disc">شروع از<span>150 تومان</span></span>
-                                <a href="#" class="btn btn-lg btn-secondary">خرید</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="slide-right">
+                <h2><?php echo htmlspecialchars($slide['name']); ?></h2>
+                <p><?php echo htmlspecialchars($slide['description']); ?></p>
+                <span class="price"><?php echo number_format($slide['price']); ?> تومان</span>
+                <a href="product-full-width.php?id=<?php echo $slide['id']; ?>" class="buy-btn">خرید</a>
             </div>
-            
-            <div class="ec-slide-item d-flex slide-3">
-                <img src="assets/images/main-slider-banner/arrow-7.jpg" class="main_banner_arrow_img" alt="" />
-                <div class="container align-self-center">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-7 col-md-7 col-sm-7 align-self-center">
-                            <div class="ec-slide-content slider-animation">
-                                <h2 class="ec-slide-stitle">استایل و مبلمان</h2>
-                                <h1 class="ec-slide-title">صندلی باغ</h1>
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
-                                <span class="ec-slide-disc">شروع از<span>150 تومان</span></span>
-                                <a href="#" class="btn btn-lg btn-secondary">خرید</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            
         </div>
-    </div> 
+        <?php endwhile; ?>
+    </div>
+    <!-- Navigation -->
+    <!-- <button class="prev">&#10094;</button>
+    <button class="next">&#10095;</button> -->
+</div>
+<!-- Slider CSS -->
+<style>
+    .book-slide-img {
+    width: 300px;  /* عرض عکس */
+    height: auto;  /* حفظ نسبت تصویر */
+    object-fit: contain; /* یا cover، بسته به اینکه بخواهی پر شود یا نه */
+    border-radius: 10px; /* اختیاری: گوشه‌های گرد */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* اختیاری: سایه */
+}
+.book-slider-wrapper { 
+    position: relative; 
+    max-width: 2000px; 
+    height: 600px;
+    margin: 50px auto; 
+    overflow: hidden; 
+    border-radius: 15px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    background: #fff;
+    
+    position: relative; 
+    max-width: 2000px; 
+    height: 600px;
+    margin: 50px auto; 
+    overflow: hidden; 
+    border-radius: 15px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    background: url('../ekka-html/assets/images/faq/slider-bg.jpeg') no-repeat center center; /* بک‌گراند */
+    background-size: cover;   /* تصویر کل باکس را پر کند */
+    background-attachment: fixed; /* هنگام اسکرول ثابت بماند */
+}
+
+.book-slides { 
+    position: relative;
+    display: flex; 
+    transition: transform 0.5s ease-in-out; 
+}
+.book-slide { 
+    display: flex; 
+    min-width: 100%; 
+    padding: 20px;
+    align-items: center;
+    min-height: 600px;
+}
+.book-slide::before{
+    content: '';
+    position: absolute;
+    top: 0;left: 0;right: 0;bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1;
+}
+.slide-left { 
+    flex: 1; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px; 
+    z-index: 2;
+}
+.slide-left img { 
+    max-width: 100%; 
+    max-height: 400px; 
+    border-radius: 10px; 
+    object-fit: cover; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+.slide-right { 
+    flex: 1; 
+    padding: 20px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    position: relative;
+    z-index: 3;
+}
+.slide-right h2 { 
+    margin-bottom: 15px; 
+    font-size: 2em; 
+    color: #c92bc4ff; 
+    font-weight: bold;
+    color: #3f4ae8ff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+.slide-right p { 
+    margin-bottom: 20px; 
+    color: #555; 
+    line-height: 1.5; 
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+.slide-right .price { 
+    font-weight: bold; 
+    font-size: 1.5em; 
+    margin-bottom: 20px; 
+    color: #382fdeff;
+}
+.buy-btn { 
+    padding: 12px 25px; 
+    background: #1573d8ff; 
+    color: #fff; 
+    text-decoration: none; 
+    border-radius: 8px; 
+    font-weight: bold;
+    width: fit-content; 
+    transition: background 0.3s; 
+}
+.buy-btn:hover { 
+    background: #0056b3; 
+}
+
+/* Navigation Buttons */
+.prev, .next { 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: rgba(0,0,0,0.5); 
+    color: #fff; 
+    border: none; 
+    padding: 12px; 
+    cursor: pointer; 
+    border-radius: 50%; 
+    font-size: 1.5em;
+}
+.prev { left: 15px; }
+.next { right: 15px; }
+
+/* Responsive */
+@media (max-width: 768px){
+    .book-slide { flex-direction: column; text-align: center; }
+    .slide-left, .slide-right { padding: 10px; }
+    .slide-left img { max-height: 250px; }
+}
+</style>
+
+<!-- Slider JS -->
+<script>
+const slidesContainer = document.querySelector('.book-slides');
+const totalSlides = document.querySelectorAll('.book-slide').length;
+let currentIndex = 0;
+
+document.querySelector('.next').addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    slidesContainer.style.transform = translateX(-${currentIndex * 100}%);
+});
+
+document.querySelector('.prev').addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    slidesContainer.style.transform = translateX(-${currentIndex * 100}%);
+});
+</script>
     <!-- Main Slider End -->
 
     <!--  category Section Start -->
@@ -1592,14 +1706,14 @@ if(!empty($last_6)) {
                                     <div class="ec-subscribe-form">
                                         <form id="ec-newsletter-form" name="ec-newsletter-form" method="post"
                                             action="#">
-                                            <div id="ec_news_signup" class="ec-form">
+                                            <!-- <div id="ec_news_signup" class="ec-form">
                                                 <input class="ec-email" type="email" required=""
                                                     placeholder="ایمیل خود را اینجا وارد کنید..." name="ec-email"
                                                     value="" />
                                                 <button id="ec-news-btn" class="button btn-secondary" type="submit"
                                                     name="subscribe" value=""><i class="ecicon eci-paper-plane-o"
                                                         aria-hidden="true"></i></button>
-                                            </div>
+                                            </div> -->
                                         </form>
                                     </div>
                                 </div>
@@ -1611,9 +1725,9 @@ if(!empty($last_6)) {
                                 <div class="ec-footer-links">
                                     <ul class="align-items-center">
                                         <li class="ec-footer-link"><a href="user-profile.html">اکانت من</a></li>
-                                        <li class="ec-footer-link"><a href="track-order.html"> تاریخچه سفارش</a></li>
-                                        <li class="ec-footer-link"><a href="wishlist.html"> لیست علاقه‌مندیها </a></li>
-                                        <li class="ec-footer-link"><a href="offer.html">ویژه</a></li>
+                                        <li class="ec-footer-link"><a href="user-history.html"> تاریخچه سفارش</a></li>
+                                        <li class="ec-footer-link"><a href="cart.php"> سبد خرید  </a></li>
+                                        <!-- <li class="ec-footer-link"><a href="offer.html">ویژه</a></li> -->
                                     </ul>
                                 </div>
                             </div>
@@ -1623,10 +1737,10 @@ if(!empty($last_6)) {
                                 <h4 class="ec-footer-heading">خدمات</h4>
                                 <div class="ec-footer-links">
                                     <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="#">تخفیف </a></li>
+                                        <!-- <li class="ec-footer-link"><a href="#">تخفیف </a></li> -->
                                         <li class="ec-footer-link"><a href="privacy-policy.html">سیاست حریم شخصی </a>
                                         </li>
-                                        <li class="ec-footer-link"><a href="#">خدمات مشتری</a></li>
+                                        <!-- <li class="ec-footer-link"><a href="#">خدمات مشتری</a></li> -->
                                         <li class="ec-footer-link"><a href="terms-condition.html">قوانین و شرایط</a>
                                         </li>
                                     </ul>
@@ -1640,9 +1754,9 @@ if(!empty($last_6)) {
                                     <ul class="align-items-center">
                                         <li class="ec-footer-link"><a href="about-us.html">درباره ما</a></li>
                                         <li class="ec-footer-link"><a href="faq.html">سوالات متداول</a></li>
-                                        <li class="ec-footer-link"><a href="track-order.html">اطلاعات ارسال</a>
+                                        <!-- <li class="ec-footer-link"><a href="track-order.html">اطلاعات ارسال</a> -->
                                         </li>
-                                        <li class="ec-footer-link"><a href="contact-us.html">ارتباط با ما</a></li>
+                                        <!-- <li class="ec-footer-link"><a href="contact-us.html">ارتباط با ما</a></li> -->
                                     </ul>
                                 </div>
                             </div>

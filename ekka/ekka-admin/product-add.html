@@ -388,7 +388,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row ec-vendor-uploads">
-                                        <div class="col-lg-4">
+                                        <!-- <div class="col-lg-4">
                                             <div class="ec-vendor-img-upload">
                                                 <div class="ec-vendor-main-img">
                                                     <div class="avatar-upload">
@@ -443,76 +443,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="col-lg-8">
                                             <div class="ec-vendor-upload-detail">
-                                                <!--<form class="row g-3">
-                                                    <div class="col-md-6"><label for="inputEmail4" class="form-label">نام محصول </label><input class="form-control slug-title" id="inputEmail4"></div>
-                                                    <div class="col-md-6"><label class="form-label">دسته بندی ها را انتخاب کنید</label><select name="categories" id="Categories" class="form-select">
-                                                            <optgroup label="مد">
-                                                                <option value="t-shirt">تی شرت</option>
-                                                                <option value="dress">پیراهن</option>
-                                                            </optgroup>
-                                                            <optgroup label="مبلمان">
-                                                                <option value="table">جدول</option>
-                                                                <option value="sofa">کاناپه</option>
-                                                            </optgroup>
-                                                            <optgroup label="الکترونیکی">
-                                                                <option value="phone">ای فون</option>
-                                                                <option value="laptop">لپ تاپ</option>
-                                                            </optgroup>
-                                                        </select></div>
-                                                    <div class="col-md-12"><label for="slug" class="col-12 col-form-label">اسلاگ</label>
-                                                        <div class="col-12"><input id="slug" name="slug" class="form-control here set-slug"></div>
-                                                    </div>
-                                                    <div class="col-md-12"><label class="form-label">توضیحات مرتب سازی</label><textarea class="form-control" rows="2"></textarea></div>
-                                                    <div class="col-md-4 mb-25"><label class="form-label">رنگ</label><input type="color" class="form-control form-control-color" id="exampleColorInput1" value="#ff6191" title="Choose your color"> <input type="color" class="form-control form-control-color" id="exampleColorInput2" value="#33317d" title="Choose your color"> <input type="color" class="form-control form-control-color" id="exampleColorInput3" value="#56d4b7" title="Choose your color"> <input type="color" class="form-control form-control-color" id="exampleColorInput4" value="#009688" title="Choose your color"></div>
-                                                    <div class="col-md-8 mb-25"><label class="form-label">اندازه</label>
-                                                        <div class="form-checkbox-box">
-                                                            <div class="form-check form-check-inline"><input type="checkbox" name="size1" value="size"><label>S</label></div>
-                                                            <div class="form-check form-check-inline"><input type="checkbox" name="size1" value="size"><label>M</label></div>
-                                                            <div class="form-check form-check-inline"><input type="checkbox" name="size1" value="size"><label>L</label></div>
-                                                            <div class="form-check form-check-inline"><input type="checkbox" name="size1" value="size"><label>XL</label></div>
-                                                            <div class="form-check form-check-inline"><input type="checkbox" name="size1" value="size"><label>XXL</label></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6"><label class="form-label">قیمت <span>( به تومان
-                                                                )</span></label><input type="number" class="form-control" id="price1"></div>
-                                                    <div class="col-md-6"><label class="form-label">تعداد</label><input type="number" class="form-control" id="quantity1"></div>
-                                                    <div class="col-md-12"><label class="form-label">جزییات</label><textarea class="form-control" rows="4"></textarea></div>
-                                                    <div class="col-md-12"><label class="form-label">برچسب های محصول
-                                                            <span>( برای جدا کردن برچسب ها کاما را تایپ کرده و درست کنید
-                                                                )</span></label><input class="form-control" id="group_tag" name="group_tag" placeholder="" data-role="tagsinput"></div>
-                                                    <div class="col-md-12"><button type="submit" class="btn btn-primary">ارسال</button></div>
-                                                </form>-->
-
-  <!-- <form class="ec-add-product-form" action="product-add.php" method="POST" enctype="multipart/form-data">
-    <div class="col-md-6">
-        <label class="form-label">قیمت</label>
-        <input type="number" class="form-control" id="price1" name="price">
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">تعداد</label>
-        <input type="number" class="form-control" id="quantity1" name="quantity">
-    </div>
-    <div class="col-md-12">
-        <label class="form-label">جزییات</label>
-        <textarea class="form-control" rows="4" name="description"></textarea>
-    </div>
-    <div class="col-md-12">
-        <label class="form-label">برچسب های محصول
-            <span>(برای جدا کردن برچسب ها کاما را تایپ کنید)</span>
-        </label>
-        <input class="form-control" id="group_tag" name="group_tag" placeholder="" data-role="tagsinput">
-    </div>
-    <div class="col-md-12">
-        <label class="form-label">تصویر محصول</label>
-        <input type="file" class="form-control" name="image">
-    </div>
-    <div class="col-md-12">
-        <button type="submit" name="submit" class="btn btn-primary">ارسال</button>
-    </div>
-</form> -->
+                                
 <form class="ec-add-product-form" action="product-add.php" method="POST" enctype="multipart/form-data">
     <label>نام کتاب</label>
     <input type="text" name="name" class="form-control">
@@ -543,7 +477,33 @@
     <label>توضیحات</label>
     <textarea name="description" class="form-control"></textarea>
 
-    <button type="submit" name="submit">ارسال</button>
+
+    <style>
+        .btn-submit {
+    background: linear-gradient(135deg, #1e88e5, #1565c0);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(30, 136, 229, 0.35);
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(30, 136, 229, 0.45);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(30, 136, 229, 0.3);
+}
+    </style>
+    <button class="btn-submit" type="submit" name="submit">ارسال</button>
 
 </form>
 

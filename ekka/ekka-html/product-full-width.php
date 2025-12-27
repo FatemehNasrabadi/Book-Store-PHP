@@ -3,11 +3,20 @@ session_start();
 include('../../config/db.php'); // اتصال به دیتابیس
 
 //عدد سبد خرید
-$cart_count=0;
-if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
-    foreach($_SESSION['cart'] as $qty){
-        $cart_count+=$qty;
-    }
+// $cart_count=0;
+// if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
+//     foreach($_SESSION['cart'] as $qty){
+//         $cart_count+=$qty;
+//     }
+// }
+
+// تعداد کل محصولات در سبد خرید
+$cart_count = 0;
+if(isset($_SESSION['users_id'])){   // همون user_id که تو سشن داری
+    $uid = $_SESSION['users_id'];
+    $q = mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
+    $row = mysqli_fetch_assoc($q);
+    $cart_count = $row['total'] ?? 0;
 }
 
 // گرفتن id محصول از URL
@@ -174,7 +183,7 @@ $('.add-to-cart-btn').click(function(e){
                                     <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                                      <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">سبد
                                         خرید</span>  
                                 </a>
                             <!-- Header Cart End -->
@@ -246,8 +255,8 @@ $('.add-to-cart-btn').click(function(e){
                             <a href="cart.php" class="ec-header-btn ">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt="" /></div>
-                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">
-                                        </span>  
+                                     <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">
+                                        </span>
                                 </a>
                                 <!-- Header Cart End -->
                             </div>
@@ -1408,23 +1417,84 @@ if ($discount > 0) {
                     <div class="row">
                         <div class="col-sm-12 col-lg-3 ec-footer-contact">
                             <div class="ec-footer-widget">
-                                <div class="ec-footer-logo">
-                                    <a href="#"><img src="assets/images/logo/footer-logo.png" alt=""><img
-                                            class="dark-footer-logo" src="assets/images/logo/dark-logo.png"
-                                            alt="لوگو سایت" style="display: none;"></a>
-                                </div>
-                                <h4 class="ec-footer-heading">ارتباط با ما</h4>
+                                <div class="ec-footer-logo"><a href="#"><img src="assets/images/logo/footer-logo-3.png"
+                                            alt=""><img class="dark-footer-logo"
+                                            src="assets/images/logo/dark-logo-3.png" alt="Site Logo"
+                                            style="display: none;" /></a></div>
+                                <h4 class="ec-footer-heading">محل</h4>
                                 <div class="ec-footer-links">
                                     <ul class="align-items-center">
-                                        <li class="ec-footer-link">یک آدرس فرضی در این مکان قرار گرفته است. غرب تهران
+                                        <li class="ec-footer-link">یک آدرس فرضی در این محل وجود دارد</li>
+                                    </ul>
+                                    <div class="col-sm-12 col-lg-3 ec-footer-social">
+                                        <div class="ec-footer-widget">
+                                            <div class="ec-footer-links">
+                                                <ul class="align-items-center">
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-facebook"></i></a>
+                                                    </li>
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-twitter"></i></a>
+                                                    </li>
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-instagram"></i></a></li>
+                                                    <li class="list-inline-item"><a href="#"><i
+                                                                class="ecicon eci-linkedin"></i></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-3 ec-footer-news">
+                            <div class="ec-footer-widget">
+                                <h4 class="ec-footer-heading"> اخبارها</h4>
+                                <div class="ec-footer-links">
+                                    <ul class="align-items-center">
+                                        <li class="ec-footer-link">به روز رسانی های فوری در مورد محصولات جدید و ویژه
+                                            دریافت کنید!</li>
+                                    </ul>
+                                    <div class="ec-subscribe-form">
+                                        <form id="ec-newsletter-form" name="ec-newsletter-form" method="post"
+                                            action="#">
+                                            <!-- <div id="ec_news_signup" class="ec-form">
+                                                <input class="ec-email" type="email" required=""
+                                                    placeholder="ایمیل خود را اینجا وارد کنید..." name="ec-email"
+                                                    value="" />
+                                                <button id="ec-news-btn" class="button btn-secondary" type="submit"
+                                                    name="subscribe" value=""><i class="ecicon eci-paper-plane-o"
+                                                        aria-hidden="true"></i></button>
+                                            </div> -->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-2 ec-footer-account">
+                            <div class="ec-footer-widget">
+                                <h4 class="ec-footer-heading">اکانت</h4>
+                                <div class="ec-footer-links">
+                                    <ul class="align-items-center">
+                                        <li class="ec-footer-link"><a href="user-profile.html">اکانت من</a></li>
+                                        <li class="ec-footer-link"><a href="user-history.html"> تاریخچه سفارش</a></li>
+                                        <li class="ec-footer-link"><a href="cart.php"> سبد خرید  </a></li>
+                                        <!-- <li class="ec-footer-link"><a href="offer.html">ویژه</a></li> -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-2 ec-footer-service">
+                            <div class="ec-footer-widget">
+                                <h4 class="ec-footer-heading">خدمات</h4>
+                                <div class="ec-footer-links">
+                                    <ul class="align-items-center">
+                                        <!-- <li class="ec-footer-link"><a href="#">تخفیف </a></li> -->
+                                        <li class="ec-footer-link"><a href="privacy-policy.html">سیاست حریم شخصی </a>
                                         </li>
-                                        <li class="ec-footer-link"><span>تماس با ما:</span><a
-                                                href="tel:+440123456789">+44
-                                                0123 456 789</a></li>
-                                        <li class="ec-footer-link"><span>ایمیل:</span><a
-                                                href="/cdn-cgi/l/email-protection#bfdac7ded2cfd3daffdadc92dad2ded6d391dcd0d2"><span
-                                                    class="__cf_email__"
-                                                    data-cfemail="68430d10090518040d280d0b450d05090104460b0705">[email&#160;protected]</span></a>
+                                        <!-- <li class="ec-footer-link"><a href="#">خدمات مشتری</a></li> -->
+                                        <li class="ec-footer-link"><a href="terms-condition.html">قوانین و شرایط</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -1437,61 +1507,10 @@ if ($discount > 0) {
                                     <ul class="align-items-center">
                                         <li class="ec-footer-link"><a href="about-us.html">درباره ما</a></li>
                                         <li class="ec-footer-link"><a href="faq.html">سوالات متداول</a></li>
-                                        <li class="ec-footer-link"><a href="#"> اطلاعات تحویل </a></li>
-                                        <li class="ec-footer-link"><a href="contact-us.html">ارتباط با ما</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-lg-2 ec-footer-account">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading"> اکانت </h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="#"> اکانت من </a></li>
-                                        <li class="ec-footer-link"><a href="track-order.html"> تاریخچه سفارش </a></li>
-                                        <li class="ec-footer-link"><a href="#"> لیست علاقه‌مندیها </a></li>
-                                        <li class="ec-footer-link"><a href="#"> ویژه </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-lg-2 ec-footer-service">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading">خدمات</h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="#"> تخفیف ها</a></li>
-                                        <li class="ec-footer-link"><a href="#">سیاست حفظ حریم خصوصی</a></li>
-                                        <li class="ec-footer-link"><a href="#">خدمات مشتری</a></li>
-                                        <li class="ec-footer-link"><a href="terms-condition.html">قوانین و شرایط</a>
+                                        <!-- <li class="ec-footer-link"><a href="track-order.html">اطلاعات ارسال</a> -->
                                         </li>
+                                        <!-- <li class="ec-footer-link"><a href="contact-us.html">ارتباط با ما</a></li> -->
                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-lg-3 ec-footer-news">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading"> خبرنامه </h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"> !دریافت به روز رسانی های فوری در مورد محصولات ویژه و
-                                            جدید ما
-                                        </li>
-                                    </ul>
-                                    <div class="ec-subscribe-form">
-                                        <form id="ec-newsletter-form" name="ec-newsletter-form" method="post"
-                                            action="#">
-                                            <div id="ec_news_signup" class="ec-form">
-                                                <input class="ec-email" type="email" required=""
-                                                    placeholder="ایمیل خود را اینجا وارد کنید..." name="ec-email"
-                                                    value="">
-                                                <button id="ec-news-btn" class="button btn-primary" type="submit"
-                                                    name="subscribe" value=""><i class="ecicon eci-paper-plane-o"
-                                                        aria-hidden="true"></i></button>
-                                            </div>
-                                        </form>
-                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -14,14 +14,14 @@ $sql="SELECT *FROM users WHERE id=$user_id LIMIT 1";
 $result=mysqli_query($conn,$sql);
 $user=mysqli_fetch_assoc($result);
 
-//عدد سبد خرید
-$cart_count=0;
-if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
-    foreach($_SESSION['cart'] as $qty){
-        $cart_count+=$qty;
-    }
+// تعداد کل محصولات در سبد خرید
+$cart_count = 0;
+if(isset($_SESSION['users_id'])){   // همون user_id که تو سشن داری
+    $uid = $_SESSION['users_id'];
+    $q = mysqli_query($conn, "SELECT SUM(quantity) AS total FROM carts WHERE user_id=$uid");
+    $row = mysqli_fetch_assoc($q);
+    $cart_count = $row['total'] ?? 0;
 }
-
 // //پردازش ویرایش اطلاعات
 
 // if(isset($_POST['update_profile'])){
@@ -191,7 +191,7 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                             <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                 <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                         class="svg_img header_svg" alt=""></div>
-                               <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">سبد
+                              <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">سبد
                                         خرید</span>
                             </a>
                             <!-- Header Cart End -->
@@ -264,7 +264,7 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                 <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                                     <div class="header-icon"><img src="assets/images/icons/cart.svg"
                                             class="svg_img header_svg" alt=""></div>
-                                     <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo isset($_SESSION['cart'])?array_sum($_SESSION['cart']):0;?></span><span class="ec-btn-title">
+                                    <span  id="cart-count" class="ec-header-count ec-cart-count"><?php echo $cart_count;?></span><span class="ec-btn-title">
                                         </span>
                                 </a>
                                 <!-- Header Cart End -->
@@ -918,8 +918,8 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                         <li><a href="user-history.html">تاریخچه</a></li>
                                         <!-- <li><a href="wishlist.html">علاقه مندی ها</a></li> -->
                                         <li><a href="cart.html">سبد خرید</a></li>
-                                        <li><a href="checkout.html">ادامه خرید</a></li>
-                                        <li><a href="track-order.html">پیگیری سفارش</a></li>
+                                        <!-- <li><a href="checkout.html">ادامه خرید</a></li> -->
+                                        <!-- <li><a href="track-order.html">پیگیری سفارش</a></li> -->
                                         <!-- <li><a href="user-invoice.html">فاکتور</a></li> -->
                                     </ul>
                                 </div>
@@ -934,13 +934,13 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                 <div class="col-md-12">
                                     <div class="ec-vendor-block-profile">
                                         <div class="ec-vendor-block-img space-bottom-30">
-                                            <div class="ec-vendor-block-bg">
+                                            <!-- <div class="ec-vendor-block-bg">
                                                 <a href="#" class="btn btn-lg btn-primary" data-link-action="editmodal"
                                                     title="ویرایش جزییات" data-bs-toggle="modal"
                                                     data-bs-target="#edit_modal">ویرایش</a>
-                                            </div>
+                                            </div> -->
                                             <div class="ec-vendor-block-detail">
-                                                <img class="v-img" src="assets/images/user/1.jpg" alt="vendor image">
+                                                <img class="v-img" src="assets/images/user/user.png" alt="vendor image">
                                                 <h5 class="name"><?php echo $user['username'];?></h5>
                                                 <p>( کاربر )</p>
                                             </div>
@@ -1214,18 +1214,18 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                 </div>
                             </div>
                             <div class="ec-vendor-upload-detail">
-                                <form class="row g-3" action="" method="post">
+                                <form class="row g-3" action="user-update.php" method="post">
                                     <div class="col-md-6 space-t-15">
                                         <label class="form-label">نام</label>
-                                        <input type="text" name="name" class="form-control" value="<?php echo $user['name'];?>">
+                                        <input type="text" name="name" class="form-control" value="<?php echo $user['name'];?>" required>
                                     </div>
                                     <div class="col-md-6 space-t-15">
                                         <label class="form-label">نام کاربری</label>
-                                        <input type="text" name="username" class="form-control" value="<?php echo $user['username'];?>">
+                                        <input type="text" name="username" class="form-control" value="<?php echo $user['username'];?>" required>
                                     </div>
                                     <div class="col-md-12 space-t-15">
-                                        <label class="form-label">آدرس1</label>
-                                        <input type="text" class="form-control" name="address" value="<?php echo $user['address'];?>">
+                                        <label class="form-label">آدرس</label>
+                                        <input type="text" class="form-control" name="address" value="<?php echo $user['address'];?>" required>
                                     </div>
                                     <!-- <div class="col-md-12 space-t-15">
                                         <label class="form-label">آدرس2</label>
@@ -1236,8 +1236,8 @@ if(isset($_SESSION['cart'])&& is_array($_SESSION['cart'])){
                                         <input type="text" class="form-control">
                                     </div> -->
                                     <div class="col-md-6 space-t-15">
-                                        <label class="form-label">ایمیل 1</label>
-                                        <input type="text" class="form-control" name="email" value="<?php echo $user['email'];?>">
+                                        <label class="form-label">ایمیل </label>
+                                        <input type="text" class="form-control" name="email" value="<?php echo $user['email'];?>" required>
                                     </div>
                                     <!-- <div class="col-md-6 space-t-15">
                                         <label class="form-label">ایمیل 2</label>
