@@ -1,2 +1,2 @@
-# PROJECT
-bookstore
+# PROJECT book-store-php
+bookstore-PHP
